@@ -63,7 +63,7 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ./src
           cmake --build . --config Release
           mv ./Release/Eep.dll ./Eep.dll
-          mv ./python/v3/pyeep.pyd ./pyeep.pyd
+          mv ./python/v3/Release/pyeep.pyd ./pyeep.pyd
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
