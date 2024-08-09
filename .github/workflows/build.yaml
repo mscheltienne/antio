@@ -1,4 +1,4 @@
-name: build
+name: unittests
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
   cancel-in-progress: true
@@ -11,7 +11,7 @@ on:  # yamllint disable-line rule:truthy
     - cron: '0 8 * * 1'
 
 jobs:
-  ubuntu:
+  build-linux:
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -42,7 +42,7 @@ jobs:
             ./libEep.so
             ./python/v3/pyeep.so
 
-  windows:
+  build-windows:
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -73,7 +73,7 @@ jobs:
               ./Eep.dll
               ./python/v3/pyeep.pyd
 
-  macos-arm64:
+  build-macos-arm64:
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -104,7 +104,7 @@ jobs:
             ./libEep.dylib
             ./python/v3/pyeep.so
 
-  macos-intel:
+  build-macos-intel:
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -134,3 +134,87 @@ jobs:
           path: |
             ./libEep.dylib
             ./python/v3/pyeep.so
+
+  pytest:
+    needs: [build-linux, build-windows, build-macos-arm64]
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, windows, macos]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    name: ${{ matrix.os }} - py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download libeep
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: ./antio/libeep/
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv and package
+        run: |
+          python -m pip install --quiet uv
+          uv pip install --quiet --system .[test]
+      - name: Display system information
+        run: antio sys-info --developer
+      - name: Run pytest
+        run: pytest antio --cov=antio --cov-report=xml --cov-config=pyproject.toml
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: unittests  # optional
+          name: codecov-umbrella  # optional
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true  # optional (default = false)
+
+  pytest-macos-intel:
+    needs: [build-macos-intel]
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    name: ${{ matrix.os }} - py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-12
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download libeep
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ matrix.os }}-intel
+          path: ./antio/libeep/
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv and package
+        run: |
+          python -m pip install --quiet uv
+          uv pip install --quiet --system .[test]
+      - name: Display system information
+        run: antio sys-info --developer
+      - name: Run pytest
+        run: pytest antio --cov=antio --cov-report=xml --cov-config=pyproject.toml
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: unittests  # optional
+          name: codecov-umbrella  # optional
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true  # optional (default = false)
