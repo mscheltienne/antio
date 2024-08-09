@@ -73,76 +73,9 @@ install(TARGETS Eep DESTINATION lib)
 
 install(FILES src/v4/eep.h DESTINATION include/libeep-${LIBEEP_VERSION}/v4)
 
-########
-# java #
-########
-if(NOT EXISTS $ENV{JAVA_HOME})
-  message("please set the environment variable JAVA_HOME to build the JNI package")
-else()
-  add_subdirectory(java)
-endif()
-
-##########
-# matlab #
-##########
-if(IS_DIRECTORY $ENV{MATLAB})
-  if(IS_DIRECTORY $ENV{MATLAB}/bin/win64)
-    # windows 64
-    set(MATLAB_BIN $ENV{MATLAB}/bin/win64)
-    set(MATLAB_EXT mexw64)
-    set(MATLAB_MEX_CFLAGS -DMEX_CXXFLAGS=-ansi -DWIN32)
-  elseif(IS_DIRECTORY $ENV{MATLAB}/bin/win32)
-    # windows 32
-    set(MATLAB_BIN $ENV{MATLAB}/bin/win32)
-    set(MATLAB_EXT mexw32)
-    set(MATLAB_MEX_CFLAGS -DMEX_CXXFLAGS=-ansi -DWIN32)
-  elseif(IS_DIRECTORY $ENV{MATLAB}/bin/glnx32)
-    # linux 32
-    set(MATLAB_BIN $ENV{MATLAB}/bin/glnx32)
-    set(MATLAB_EXT mexa32)
-  elseif(IS_DIRECTORY $ENV{MATLAB}/bin/glnxa64)
-    # linux 64
-    set(MATLAB_BIN $ENV{MATLAB}/bin/glnxa64)
-    set(MATLAB_EXT mexa64)
-    set(MATLAB_MEX_CFLAGS "CFLAGS=-std=c99 -fPIC -D_GNU_SOURCE -O3 -v")
-  else()
-    # fallback, mac 64
-    set(MATLAB_BIN $ENV{MATLAB}/bin)
-    set(MATLAB_EXT mexmaci64)
-  endif()
-
-  message("Eep................. ${Eep}")
-  message("MATLAB_BIN.......... ${MATLAB_BIN}")
-  message("MATLAB_EXT.......... ${MATLAB_EXT}")
-
-  foreach(matlab_target read_eep_avr read_eep_cnt read_eep_trg write_eep_avr write_eep_cnt eepv4_version eepv4_read_info eepv4_read)
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/mex/matlab/${matlab_target}.c)
-      add_custom_command(OUTPUT ${matlab_target}.${MATLAB_EXT}
-                         COMMAND ${MATLAB_BIN}/mex
-                         ARGS ${CMAKE_CURRENT_SOURCE_DIR}/mex/matlab/${matlab_target}.c -I${CMAKE_CURRENT_SOURCE_DIR}/src
-                              ${Eep_sources}
-                              ${MATLAB_MEX_CFLAGS}
-                              -DLIBEEP_VERSION_MAJOR=${LIBEEP_VERSION_MAJOR}
-                              -DLIBEEP_VERSION_MINOR=${LIBEEP_VERSION_MINOR}
-                              -DLIBEEP_VERSION_PATCH=${LIBEEP_VERSION_PATCH}
-                         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/mex/matlab/${matlab_target}.c ${Eep_sources}
-                        )
-      add_custom_target(${matlab_target} ALL DEPENDS ${matlab_target}.${MATLAB_EXT})
-
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${matlab_target}.${MATLAB_EXT} DESTINATION share/libeep/matlab)
-    endif()
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/mex/matlab/${matlab_target}.m)
-      install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/mex/matlab/${matlab_target}.m DESTINATION share/libeep/matlab)
-    endif()
-  endforeach()
-elseif()
-  message("please set the environment variable MATLAB to a matlab directry to build the MATLAB plugin")
-endif()
-
 ##########
 # python #
 ##########
-add_subdirectory(python/v2)
 add_subdirectory(python/v3)
 
 if(UNIX)
