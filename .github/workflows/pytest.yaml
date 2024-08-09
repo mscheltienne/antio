@@ -3,12 +3,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
   cancel-in-progress: true
 on:  # yamllint disable-line rule:truthy
-  pull_request:
-  push:
-    branches: [main]
-  workflow_dispatch:
-  schedule:
-    - cron: '0 8 * * 1'
+  workflow_run:
+    workflows: ["build"]
+    types:
+      - completed
 
 jobs:
   pytest:
@@ -16,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos, windows]
+        os: [ubuntu, windows]
         python-version: ["3.10"]
     name: ${{ matrix.os }} - py${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest
@@ -26,6 +24,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Download libeep
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: ./antio/libeep/
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:

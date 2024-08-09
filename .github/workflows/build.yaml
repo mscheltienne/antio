@@ -1,0 +1,74 @@
+name: build
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  cancel-in-progress: true
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 1'
+
+jobs:
+  ubuntu:
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu]
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: libeep
+          path: src
+      - name: Build
+        run: |
+          mkdir Build
+          cd Build
+          cmake -DCMAKE_BUILD_TYPE=Release ../src
+          cmake --build . --config Release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: |
+            ./libEep.so
+            ./python/v3/pyeep.so
+
+  windows:
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows]
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: libeep
+          path: src
+      - name: Build
+        run: |
+            mkdir Build
+            cd Build
+            cmake -DCMAKE_BUILD_TYPE=Release ../src
+            cmake --build . --config Release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: build-${{ matrix.os }}
+            path: |
+              ./Eep.dll
+              ./python/v3/pyeep.pyd

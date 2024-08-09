@@ -1,6 +1,7 @@
+import platform
+
 from setuptools import setup
 from setuptools.dist import Distribution
-import platform
 
 
 class BinaryDistribution(Distribution):
