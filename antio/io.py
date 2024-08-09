@@ -3,11 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import libeep
 import numpy as np
 from mne import Annotations, create_info
 from mne.io import RawArray
 
+from . import libeep
 from .utils._checks import ensure_path
 
 if TYPE_CHECKING:
