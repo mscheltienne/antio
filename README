@@ -1,0 +1,10 @@
+How to submit changes:
+ *) create a patch of your changes to the latest trunk in the Subversion tree.
+ *) send the patch in an e-mail to rsmies@ant-neuro.com. don't forget to include a description of your change in the body of the e-mail.
+
+How to enable the MATLAB importers:
+ *) make sure you have a working compiler toolchain(MacOSX users may need to install XCode from the app-store)
+ *) assuming you have MATLAB installed in '/opt/MATLAB' and you want your plugin to be installed in '/opt/ant-eep'(you are free to change these off-course), you can compile and install the plugin using: MATLAB=/opt/MATLAB ./configure --enable-matlab --prefix=/opt/ant-eep --with-matlab=/opt/MATLAB && make install
+ *) You may need to run 'make install' as super user, or with the sudo command on some platforms
+ *) start MATLAB, make sure the (install dir)/share/matlab path is added to MATLAB
+ *) run [my_data] = read_eep_cnt('/path/to/my_data.cnt', 1, 1024) to read the first 1024 samples
