@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import platform
 import sys
-from functools import lru_cache, partial
+from functools import partial
 from importlib.metadata import requires, version
 from typing import TYPE_CHECKING
 
@@ -99,23 +99,6 @@ def _list_dependencies_info(
             output += f" ({str(dep.specifier)})"
         output += ":"
         output = output.ljust(ljust) + version_
-
-        # handle special dependencies with backends, C dep, ..
-        if dep.name in ("matplotlib", "seaborn") and version_ != "Not found.":
-            try:
-                from matplotlib import pyplot as plt
-
-                backend = plt.get_backend()
-            except Exception:
-                backend = "Not found"
-
-            output += f" (backend: {backend})"
-        if dep.name == "pyvista":
-            version_, renderer = _get_gpu_info()
-            if version_ is None:
-                output += " (OpenGL unavailable)"
-            else:
-                output += f" (OpenGL {version_} via {renderer})"
         out(output + "\n")
 
     if len(not_found) != 0:
@@ -129,15 +112,3 @@ def _list_dependencies_info(
             out(f"✘ Not installed: {', '.join(not_found)}\n")
         else:
             out(f"Not installed: {', '.join(not_found)}\n")
-
-
-@lru_cache(maxsize=1)
-def _get_gpu_info() -> tuple[Optional[str], Optional[str]]:
-    """Get the GPU information."""
-    try:
-        from pyvista import GPUInfo
-
-        gi = GPUInfo()
-        return gi.version, gi.renderer
-    except Exception:
-        return None, None

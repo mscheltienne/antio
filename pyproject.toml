@@ -66,7 +66,6 @@ style = [
 ]
 test = [
   'pytest-cov',
-  'pytest-timeout',
   'pytest>=8.0',
 ]
 
@@ -78,6 +77,10 @@ documentation = 'https://github.com/mscheltienne/antio'
 homepage = 'https://github.com/mscheltienne/antio'
 source = 'https://github.com/mscheltienne/antio'
 tracker = 'https://github.com/mscheltienne/antio/issues'
+
+[tool.cibuildwheel]
+test-requires = ["pytest>=8.0", "pytest-cov"]
+test-command = "pytest antio --cov=antio --cov-report=xml --cov-config=pyproject.toml"
 
 [tool.codespell]
 check-filenames = true
@@ -147,7 +150,6 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 include-package-data = false
 
 [tool.setuptools.packages.find]
-exclude = ['antio*tests']
 include = ['antio*']
 
 [tool.tomlsort]

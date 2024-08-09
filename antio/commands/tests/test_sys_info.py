@@ -15,6 +15,5 @@ def test_sys_info(developer: bool):
     assert "Executable:" in result.output
     assert "Core dependencies" in result.output
     if developer:
-        assert "Optional 'build' dependencies" in result.output
         assert "Optional 'style' dependencies" in result.output
         assert "Optional 'test' dependencies" in result.output
