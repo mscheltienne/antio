@@ -104,9 +104,11 @@ jobs:
 
   build_wheels:
     needs: [build-libeep-linux, build-libeep-windows, build-libeep-macos]
+    timeout-minutes: 10
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
