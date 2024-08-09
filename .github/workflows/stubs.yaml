@@ -27,7 +27,7 @@ jobs:
           python -m pip install --quiet uv
           uv pip install --quiet --system -e .[stubs]
       - name: Display system information
-        run: template sys-info --developer
+        run: antio sys-info --developer
       - name: Generate stub files
         run: python tools/stubgen.py
       - name: Push stub files
@@ -36,7 +36,7 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           if [ -n "$(git status --porcelain)" ]; then
-            git add template/\*.pyi
+            git add antio/\*.pyi
             git commit -m "deploy stub files [ci skip]"
             git push
           fi

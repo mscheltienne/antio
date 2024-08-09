@@ -35,9 +35,9 @@ jobs:
           python -m pip install --quiet uv
           uv pip install --quiet --system .[test]
       - name: Display system information
-        run: template sys-info --developer
+        run: antio sys-info --developer
       - name: Run pytest
-        run: pytest template --cov=template --cov-report=xml --cov-config=pyproject.toml
+        run: pytest antio --cov=antio --cov-report=xml --cov-config=pyproject.toml
       - name: Upload to codecov
         uses: codecov/codecov-action@v4
         with:
@@ -72,9 +72,9 @@ jobs:
           uv pip install --quiet --system --upgrade git+https://github.com/mne-tools/mne-python
           uv pip install --quiet --system --upgrade --prerelease allow --only-binary :all: -i https://pypi.anaconda.org/scientific-python-nightly-wheels/simple numpy
       - name: Display system information
-        run: template sys-info --developer
+        run: antio sys-info --developer
       - name: Run pytest
-        run: pytest template --cov=template --cov-report=xml --cov-config=pyproject.toml
+        run: pytest antio --cov=antio --cov-report=xml --cov-config=pyproject.toml
       - name: Upload to codecov
         uses: codecov/codecov-action@v4
         with:

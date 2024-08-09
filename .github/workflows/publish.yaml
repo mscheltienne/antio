@@ -19,7 +19,7 @@ jobs:
           python -m pip install --quiet uv
           uv pip install --quiet --system -e .[build,stubs]
       - name: Display system information
-        run: template sys-info --developer
+        run: antio sys-info --developer
       - name: Generate stub files
         run: python tools/stubgen.py
       - name: Build and publish
