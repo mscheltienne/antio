@@ -7,7 +7,6 @@ import numpy as np
 from mne import Annotations, create_info
 from mne.io import RawArray
 
-from . import libeep
 from .utils._checks import ensure_path
 
 if TYPE_CHECKING:
@@ -24,6 +23,8 @@ def read_raw_ant(fname: Union[Path, str]) -> BaseRaw:
     fname : str | Path
         Path to the file name to read.
     """
+    from . import libeep
+
     fname = ensure_path(fname, must_exist=True)
     cnt = libeep.read_cnt(str(fname))
 
