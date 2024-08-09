@@ -58,7 +58,6 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     # extras
     if developer:
         keys = (
-            "build",
             "test",
             "stubs",
             "style",

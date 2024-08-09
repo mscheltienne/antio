@@ -44,14 +44,9 @@ version = '0.1.0'
 
 [project.optional-dependencies]
 all = [
-  'antio[build]',
   'antio[stubs]',
   'antio[style]',
   'antio[test]',
-]
-build = [
-  'build',
-  'twine',
 ]
 full = [
   'antio[all]',

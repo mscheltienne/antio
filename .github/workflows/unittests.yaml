@@ -132,15 +132,15 @@ jobs:
             ./libEep.dylib
             ./pyeep.so
 
-  pytest:
+  build-wheel:
     needs: [build-linux, build-windows, build-macos-arm64]
-    timeout-minutes: 30
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu, windows, macos]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-    name: pytest ${{ matrix.os }} - py${{ matrix.python-version }}
+    name: build-wheel ${{ matrix.os }} - py${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-latest
     defaults:
       run:
@@ -160,7 +160,44 @@ jobs:
       - name: Install uv and package
         run: |
           python -m pip install --quiet uv
-          uv pip install --quiet --system .[test]
+          uv pip install --quiet --system build
+      - name: Build wheel
+        run: python -m build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: dist/*.whl
+
+  pytest:
+    needs: build-wheel
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, windows, macos]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    name: pytest ${{ matrix.os }} - py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: dist/
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv and package
+        run: |
+          python -m pip install --quiet uv
+          uv pip install --quiet --system dist/*.whl[test]
       - name: Display system information
         run: antio sys-info --developer
       - name: Run pytest
@@ -174,15 +211,15 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true  # optional (default = false)
 
-  pytest-macos-intel:
-    needs: [build-macos-intel]
-    timeout-minutes: 30
+  build-wheel-macos-intel:
+    needs: build-macos-intel
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         os: [macos]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-    name: pytest ${{ matrix.os }}-intel - py${{ matrix.python-version }}
+    name: build-wheel ${{ matrix.os }}-intel - py${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}-12
     defaults:
       run:
@@ -193,7 +230,7 @@ jobs:
       - name: Download libeep
         uses: actions/download-artifact@v4
         with:
-          name: build-${{ matrix.os }}-intel
+          name: build-${{ matrix.os }}
           path: ./antio/libeep/
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -202,7 +239,44 @@ jobs:
       - name: Install uv and package
         run: |
           python -m pip install --quiet uv
-          uv pip install --quiet --system .[test]
+          uv pip install --quiet --system build
+      - name: Build wheel
+        run: python -m build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-intel-py${{ matrix.python-version }}
+          path: dist/*.whl
+
+  pytest-macos-intel:
+    needs: build-wheel-macos-intel
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    name: pytest ${{ matrix.os }} - py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-12
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-intel-py${{ matrix.python-version }}
+          path: dist/
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install uv and package
+        run: |
+          python -m pip install --quiet uv
+          uv pip install --quiet --system dist/*.whl[test]
       - name: Display system information
         run: antio sys-info --developer
       - name: Run pytest
