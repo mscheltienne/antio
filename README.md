@@ -7,3 +7,4 @@
 # ANT I/O
 
 Python package to handle I/O with the CNT format from ANT Neuro.
+This software uses the LIBEEP Library (http://libeep.sourceforge.net).
