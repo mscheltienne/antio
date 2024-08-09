@@ -24,47 +24,36 @@ dependencies = [
   'packaging',
   'psutil',
 ]
-description = 'Template for python projects.'
+description = 'Python package to handle I/O with the CNT format from ANT Neuro. '
 keywords = [
   'python',
-  'template',
+  'eeg',
+  'ant neuro',
+  'eego',
+  'cnt',
 ]
 license = {file = 'LICENSE'}
 maintainers = [
   {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
 ]
-name = 'template'
+name = 'antio'
 readme = 'README.md'
 requires-python = '>=3.9'
 version = '0.1.0'
 
 [project.optional-dependencies]
 all = [
-  'template[build]',
-  'template[doc]',
-  'template[stubs]',
-  'template[style]',
-  'template[test]',
+  'antio[build]',
+  'antio[stubs]',
+  'antio[style]',
+  'antio[test]',
 ]
 build = [
   'build',
   'twine',
 ]
-doc = [
-  'furo',
-  'intersphinx_registry',
-  'matplotlib',
-  'memory-profiler',
-  'numpydoc',
-  'sphinx',
-  'sphinx-copybutton',
-  'sphinx-design',
-  'sphinx-gallery',
-  'sphinx-issues',
-  'sphinxcontrib-bibtex',
-]
 full = [
-  'template[all]',
+  'antio[all]',
 ]
 stubs = [
   'isort',
@@ -72,7 +61,6 @@ stubs = [
   'ruff>=0.1.8',
 ]
 style = [
-  'bibclean',
   'codespell[toml]>=2.2.4',
   'isort',
   'pydocstyle[toml]',
@@ -87,13 +75,13 @@ test = [
 ]
 
 [project.scripts]
-template = 'template.commands.main:run'
+antio = 'antio.commands.main:run'
 
 [project.urls]
-documentation = 'https://github.com/mscheltienne/template-python'
-homepage = 'https://github.com/mscheltienne/template-python'
-source = 'https://github.com/mscheltienne/template-python'
-tracker = 'https://github.com/mscheltienne/template-python/issues'
+documentation = 'https://github.com/mscheltienne/antio'
+homepage = 'https://github.com/mscheltienne/antio'
+source = 'https://github.com/mscheltienne/antio'
+tracker = 'https://github.com/mscheltienne/antio/issues'
 
 [tool.codespell]
 check-filenames = true
@@ -115,17 +103,13 @@ cover_pylib = false
 omit = [
   '**/__init__.py',
   '**/conftest.py',
-  '**/template/_version.py',
-  '**/template/utils/_fixes.py',
+  '**/antio/_version.py',
+  '**/antio/utils/_fixes.py',
   '**/tests/**',
 ]
 
 [tool.isort]
-extend_skip_glob = [
-  'doc/*',
-  'examples/*',
-  'tutorials/*',
-]
+extend_skip_glob = []
 line_length = 88
 multi_line_output = 3
 profile = 'black'
@@ -136,7 +120,7 @@ add_ignore = 'D100,D104,D107'
 convention = 'numpy'
 ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
 match = '^(?!__init__|test_).*\.py'
-match-dir = '^template.*'
+match-dir = '^antio.*'
 
 [tool.pytest.ini_options]
 addopts = ['--color=yes', '--cov-report=', '--durations=20', '--junit-xml=junit-results.xml', '--strict-config', '--tb=short', '-ra', '-v']
@@ -144,9 +128,7 @@ junit_family = 'xunit2'
 minversion = '8.0'
 
 [tool.ruff]
-extend-exclude = [
-  'doc',
-]
+extend-exclude = []
 line-length = 88
 
 [tool.ruff.format]
@@ -169,8 +151,8 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 include-package-data = false
 
 [tool.setuptools.packages.find]
-exclude = ['template*tests']
-include = ['template*']
+exclude = ['antio*tests']
+include = ['antio*']
 
 [tool.tomlsort]
 all = true

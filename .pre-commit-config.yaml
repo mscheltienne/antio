@@ -3,7 +3,7 @@ repos:
       rev: 5.13.2
       hooks:
           - id: isort
-            files: template
+            files: antio
 
     - repo: https://github.com/astral-sh/ruff-pre-commit
       rev: v0.5.6
@@ -11,10 +11,10 @@ repos:
           - id: ruff
             name: ruff linter
             args: [--fix, --show-fixes]
-            files: template
+            files: antio
           - id: ruff-format
             name: ruff formatter
-            files: template
+            files: antio
 
     - repo: https://github.com/codespell-project/codespell
       rev: v2.3.0
@@ -27,15 +27,8 @@ repos:
       rev: 6.3.0
       hooks:
           - id: pydocstyle
-            files: template
+            files: antio
             additional_dependencies: [tomli]
-
-    - repo: https://github.com/mscheltienne/bibclean
-      rev: 0.8.0
-      hooks:
-          - id: bibclean-fix
-            files: doc/references.bib
-            args: [--exit-non-zero-on-fix]
 
     - repo: https://github.com/pappasam/toml-sort
       rev: v0.23.1

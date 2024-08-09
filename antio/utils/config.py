@@ -59,7 +59,6 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     if developer:
         keys = (
             "build",
-            "doc",
             "test",
             "stubs",
             "style",
