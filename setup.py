@@ -14,6 +14,8 @@ if platform.system() == "Linux":
     lib_files = ["*libEep.so", "*pyeep.so"]
 elif platform.system() == "Windows":
     lib_files = ["*Eep.dll", "*pyeep.pyd"]
+elif platform.system() == "Darwin":
+    lib_files = ["*libEep.dylib", "*pyeep.so"]
 else:
     lib_files = []
 
