@@ -33,6 +33,6 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           if [ -n "$(git status --porcelain)" ]; then
             git add .
-            git commit --amend --no-edit -m "Mirror from GitLab to GitHub"
+            git commit -m "Mirror from GitLab to GitHub"
             git push origin libeep_gitlab --force
           fi
