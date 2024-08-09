@@ -59,15 +59,18 @@ jobs:
           path: src
       - name: Build
         run: |
-            cmake -DCMAKE_BUILD_TYPE=Release ./src
-            cmake --build . --config Release
+          cmake -DCMAKE_BUILD_TYPE=Release ./src
+          cmake --build . --config Release
+      - name: DEBUG
+        run: |
+          ls -la
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-            name: build-${{ matrix.os }}
-            path: |
-              ./Eep.dll
-              ./python/v3/pyeep.pyd
+          name: build-${{ matrix.os }}
+          path: |
+            ./Eep.dll
+            ./python/v3/pyeep.pyd
 
   build-macos-arm64:
     timeout-minutes: 10
