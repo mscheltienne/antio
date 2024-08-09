@@ -1,0 +1,178 @@
+[build-system]
+build-backend = 'setuptools.build_meta'
+requires = ['setuptools >= 64.0.0']
+
+[project]
+authors = [
+  {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
+]
+classifiers = [
+  'License :: OSI Approved :: MIT License',
+  'Natural Language :: English',
+  'Operating System :: MacOS',
+  'Operating System :: Microsoft :: Windows',
+  'Operating System :: Unix',
+  'Programming Language :: Python :: 3 :: Only',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.9',
+]
+dependencies = [
+  'click',
+  'numpy>=1.21,<3',
+  'packaging',
+  'psutil',
+]
+description = 'Template for python projects.'
+keywords = [
+  'python',
+  'template',
+]
+license = {file = 'LICENSE'}
+maintainers = [
+  {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
+]
+name = 'template'
+readme = 'README.md'
+requires-python = '>=3.9'
+version = '0.1.0'
+
+[project.optional-dependencies]
+all = [
+  'template[build]',
+  'template[doc]',
+  'template[stubs]',
+  'template[style]',
+  'template[test]',
+]
+build = [
+  'build',
+  'twine',
+]
+doc = [
+  'furo',
+  'intersphinx_registry',
+  'matplotlib',
+  'memory-profiler',
+  'numpydoc',
+  'sphinx',
+  'sphinx-copybutton',
+  'sphinx-design',
+  'sphinx-gallery',
+  'sphinx-issues',
+  'sphinxcontrib-bibtex',
+]
+full = [
+  'template[all]',
+]
+stubs = [
+  'isort',
+  'mypy',
+  'ruff>=0.1.8',
+]
+style = [
+  'bibclean',
+  'codespell[toml]>=2.2.4',
+  'isort',
+  'pydocstyle[toml]',
+  'ruff>=0.1.8',
+  'toml-sort',
+  'yamllint',
+]
+test = [
+  'pytest-cov',
+  'pytest-timeout',
+  'pytest>=8.0',
+]
+
+[project.scripts]
+template = 'template.commands.main:run'
+
+[project.urls]
+documentation = 'https://github.com/mscheltienne/template-python'
+homepage = 'https://github.com/mscheltienne/template-python'
+source = 'https://github.com/mscheltienne/template-python'
+tracker = 'https://github.com/mscheltienne/template-python/issues'
+
+[tool.codespell]
+check-filenames = true
+check-hidden = true
+ignore-words = '.codespellignore'
+skip = 'build,.git,.mypy_cache,.pytest_cache,.venv'
+
+[tool.coverage.report]
+exclude_lines = [
+  'if __name__ == .__main__.:',
+  'if TYPE_CHECKING:',
+  'pragma: no cover',
+]
+precision = 2
+
+[tool.coverage.run]
+branch = true
+cover_pylib = false
+omit = [
+  '**/__init__.py',
+  '**/conftest.py',
+  '**/template/_version.py',
+  '**/template/utils/_fixes.py',
+  '**/tests/**',
+]
+
+[tool.isort]
+extend_skip_glob = [
+  'doc/*',
+  'examples/*',
+  'tutorials/*',
+]
+line_length = 88
+multi_line_output = 3
+profile = 'black'
+py_version = 39
+
+[tool.pydocstyle]
+add_ignore = 'D100,D104,D107'
+convention = 'numpy'
+ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
+match = '^(?!__init__|test_).*\.py'
+match-dir = '^template.*'
+
+[tool.pytest.ini_options]
+addopts = ['--color=yes', '--cov-report=', '--durations=20', '--junit-xml=junit-results.xml', '--strict-config', '--tb=short', '-ra', '-v']
+junit_family = 'xunit2'
+minversion = '8.0'
+
+[tool.ruff]
+extend-exclude = [
+  'doc',
+]
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
+ignore = []
+select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
+
+[tool.ruff.lint.per-file-ignores]
+'*' = [
+  'B904', # 'Within an except clause, raise exceptions with raise ... from ...'
+  'UP007', # 'Use `X | Y` for type annotations', requires python 3.10
+]
+'*.pyi' = ['E501']
+'__init__.py' = ['F401']
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+exclude = ['template*tests']
+include = ['template*']
+
+[tool.tomlsort]
+all = true
+ignore_case = true
+trailing_comma_inline_array = true
