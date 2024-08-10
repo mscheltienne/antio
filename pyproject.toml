@@ -150,6 +150,7 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 include-package-data = false
 
 [tool.setuptools.packages.find]
+exclude = ['antio*tests']
 include = ['antio*']
 
 [tool.tomlsort]

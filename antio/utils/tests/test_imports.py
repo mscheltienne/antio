@@ -1,6 +1,6 @@
 import pytest
 
-from .._imports import import_optional_dependency
+from antio.utils._imports import import_optional_dependency
 
 
 def test_import_optional_dependency():

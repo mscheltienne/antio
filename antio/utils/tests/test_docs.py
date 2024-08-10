@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from .._docs import copy_doc, docdict, fill_doc
-from ..logs import verbose
+from antio.utils._docs import copy_doc, docdict, fill_doc
+from antio.utils.logs import verbose
 
 
 def test_fill_doc_function():

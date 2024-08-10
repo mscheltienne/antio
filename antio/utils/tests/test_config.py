@@ -1,7 +1,6 @@
 from io import StringIO
 
-
-from ..config import sys_info
+from antio.utils.config import sys_info
 
 
 def test_sys_info():
