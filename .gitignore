@@ -1,6 +1,3 @@
-# macOS
-.DS_Store
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *$py.class
@@ -123,3 +120,13 @@ dmypy.json
 
 # Ruff
 .ruff_cache
+
+# macOS
+.DS_Store
+
+# cibuildwheels
+wheelhouse/
+antio/libeep/*.dll
+antio/libeep/*.so
+antio/libeep/*.dylib
+antio/libeep/*.pyd
