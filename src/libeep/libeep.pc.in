@@ -1,0 +1,6 @@
+Name: libeep
+Description: A.N.T. erp package
+Requires:
+Version: @LIBEEP_VERSION@
+Libs: -L@prefix@/lib -lEep -lm
+Cflags: -isystem@prefix@/include/@PACKAGE@-@LIBEEP_VERSION@

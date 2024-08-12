@@ -18,14 +18,14 @@ jobs:
       - name: Checkout github libeep repository
         uses: actions/checkout@v4
         with:
-            path: src
-            ref: libeep_gitlab
+          path: src
+          ref: libeep
       - name: Checkout GitLab Repository
         run: |
-          git clone https://gitlab.com/smeeze/libeep.git libeep_gitlab
+          git clone https://gitlab.com/smeeze/libeep.git libeep
       - name: Copy files from GitLab to GitHub
         run: |
-          rsync -a --delete --exclude='.git' libeep_gitlab/ src/
+          rsync -a --delete --exclude='.git' libeep/ src/
       - name: Commit and Push Changes
         run: |
           cd src

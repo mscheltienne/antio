@@ -1,6 +1,6 @@
 [build-system]
-build-backend = 'setuptools.build_meta'
-requires = ['setuptools >= 64.0.0']
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
 
 [project]
 authors = [
@@ -20,7 +20,6 @@ classifiers = [
 ]
 dependencies = [
   'click',
-  'mne',
   'numpy>=1.21,<3',
   'packaging',
   'psutil',
@@ -44,17 +43,20 @@ version = '0.1.0'
 
 [project.optional-dependencies]
 all = [
-  'antio[stubs]',
+  'antio[build]',
+  'antio[mne]',
   'antio[style]',
   'antio[test]',
+]
+build = [
+  'scikit-build-core',
+  'twine',
 ]
 full = [
   'antio[all]',
 ]
-stubs = [
-  'isort',
-  'mypy',
-  'ruff>=0.1.8',
+mne = [
+  'mne',
 ]
 style = [
   'codespell[toml]>=2.2.4',
@@ -79,8 +81,8 @@ source = 'https://github.com/mscheltienne/antio'
 tracker = 'https://github.com/mscheltienne/antio/issues'
 
 [tool.cibuildwheel]
-test-requires = ["pytest>=8.0", "pytest-cov"]
-test-command = "pytest antio --cov=antio --cov-report=xml --cov-config=pyproject.toml"
+test-command = "pytest tests --cov=src/antio --cov-report=xml --cov-config=pyproject.toml"
+test-extras = ["mne", "test"]
 
 [tool.codespell]
 check-filenames = true
@@ -104,7 +106,6 @@ omit = [
   '**/conftest.py',
   '**/antio/_version.py',
   '**/antio/utils/_fixes.py',
-  '**/tests/**',
 ]
 
 [tool.isort]
@@ -119,7 +120,7 @@ add_ignore = 'D100,D104,D107'
 convention = 'numpy'
 ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
 match = '^(?!__init__|test_).*\.py'
-match-dir = '^antio.*'
+match-dir = '^.*antio.*'
 
 [tool.pytest.ini_options]
 addopts = ['--color=yes', '--cov-report=', '--durations=20', '--junit-xml=junit-results.xml', '--strict-config', '--tb=short', '-ra', '-v']
@@ -145,13 +146,6 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 ]
 '*.pyi' = ['E501']
 '__init__.py' = ['F401']
-
-[tool.setuptools]
-include-package-data = false
-
-[tool.setuptools.packages.find]
-exclude = ['antio*tests']
-include = ['antio*']
 
 [tool.tomlsort]
 all = true
