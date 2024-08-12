@@ -59,10 +59,11 @@ jobs:
           pattern: cibw-wheels-${{ matrix.os }}-native-*
           merge-multiple: true
           path: dist
+      - run: ls -alt . && ls -alt dist/
       - run: pip install dist/*.whl[tests]
       - run: pytest tests/ --cov=antio --cov-report=xml
 
-  check:
+  sdist_check:
     name: Create sdist and check
     needs: cibuildwheel
     timeout-minutes: 10
@@ -74,7 +75,7 @@ jobs:
           pattern: cibw-wheels-*
           merge-multiple: true
           path: dist
-      - run: pwd && ls -alt . && ls -alt dist/
+      - run: ls -alt . && ls -alt dist/
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -90,7 +91,7 @@ jobs:
   # https://github.com/marketplace/actions/pypi-publish#usage
   publish:
     name: Publish
-    needs: check
+    needs: sdist_check
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -100,5 +101,10 @@ jobs:
     timeout-minutes: 10
     if: github.event_name == 'release'
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          merge-multiple: true
+          path: dist
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
