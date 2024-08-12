@@ -72,7 +72,12 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-native
           path: dist
       - run: ls -alt . && ls -alt dist/
-      - run: pip install dist/*.whl[tests]
+      - run: |
+          set -eo pipefail
+          FNAME=$(ls dist/*.whl)
+          echo "FNAME=$FNAME"
+          pip install ${FNAME}[tests]
+        shell: bash
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v4
 
