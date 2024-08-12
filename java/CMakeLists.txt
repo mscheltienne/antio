@@ -1,0 +1,20 @@
+find_package(JNI)
+find_package(Java)
+if (JNI_FOUND)
+  include(UseJava)
+  message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+  message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
+  message (STATUS "Java_INCLUDE_DIRS=${Java_INCLUDE_DIRS}")
+  message (STATUS "Java_LIBRARIES=${Java_LIBRARIES}")
+
+  add_jar(libeep SHARED com/antneuro/libeep.java)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libeep.jar DESTINATION lib)
+
+  add_custom_command(OUTPUT libeep-jni.h COMMAND javah ARGS -classpath ${CMAKE_CURRENT_SOURCE_DIR} -o libeep-jni.h com.antneuro.libeep DEPENDS com/antneuro/libeep.java WORKING_DIRECTORY)
+
+  add_library(EepJNI SHARED libeep-jni.h libeep-jni.cc)
+  target_include_directories(EepJNI PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  target_include_directories(EepJNI PRIVATE ${JNI_INCLUDE_DIRS})
+  target_link_libraries(EepJNI EepStatic ${JNI_LIBRARIES})
+  install(TARGETS EepJNI DESTINATION lib)
+endif()
