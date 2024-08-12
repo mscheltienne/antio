@@ -57,80 +57,10 @@ class build_ext(_build_ext):
 
 
 setup(
-    author="Mathieu Scheltienne",
-    author_email="mathieu.scheltienne@fcbg.ch",
-    classifiers=[
-        "Natural Language :: English",
-        "Operating System :: MacOS",
-        "Operating System :: Microsoft :: Windows",
-        "Operating System :: Unix",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-    ],
     cmdclass={
         "build_ext": build_ext,
     },
-    description="Python package to handle I/O with the CNT format from ANT Neuro.",
     distclass=BinaryDistribution,  # to handle binary files
-    entry_points={
-        "console_scripts": [
-            "antio = antio.commands.main:run",
-        ],
-    },
-    extras_require={
-        "all": [
-            "antio[build]",
-            "antio[mne]",
-            "antio[style]",
-            "antio[test]",
-        ],
-        "build": [
-            "build",
-            "cibuildwheel",
-            "setuptools",
-            "twine",
-        ],
-        "full": [
-            "antio[all]",
-        ],
-        "mne": [
-            "mne",
-        ],
-        "style": [
-            "codespell[toml]>=2.2.4",
-            "isort",
-            "pydocstyle[toml]",
-            "ruff>=0.1.8",
-            "toml-sort",
-            "yamllint",
-        ],
-        "test": [
-            "pytest-cov",
-            "pytest>=8.0",
-        ],
-    },
     include_package_data=False,
-    install_requires=[
-        "click",
-        "numpy>=1.21,<3",
-        "packaging",
-        "psutil",
-    ],
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
-    maintainer="Mathieu Scheltienne",
-    maintainer_email="mathieu.scheltienne@fcbg.ch",
-    name="antio",
     package_data={"antio.libeep": lib_files},
-    project_urls={
-        "Documentation": "https://github.com/mscheltienne/antio",
-        "Homepage": "https://github.com/mscheltienne/antio",
-        "Source": "https://github.com/mscheltienne/antio",
-        "Tracker": "https://github.com/mscheltienne/antio/issues",
-    },
-    python_requires=">=3.9",
-    version="0.1.0",
 )

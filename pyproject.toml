@@ -1,14 +1,94 @@
 [build-system]
 build-backend = 'setuptools.build_meta'
-requires = ['setuptools']
+requires = ['setuptools >= 64.0.0']
+
+[project]
+authors = [
+  {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
+]
+classifiers = [
+  'License :: OSI Approved :: MIT License',
+  'Natural Language :: English',
+  'Operating System :: MacOS',
+  'Operating System :: Microsoft :: Windows',
+  'Operating System :: Unix',
+  'Programming Language :: Python :: 3 :: Only',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.9',
+]
+dependencies = [
+  'click',
+  'numpy>=1.21,<3',
+  'packaging',
+  'psutil',
+]
+description = 'Python package to handle I/O with the CNT format from ANT Neuro. '
+keywords = [
+  'python',
+  'eeg',
+  'ant neuro',
+  'eego',
+  'cnt',
+]
+license = {file = 'LICENSE'}
+maintainers = [
+  {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
+]
+name = 'antio'
+readme = 'README.md'
+requires-python = '>=3.9'
+version = '0.1.0'
+
+[project.optional-dependencies]
+all = [
+  'antio[build]',
+  'antio[mne]',
+  'antio[style]',
+  'antio[test]',
+]
+build = [
+  'build',
+  'cibuildwheel[uv]',
+  'setuptools>= 64.0.0',
+  'twine',
+]
+full = [
+  'antio[all]',
+]
+mne = [
+  'mne',
+]
+style = [
+  'codespell[toml]>=2.2.4',
+  'isort',
+  'pydocstyle[toml]',
+  'ruff>=0.1.8',
+  'toml-sort',
+  'yamllint',
+]
+test = [
+  'pytest-cov',
+  'pytest>=8.0',
+]
+
+[project.scripts]
+antio = 'antio.commands.main:run'
+
+[project.urls]
+documentation = 'https://github.com/mscheltienne/antio'
+homepage = 'https://github.com/mscheltienne/antio'
+source = 'https://github.com/mscheltienne/antio'
+tracker = 'https://github.com/mscheltienne/antio/issues'
 
 [tool.cibuildwheel]
-build-frontend = "build"
+build-frontend = "build[uv]"
 test-command = "pytest tests --cov=src/antio --cov-report=xml --cov-config=pyproject.toml"
 test-extras = ["mne", "test"]
 
 [tool.cibuildwheel.linux]
-before-all = "sudo yum update -y & yum install -y python3-devel"
+before-all = "sudo yum update -y & sudo yum install https://repo.ius.io/ius-release-el$(rpm -E '%{rhel}').rpm & sudo yum update -y & yum install -y python3-devel"
 
 [tool.codespell]
 check-filenames = true
