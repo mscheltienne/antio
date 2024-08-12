@@ -16,4 +16,4 @@ def datafiles() -> Path:
 def test_io(datafiles):
     """Test loading of .cnt file."""
     pytest.importorskip("mne")
-    raw1 = read_raw_ant(datafiles["cnt"])
+    raw1 = read_raw_ant(datafiles)
