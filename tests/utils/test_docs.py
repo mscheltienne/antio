@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+import antio
 from antio.utils._docs import copy_doc, docdict, fill_doc
 from antio.utils.logs import verbose
 
@@ -203,7 +204,7 @@ def test_copy_doc_class():
 def test_docdict_order():
     """Test that docdict is alphabetical."""
     # read the file as text, and get entries via regex
-    docs_path = Path(__file__).parents[1] / "_docs.py"
+    docs_path = Path(antio.__file__).parent / "utils" / "_docs.py"
     assert docs_path.is_file()
     with open(docs_path, encoding="UTF-8") as fid:
         docs = fid.read()

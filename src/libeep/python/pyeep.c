@@ -38,7 +38,7 @@ PyObject *
 pyeep_write_cnt(PyObject* self, PyObject* args) {
   char       * filename;
   int          rate;
-  chaninfo_t   channel_info_handle;    
+  chaninfo_t   channel_info_handle;
   int          rf64;
 
   if(!PyArg_ParseTuple(args, "siii", & filename, & rate, & channel_info_handle, & rf64)) {
@@ -166,7 +166,7 @@ pyeep_get_samples(PyObject* self, PyObject* args) {
         Py_DECREF(python_list);
         return NULL;
     }
-    PyList_SET_ITEM(python_list, i, num);   // reference to num stolen
+    PyList_SetItem(python_list, i, num);   // reference to num stolen
   }
   libeep_free_samples(libeep_sample_data);
   return python_list;

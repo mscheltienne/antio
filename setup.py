@@ -1,20 +1,22 @@
 import platform
 import subprocess
+import sys
 from pathlib import Path
 from shutil import move
 from tempfile import TemporaryDirectory
 
-from setuptools import setup
+from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
 from setuptools.dist import Distribution
+from wheel.bdist_wheel import bdist_wheel
 
 # set the platform-specific files, libeep first, pyeep second.
 if platform.system() == "Linux":
-    lib_files = ["libEep.so", "pyeep.so"]
+    lib_files = ["libEep.so", "pyeep.abi3.so"]
 elif platform.system() == "Windows":
     lib_files = ["Eep.dll", "pyeep.pyd"]
 elif platform.system() == "Darwin":
-    lib_files = ["libEep.dylib", "pyeep.so"]
+    lib_files = ["libEep.dylib", "pyeep.abi3.so"]
 else:
     lib_files = []
 
@@ -37,6 +39,7 @@ class build_ext(_build_ext):
                     "-B",
                     build_dir,
                     "-DCMAKE_BUILD_TYPE=Release",
+                    f"-DPython3_EXECUTABLE={sys.executable}",
                 ],
                 check=True,
             )
@@ -56,11 +59,25 @@ class build_ext(_build_ext):
         super().run()
 
 
+# Adapted from
+# https://github.com/joerick/python-abi3-package-sample/blob/main/setup.py
+class bdist_wheel_abi3(bdist_wheel):
+    def get_tag(self):
+        python, abi, plat = super().get_tag()
+
+        if python.startswith("cp"):
+            # on CPython, our wheels are abi3 and compatible back to 3.2,
+            # but let's set it to our min version anyway
+            return "cp38", "abi3", plat
+
+        return python, abi, plat
+
+
 setup(
     cmdclass={
         "build_ext": build_ext,
+        "bdist_wheel": bdist_wheel_abi3,
     },
     distclass=BinaryDistribution,  # to handle binary files
     include_package_data=False,
-    package_data={"antio.libeep": lib_files},
 )
