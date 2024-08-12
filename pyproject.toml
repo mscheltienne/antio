@@ -124,6 +124,9 @@ match-dir = '^.*antio.*'
 
 [tool.pytest.ini_options]
 addopts = ['--color=yes', '--cov-report=', '--durations=20', '--junit-xml=junit-results.xml', '--strict-config', '--tb=short', '-ra', '-v']
+filterwarnings = [
+  "error",
+]
 junit_family = 'xunit2'
 minversion = '8.0'
 
@@ -146,6 +149,12 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 ]
 '*.pyi' = ['E501']
 '__init__.py' = ['F401']
+
+[tool.scikit-build]
+cmake.source-dir = "src/libeep"
+sdist.cmake = false
+wheel.expand-macos-universal-tags = true
+wheel.license-files = ["LICENSE"]
 
 [tool.tomlsort]
 all = true

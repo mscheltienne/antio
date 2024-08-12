@@ -37,7 +37,6 @@ def _init_logger(*, verbose: Optional[Union[bool, str, int]] = None) -> logging.
     # create logger
     verbose = check_verbose(verbose)
     logger = logging.getLogger(__package__.split(".utils", maxsplit=1)[0])
-    logger.propagate = False
     logger.setLevel(verbose)
     # add the main handler
     handler = logging.StreamHandler(WrapStdOut())
