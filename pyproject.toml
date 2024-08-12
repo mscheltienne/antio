@@ -50,7 +50,7 @@ all = [
 ]
 build = [
   'build',
-  'cibuildwheel[uv]',
+  'cibuildwheel',
   'setuptools>= 64.0.0',
   'twine',
 ]
@@ -86,7 +86,6 @@ tracker = 'https://github.com/mscheltienne/antio/issues'
 build = "cp312-*"
 skip = "*musllinux*"
 archs = "native"
-build-frontend = "build[uv]"
 test-command = "pytest {project}/tests --cov=antio --cov-report=xml --cov-config={project}/pyproject.toml"
 test-extras = ["mne", "test"]
 

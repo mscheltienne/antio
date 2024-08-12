@@ -9,23 +9,96 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
     - cron: '0 8 * * 1'
+  release:
+    types: [published]
 
 jobs:
   cibuildwheel:
     timeout-minutes: 10
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        arch: [native]
+        include:
+          - os: ubuntu-latest
+            arch: aarch64
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.20.0
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+        if: runner.os == 'Linux' && matrix.arch == 'aarch64'
+      - uses: pypa/cibuildwheel@v2.20.0
+        env:
+          CIBW_ARCHS: ${{ matrix.arch }}
       - uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ matrix.os }}
+          name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index}}
           path: ./wheelhouse/*.whl
+
+  test:
+    name: Test on ${{ matrix.os }} ${{ matrix.python }}
+    needs: cibuildwheel
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
+        python: ["3.8", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-${{ matrix.os }}-native-*
+          merge-multiple: true
+          path: dist
+      - run: pip install dist/*.whl[tests]
+      - run: pytest tests/ --cov=antio --cov-report=xml
+
+  check:
+    name: Create sdist and check
+    needs: cibuildwheel
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-*
+          merge-multiple: true
+          path: dist
+      - run: pwd && ls -alt . && ls -alt dist/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --upgrade twine
+      - run: python -m build --sdist
+      # - run: python tools/stubgen.py
+      - run: twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-sdist
+          path: ./dist/*.tar.gz
+
+  # https://github.com/marketplace/actions/pypi-publish#usage
+  publish:
+    name: Publish
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/antio
+    timeout-minutes: 10
+    if: github.event_name == 'release'
+    steps:
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
