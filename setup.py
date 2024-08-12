@@ -38,7 +38,7 @@ class build_ext(_build_ext):
                     build_dir,
                     "-DCMAKE_BUILD_TYPE=Release",
                 ],
-                check=True
+                check=True,
             )
             subprocess.run(
                 ["cmake", "--build", build_dir, "--config", "Release"], check=True
@@ -52,7 +52,7 @@ class build_ext(_build_ext):
                 lib = build_dir / lib_files[0]
                 pyeep = build_dir / "python" / lib_files[1]
             for elt in (lib, pyeep):
-                move(elt, Path(self.build_lib) / "antio" / "libeep"/ elt.name)
+                move(elt, Path(self.build_lib) / "antio" / "libeep" / elt.name)
         super().run()
 
 

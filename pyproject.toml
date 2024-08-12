@@ -50,7 +50,7 @@ all = [
 ]
 build = [
   'build',
-  'cibuildwheel',
+  'cibuildwheel[uv]',
   'setuptools>= 64.0.0',
   'twine',
 ]
@@ -83,8 +83,12 @@ source = 'https://github.com/mscheltienne/antio'
 tracker = 'https://github.com/mscheltienne/antio/issues'
 
 [tool.cibuildwheel]
+build-frontend = "build[uv]"
 test-command = "pytest tests --cov=src/antio --cov-report=xml --cov-config=pyproject.toml"
 test-extras = ["mne", "test"]
+
+[tool.cibuildwheel.linux]
+before-all = "sudo yum update -y & sudo yum install https://repo.ius.io/ius-release-el$(rpm -E '%{rhel}').rpm & sudo yum update -y & yum install -y python3-devel"
 
 [tool.codespell]
 check-filenames = true
