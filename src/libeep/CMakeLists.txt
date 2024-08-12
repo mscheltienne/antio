@@ -73,7 +73,4 @@ install(TARGETS Eep DESTINATION lib)
 
 install(FILES src/v4/eep.h DESTINATION include/libeep-${LIBEEP_VERSION}/v4)
 
-##########
-# python #
-##########
-add_subdirectory(python/v3)
+add_subdirectory(python)
