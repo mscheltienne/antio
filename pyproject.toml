@@ -151,10 +151,13 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 '__init__.py' = ['F401']
 
 [tool.scikit-build]
+cmake.build-type = "Release"
 cmake.source-dir = "src/libeep"
 sdist.cmake = false
+sdist.exclude = [".github", "tests"]
 wheel.expand-macos-universal-tags = true
 wheel.license-files = ["LICENSE"]
+wheel.packages = ["src/antio"]
 
 [tool.tomlsort]
 all = true
