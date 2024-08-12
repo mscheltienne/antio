@@ -20,13 +20,13 @@ def test_sys_info():
     assert "numpy" in value
     assert "psutil" in value
 
-    assert "style" not in value
-    assert "test" not in value
+    assert "ruff" not in value
+    assert "pytest" not in value
 
     out = StringIO()
     sys_info(fid=out, developer=True)
     value = out.getvalue()
     out.close()
 
-    assert "style" in value
-    assert "test" in value
+    assert "ruff" in value
+    assert "pytest" in value
