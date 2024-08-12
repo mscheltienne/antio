@@ -34,5 +34,5 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "Mirror from GitLab to GitHub"
-            git push origin libeep_gitlab --force
+            git push origin libeep --force
           fi
