@@ -92,7 +92,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install --upgrade twine
+      - run: pip install --upgrade twine build
       - run: python -m build --sdist
       # - run: python tools/stubgen.py
       - run: twine check --strict dist/*
