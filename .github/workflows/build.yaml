@@ -70,6 +70,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           pattern: cibw-wheels-*
+          merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
       - run: pip install --only-binary antio antio[tests] --find-links dist
