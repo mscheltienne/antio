@@ -15,14 +15,28 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   cibuildwheel:
     timeout-minutes: 10
-    name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        arch: [native]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pypa/cibuildwheel@v2.20.0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-native
+          path: ./wheelhouse/*.whl
+
+  cibuildwheel_emulated:  # Separate out because it's slower and not tested separately
+    timeout-minutes: 10
+    name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
         include:
           - os: ubuntu-latest
             arch: aarch64
@@ -31,7 +45,6 @@ jobs:
       - uses: docker/setup-qemu-action@v3
         with:
           platforms: all
-        if: runner.os == 'Linux' && matrix.arch == 'aarch64'
       - uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
@@ -56,16 +69,16 @@ jobs:
           python-version: ${{ matrix.python }}
       - uses: actions/download-artifact@v4
         with:
-          pattern: cibw-wheels-${{ matrix.os }}-native-*
-          merge-multiple: true
+          name: cibw-wheels-${{ matrix.os }}-native
           path: dist
       - run: ls -alt . && ls -alt dist/
       - run: pip install dist/*.whl[tests]
       - run: pytest tests/ --cov=antio --cov-report=xml
+      - uses: codecov/codecov-action@v4
 
   sdist_check:
     name: Create sdist and check
-    needs: cibuildwheel
+    needs: [cibuildwheel, cibuildwheel_emulated]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
