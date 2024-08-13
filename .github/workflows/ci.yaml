@@ -15,7 +15,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   cibuildwheel:
     timeout-minutes: 10
-    name: Build wheels on ${{ matrix.os }}
+    name: build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -32,7 +32,7 @@ jobs:
 
   cibuildwheel_aarch64:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
-    name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
+    name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -54,7 +54,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   test:
-    name: Test wheels on ${{ matrix.os }} ${{ matrix.python }}
+    name: test wheels on ${{ matrix.os }} ${{ matrix.python }}
     needs: cibuildwheel
     runs-on: ${{ matrix.os }}
     strategy:
@@ -78,7 +78,7 @@ jobs:
       - uses: codecov/codecov-action@v4
 
   sdist:
-    name: Create and check sdist
+    name: create and check sdist
     needs: [cibuildwheel, cibuildwheel_aarch64]
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -102,7 +102,7 @@ jobs:
           path: ./dist/*.tar.gz
 
   publish:
-    name: Publish PyPI
+    name: publish PyPI
     needs: sdist
     runs-on: ubuntu-latest
     permissions:
