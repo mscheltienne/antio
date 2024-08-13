@@ -33,7 +33,7 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-native
           path: ./wheelhouse/*.whl
 
-  cibuildwheel_emulated:  # separate out because it's slower and not tested separately
+  cibuildwheel_aarch64:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -41,8 +41,6 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: aarch64
-          - os: windows-latest
-            arch: arm64
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -103,7 +101,7 @@ jobs:
           path: ./dist/*.tar.gz
 
   check:
-    needs: [cibuildwheel, cibuildwheel_emulated, sdist]
+    needs: [cibuildwheel, cibuildwheel_aarch64, sdist]
     timeout-minutes: 10
     name: check dist/*
     runs-on: ubuntu-latest
