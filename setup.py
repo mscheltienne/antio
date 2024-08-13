@@ -1,3 +1,4 @@
+import os
 import platform
 import subprocess
 import sys
@@ -31,8 +32,7 @@ class build_ext(_build_ext):
         """Build libeep with cmake as part of the extension build process."""
         src_dir = Path(__file__).parent / "src" / "libeep"
         with TemporaryDirectory() as build_dir:  # str
-            subprocess.run(
-                [
+            args = [
                     "cmake",
                     "-S",
                     str(src_dir),
@@ -40,9 +40,11 @@ class build_ext(_build_ext):
                     build_dir,
                     "-DCMAKE_BUILD_TYPE=Release",
                     f"-DPython3_EXECUTABLE={sys.executable}",
-                ],
-                check=True,
-            )
+            ]
+            for key in ("CMAKE_GENERATOR_PLATFORM",):
+                if key in os.environ:
+                    args.append(f"-D{key}={os.environ[key]}")
+            subprocess.run(args, check=True)
             subprocess.run(
                 ["cmake", "--build", build_dir, "--config", "Release"], check=True
             )

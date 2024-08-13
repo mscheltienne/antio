@@ -47,10 +47,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-qemu-action@v3
+      - name: Setup emulation on Linux
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
         if: runner.os == 'Linux'
+      - name: Setup cross-compilation on Windows
+        run: |
+          echo "CMAKE_GENERATOR_PLATFORM=${{ matrix.arch }}" >> $GITHUB_ENV
+        shell: bash
+        if: runner.os == 'Windows'
       - uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
