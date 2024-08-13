@@ -32,6 +32,7 @@ class build_ext(_build_ext):
         """Build libeep with cmake as part of the extension build process."""
         src_dir = Path(__file__).parent / "src" / "libeep"
         with TemporaryDirectory() as build_dir:  # str
+            Python3_EXECUTABLE = os.environ.get("Python3_EXECUTABLE", sys.executable)
             args = [
                     "cmake",
                     "-S",
@@ -39,7 +40,7 @@ class build_ext(_build_ext):
                     "-B",
                     build_dir,
                     "-DCMAKE_BUILD_TYPE=Release",
-                    f"-DPython3_EXECUTABLE={sys.executable}",
+                    f"-DPython3_EXECUTABLE={Python3_EXECUTABLE}",
             ]
             if platform.system() == "Windows":
                 args.append("-DCMAKE_GENERATOR=Visual Studio 17 2022")
