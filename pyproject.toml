@@ -131,7 +131,6 @@ omit = [
   '**/__init__.py',
   '**/conftest.py',
   '**/antio/_version.py',
-  '**/antio/utils/_fixes.py',
 ]
 
 [tool.isort]
