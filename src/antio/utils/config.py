@@ -10,6 +10,7 @@ import psutil
 from packaging.requirements import Requirement
 
 from ._checks import check_type
+from ..libeep import pyeep
 
 if TYPE_CHECKING:
     from typing import IO, Callable, Optional
@@ -48,6 +49,7 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     out(f"{psutil.swap_memory().total / float(2 ** 30):0.1f} GB\n")
     # package information
     out(f"{package}:".ljust(ljust) + version(package) + "\n")
+    out("libeep:".ljust(ljust) + pyeep.get_version() + "\n")
 
     # dependencies
     out("\nCore dependencies\n")
