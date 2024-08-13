@@ -15,13 +15,16 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   cibuildwheel:
     timeout-minutes: 10
-    name: build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
+    name: build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: pypa/cibuildwheel@v2.20.0
@@ -32,14 +35,14 @@ jobs:
 
   cibuildwheel_aarch64:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
-    name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
             arch: aarch64
+    name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
@@ -54,14 +57,18 @@ jobs:
           path: ./wheelhouse/*.whl
 
   test:
-    name: test wheels on ${{ matrix.os }} ${{ matrix.python }}
     needs: cibuildwheel
-    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
         python: ["3.9", "3.12"]
+    name: test wheels on ${{ matrix.os }} ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -78,9 +85,9 @@ jobs:
       - uses: codecov/codecov-action@v4
 
   sdist:
-    name: create and check sdist
     needs: [cibuildwheel, cibuildwheel_aarch64]
     timeout-minutes: 10
+    name: create and check sdist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -102,8 +109,8 @@ jobs:
           path: ./dist/*.tar.gz
 
   publish:
-    name: publish PyPI
     needs: sdist
+    name: publish PyPI
     runs-on: ubuntu-latest
     permissions:
       id-token: write
