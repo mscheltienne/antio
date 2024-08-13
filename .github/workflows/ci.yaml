@@ -52,18 +52,12 @@ jobs:
         with:
           platforms: all
         if: runner.os == 'Linux'
-      - name: Setup cross-compilation on Windows
-        # TODO: Don't hardcode the lib path!
-        run: |
-          echo "CMAKE_GENERATOR_PLATFORM=${{ matrix.arch }}" >> $GITHUB_ENV
-          echo "Python3_SABI_LIBRARY=C:/Users/runneradmin/AppData/Local/pypa/cibuildwheel/Cache/nuget-cpython/pythonarm64.3.12.4/tools/libs/python3.lib" >> $GITHUB_ENV
-        shell: bash
-        if: runner.os == 'Windows'
       - uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
           # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
           CIBW_TEST_SKIP: "*-win_arm64"
+          CIBW_BEFORE_BUILD_WINDOWS: bash ./.github/workflows/cibw_before_build_windows_cross.sh
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
