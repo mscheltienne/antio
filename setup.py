@@ -41,6 +41,8 @@ class build_ext(_build_ext):
                     "-DCMAKE_BUILD_TYPE=Release",
                     f"-DPython3_EXECUTABLE={sys.executable}",
             ]
+            if platform.system() == "Windows":
+                args.append("-DCMAKE_GENERATOR=Visual Studio 17 2022")
             for key in ("CMAKE_GENERATOR_PLATFORM",):
                 if key in os.environ:
                     args.append(f"-D{key}={os.environ[key]}")
