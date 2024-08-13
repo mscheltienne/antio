@@ -85,9 +85,25 @@ jobs:
       - uses: codecov/codecov-action@v4
 
   sdist:
-    needs: [cibuildwheel, cibuildwheel_aarch64]
     timeout-minutes: 10
-    name: create and check sdist
+    name: create sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --upgrade build
+      - run: python -m build --sdist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-sdist
+          path: ./dist/*.tar.gz
+
+  check:
+    needs: [cibuildwheel, cibuildwheel_aarch64, sdist]
+    timeout-minutes: 10
+    name: check dist/*
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -100,16 +116,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install --upgrade twine build
-      - run: python -m build --sdist
+      - run: pip install --upgrade twine
       - run: twine check --strict dist/*
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-sdist
-          path: ./dist/*.tar.gz
 
   publish:
-    needs: sdist
+    needs: [check, test]
     name: publish PyPI
     runs-on: ubuntu-latest
     permissions:
