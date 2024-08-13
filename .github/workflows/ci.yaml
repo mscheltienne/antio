@@ -41,6 +41,8 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: aarch64
+          - os: windows-latest
+            arch: ARM64
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -51,6 +53,8 @@ jobs:
       - uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
+          # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
+          CIBW_TEST_SKIP: "*-win_arm64"
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
