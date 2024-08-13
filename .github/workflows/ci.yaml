@@ -55,7 +55,6 @@ jobs:
       - name: Setup cross-compilation on Windows
         run: |
           echo "CMAKE_GENERATOR_PLATFORM=${{ matrix.arch }}" >> $GITHUB_ENV
-          echo "Python3_EXECUTABLE=$(python -c "import sys; print(sys.executable + '${{ matrix.arch }}'.lower())")" >> $GITHUB_ENV
         shell: bash
         if: runner.os == 'Windows'
       - uses: pypa/cibuildwheel@v2.20.0

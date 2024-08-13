@@ -3,7 +3,7 @@ message("Python3_EXECUTABLE..... ${Python3_EXECUTABLE}")
 # https://github.com/pybind/pybind11/pull/2689/files
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development.SABIModule)
 message("python 3 include...... ${Python3_INCLUDE_DIRS}")
-message("python 3 abi3 lib..... ${Python3_SABI_LIBRARY}")
+message("python 3 abi3 lib..... ${Python3_SABI_LIBRARIES}")
 set(Python_SOABI "abi3")
 Python3_add_library(pyeep3 MODULE ./pyeep.c USE_SABI 3.9 WITH_SOABI)
 set_target_properties(pyeep3 PROPERTIES OUTPUT_NAME pyeep)
