@@ -5,7 +5,7 @@ from pathlib import Path
 from shutil import move
 from tempfile import TemporaryDirectory
 
-from setuptools import setup, Extension
+from setuptools import setup
 from setuptools.command.build_ext import build_ext as _build_ext
 from setuptools.dist import Distribution
 from wheel.bdist_wheel import bdist_wheel

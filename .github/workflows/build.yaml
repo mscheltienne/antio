@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-13, macos-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: pypa/cibuildwheel@v2.20.0
@@ -30,7 +30,7 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-native
           path: ./wheelhouse/*.whl
 
-  cibuildwheel_emulated:  # Separate out because it's slower and not tested separately
+  cibuildwheel_emulated:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
     name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
@@ -91,12 +91,12 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
+        shell: bash
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install --upgrade twine build
       - run: python -m build --sdist
-      # - run: python tools/stubgen.py
       - run: twine check --strict dist/*
       - uses: actions/upload-artifact@v4
         with:
