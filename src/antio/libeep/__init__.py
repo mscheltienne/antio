@@ -64,30 +64,3 @@ def read_cnt(filename: str) -> cnt_in:
     if not filename.endswith(".cnt"):
         raise RuntimeError("Unsupported file extension.")
     return cnt_in(pyeep.read(filename))
-
-
-def write_cnt(
-    filename: str, rate: float, channels: list[tuple], rf64: int = 0
-) -> cnt_out:
-    """Create an object for writing a .cnt file.
-
-    Parameters
-    ----------
-    filename : str
-        Path to the .cnt file.
-    rate : float
-        Sampling rate in Hz.
-    channels : list of tuple
-        List of channel names.
-    rf64 : int
-        If 0, creates default 32-bit CNT data, otherwise 64 bit (for larger than 2GB
-        files).
-    """
-    if not filename.endswith(".cnt"):
-        raise RuntimeError("Unsupported file extension.")
-    channels_handle = pyeep.create_channel_info()
-    for c in channels:
-        pyeep.add_channel(channels_handle, c[0], c[1], c[2])
-    rv = cnt_out(pyeep.write_cnt(filename, rate, channels_handle, rf64), len(channels))
-    pyeep.close_channel_info(channels_handle)
-    return rv
