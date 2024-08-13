@@ -41,6 +41,8 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: aarch64
+          - os: windows-latest
+            arch: aarch64
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
