@@ -106,7 +106,6 @@ repair-wheel-command = [
 ]
 
 [[tool.cibuildwheel.overrides]]
-select = "*aarch64*"
 test-command = "pytest {project}/tests"
 test-extras = ["mne", "test"]
 
