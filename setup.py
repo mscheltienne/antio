@@ -35,7 +35,8 @@ class build_ext(_build_ext):
         # This is an unfortunate hack to get new env vars within a GH Actions step
         # (no way to use before-build to inject env vars back to the env)
         check_env = os.environ
-        try:
+        if "GITHUB_ENV" in check_env:
+            print("Using GITHUB_ENV instead of os.environ:")
             check_env = dict(
                 line.split("=", maxsplit=1)
                 for line in Path(
@@ -43,10 +44,6 @@ class build_ext(_build_ext):
                 ).read_text("utf-8").splitlines()
                 if "=" in line
             )
-        except Exception:
-            pass
-        else:
-            print("Using GITHUB_ENV instead of os.environ:")
             pprint.pprint(check_env)
         with TemporaryDirectory() as build_dir:  # str
             args = [
