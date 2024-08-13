@@ -58,6 +58,7 @@ jobs:
           # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
           CIBW_TEST_SKIP: "*-win_arm64"
           CIBW_BEFORE_BUILD_WINDOWS: bash ./.github/workflows/cibw_before_build_windows_cross.sh
+          CIBW_BUILD_VERBOSITY: 3
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
