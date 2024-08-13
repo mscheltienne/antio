@@ -1,4 +1,4 @@
-name: build
+name: ci
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
   cancel-in-progress: true
@@ -30,7 +30,7 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-native
           path: ./wheelhouse/*.whl
 
-  cibuildwheel_emulated:  # separate out because it's slower and not tested separately
+  cibuildwheel_aarch64:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
     name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
@@ -73,14 +73,13 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
-        shell: bash
       - run: pip install --only-binary antio antio[test] --find-links dist
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v4
 
-  sdist_check:
-    name: Create sdist and check
-    needs: [cibuildwheel, cibuildwheel_emulated]
+  sdist:
+    name: Create and check sdist
+    needs: [cibuildwheel, cibuildwheel_aarch64]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -91,7 +90,6 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
-        shell: bash
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -103,10 +101,9 @@ jobs:
           name: cibw-wheels-sdist
           path: ./dist/*.tar.gz
 
-  # https://github.com/marketplace/actions/pypi-publish#usage
   publish:
-    name: Publish
-    needs: sdist_check
+    name: Publish PyPI
+    needs: sdist
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -121,5 +118,4 @@ jobs:
           pattern: cibw-wheels-*
           merge-multiple: true
           path: dist
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
