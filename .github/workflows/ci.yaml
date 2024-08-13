@@ -33,7 +33,7 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-native
           path: ./wheelhouse/*.whl
 
-  cibuildwheel_aarch64:  # separate out because it's slower and not tested separately
+  cibuildwheel_emulated:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -53,7 +53,7 @@ jobs:
           CIBW_ARCHS: ${{ matrix.arch }}
       - uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index}}
+          name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
 
   test:
@@ -101,7 +101,7 @@ jobs:
           path: ./dist/*.tar.gz
 
   check:
-    needs: [cibuildwheel, cibuildwheel_aarch64, sdist]
+    needs: [cibuildwheel, cibuildwheel_emulated, sdist]
     timeout-minutes: 10
     name: check dist/*
     runs-on: ubuntu-latest
