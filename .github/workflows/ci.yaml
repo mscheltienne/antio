@@ -42,7 +42,7 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
           - os: windows-latest
-            arch: aarch64
+            arch: arm64
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
