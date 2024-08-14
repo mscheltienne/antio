@@ -54,22 +54,15 @@ class RawANT(BaseRaw):
         The list of channels to treat as bipolar EEG channels. Each element should be
         a string of the form ``'anode-cathode'`` or in ANT terminology as ``'label-
         reference'``. If None, all channels are interpreted as ``'eeg'`` channels
-        referenced to the same reference electrode. See notes for additional
-        information.
+        referenced to the same reference electrode. Bipolar channels are treated
+        as EEG channels with a special coil type in MNE-Python, see also
+        :func:`mne.set_bipolar_reference`
 
         .. warning::
 
             Do not provide auxiliary channels in this argument, provide them in the
             ``eog`` and ``misc`` arguments.
     %(verbose)s
-
-    Notes
-    -----
-    By default, all channels are interpreted as ``'eeg'`` channels, referenced to the
-    same reference electrode. However, channels which have a different reference are
-    handled differently by MNE-Python and should be provided in the arguments
-    ``bipolars`` as a list of strings ``'anode-cathode'``, or in ANT terminology as
-    ``'label-reference'``. See also :func:`mne.set_bipolar_reference`.
     """
 
     _extra_attributes = ("impedances",)
@@ -117,17 +110,15 @@ class RawANT(BaseRaw):
         annotations = Annotations(onsets, duration=durations, description=descriptions)
         self.set_annotations(annotations)
         # set impedance similarly as for brainvision files
-        self._impedances = {
-            key: {ch: impedances[key][k] for k, ch in enumerate(ch_names)}
-            for key in impedances
-        }
+        self._impedances = [
+            {ch: imp[k] for k, ch in enumerate(ch_names)} for imp in impedances
+        ]
 
     @property
-    def impedances(self) -> dict[int, dict[str, float]]:
+    def impedances(self) -> list[dict[str, float]]:
         """Impedances for each impedance measurement event.
 
-        The key represent the sample idx at which the impedance measurement took place.
-        The value contain the measured impedance values in kOhm, per channel.
+        The measurements are ordered as in the attached :class:`~mne.Annotations`.
         """
         return self._impedances
 
@@ -204,11 +195,10 @@ def _parse_data(cnt: InputCNT, ch_units: list[str]) -> NDArray[np.float64]:
 
 def _parse_triggers(
     cnt: InputCNT,
-) -> tuple[list[int], list[int], list[str], dict[int, list[float]]]:
+) -> tuple[list[int], list[int], list[str], list[list[float]]]:
     """Parse triggers into annotations."""
     n_triggers = cnt.get_trigger_count()
-    onsets, durations, descriptions = [], [], []
-    impedances = dict()
+    onsets, durations, descriptions, impedances = [], [], [], []
     disconnect = dict(start=[], stop=[])
     for k in range(n_triggers):
         code, idx, duration, condition, description, impedance = cnt.get_trigger(k)
@@ -218,7 +208,7 @@ def _parse_triggers(
             and description.lower() == "impedance"
             and impedance is not None
         ):
-            impedances[idx] = [float(elt) for elt in impedance.split(" ")]
+            impedances.append([float(elt) for elt in impedance.split(" ")])
             # create an impedance annotation to mark the measurement
             onsets.append(idx)
             durations.append(duration)
@@ -271,4 +261,12 @@ def read_raw_ant(
     bipolars: Optional[Union[list[str], tuple[str, ...]]] = None,
     verbose=None,
 ) -> RawANT:
+    """
+
+    Returns
+    -------
+    RawANT
+        The ANT raw object containing the channel information, data and relevant
+        :class:`~mne.Annotations`.
+    """
     return RawANT(fname, eog=eog, misc=misc, bipolars=bipolars, verbose=verbose)

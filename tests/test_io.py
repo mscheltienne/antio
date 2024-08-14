@@ -98,3 +98,7 @@ def test_io_amp_disconnection(ca_208: dict[str, dict[str, Path]]) -> None:
         raw_bv.get_data(reject_by_annotation="omit"),
         atol=1e-8,
     )
+
+
+def test_io_impedance(ca_208: dict[str, dict[str, Path]]) -> None:
+    """Test loading of impedances from a .cnt file."""
