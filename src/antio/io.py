@@ -187,10 +187,9 @@ def _handle_bipolar_channels(
 
 def _parse_data(cnt: InputCNT, ch_units: list[str]) -> NDArray[np.float64]:
     """Parse the data array."""
-    n_channels = cnt.get_channel_count()
     n_samples = cnt.get_sample_count()  # sample = (n_channels,)
     data = cnt.get_samples(0, n_samples)
-    data = np.array(data).reshape(n_channels, -1).T  # (n_channels, n_samples)
+    data = np.array(data).reshape(n_samples, -1).T  # (n_channels, n_samples)
     # apply scalings to SI units if able
     units_index = defaultdict(list)
     for idx, unit in enumerate(ch_units):
