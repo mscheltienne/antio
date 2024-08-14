@@ -11,6 +11,9 @@ if TYPE_CHECKING:
     from typing import Optional, Union
 
 
+logger.propagate = True
+
+
 def test_default_log_level(caplog: pytest.LogCaptureFixture):
     """Test the default log level."""
     with _use_log_level("WARNING"):  # set to default
