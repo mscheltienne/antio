@@ -1,93 +1,151 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+from ..utils._checks import ensure_path
 from . import pyeep
 
+if TYPE_CHECKING:
+    from pathlib import Path
+    from typing import Optional, Union
 
-class cnt_base:
-    def __init__(self, handle):
+
+class BaseCNT:
+    """Object representing a CNT file."""
+
+    def __init__(self, handle: int) -> None:
         self._handle = handle
         if self._handle == -1:
             raise RuntimeError("Not a valid libeep handle.")
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self._handle != -1:
             pyeep.close(self._handle)
 
 
-class cnt_in(cnt_base):
-    def __init__(self, handle):
-        cnt_base.__init__(self, handle)
+class InputCNT(BaseCNT):
+    """Object representing reading a CNT file."""
 
-    def get_channel_count(self):
+    def __init__(self, handle: int) -> None:
+        BaseCNT.__init__(self, handle)
+
+    def get_channel_count(self) -> int:
+        """Get the total number of channels.
+
+        Returns
+        -------
+        n_channels : int
+            Number of channels.
+        """
         return pyeep.get_channel_count(self._handle)
 
-    def get_channel(self, index):
+    def get_channel(self, index: int) -> tuple[str, str, str]:
+        """Get the channel information at a given index.
+
+        Parameters
+        ----------
+        index : int
+            Index of the channel.
+
+        Returns
+        -------
+        channel : tuple of shape (3,)
+            The tuple contains the following elements:
+            - 0: label
+            - 1: unit
+            - 2: reference
+        """
         return (
             pyeep.get_channel_label(self._handle, index),
             pyeep.get_channel_unit(self._handle, index),
             pyeep.get_channel_reference(self._handle, index),
         )
 
-    def get_sample_frequency(self):
+    def get_sample_frequency(self) -> int:
+        """Get the sampling frequency of the recording in Hz.
+
+        Returns
+        -------
+        sfreq : int
+            Sampling frequency in Hz.
+        """
         return pyeep.get_sample_frequency(self._handle)
 
-    def get_sample_count(self):
+    def get_sample_count(self) -> int:
+        """Get the total number of samples.
+
+        Returns
+        -------
+        n_samples : int
+            Number of samples, a sample being of shape (n_channels, ).
+        """
         return pyeep.get_sample_count(self._handle)
 
-    def get_samples(self, fro, to):
+    def get_samples(self, fro: int, to: int) -> list[float]:
+        """Get samples between 2 index.
+
+        Parameters
+        ----------
+        fro : int
+            Start index.
+        to : int
+            End index.
+
+        Returns
+        -------
+        samples : list of shape (n_channels * n_samples)
+            List of retrieved samples, ordered by (n_channels, ) samples.
+        """
         return pyeep.get_samples(self._handle, fro, to)
 
-    def get_trigger_count(self):
+    def get_trigger_count(self) -> int:
+        """Get the total number of triggers (annotations).
+
+        Returns
+        -------
+        n_triggers : int
+            Number of triggers (annotations).
+        """
         return pyeep.get_trigger_count(self._handle)
 
-    def get_trigger(self, index):
+    def get_trigger(
+        self, index: int
+    ) -> tuple[str, int, int, Optional[str], Optional[str], Optional[str]]:
+        """Get the trigger (annotation) at a given index.
+
+        Parameters
+        ----------
+        index : int
+            Index of the trigger.
+
+        Returns
+        -------
+        trigger : tuple of shape (6,)
+            The tuple contains the following elements:
+            - 0: code
+            - 1: sample index
+            - 2: duration in samples
+            - 3: condition
+            - 4: description
+            - 5: impedance, as a string separated by spaces.
+        """
         return pyeep.get_trigger(self._handle, index)
 
 
-class cnt_out(cnt_base):
-    def __init__(self, handle, channel_count):
-        cnt_base.__init__(self, handle)
-        self._channel_count = channel_count
-
-    def add_samples(self, samples):
-        return pyeep.add_samples(self._handle, samples, self._channel_count)
-
-
-def read_cnt(filename: str) -> cnt_in:
+def read_cnt(fname: Union[str, Path]) -> InputCNT:
     """Read a CNT file.
 
     Parameters
     ----------
-    filename : str
+    filename : str | Path
         Path to the .cnt file.
+
+    Returns
+    -------
+    cnt : InputCNT
+        An object representing the CNT file.
     """
-    if not filename.endswith(".cnt"):
+    fname = ensure_path(fname, must_exist=True)
+    if fname.suffix != ".cnt":
         raise RuntimeError("Unsupported file extension.")
-    return cnt_in(pyeep.read(filename))
-
-
-def write_cnt(
-    filename: str, rate: float, channels: list[tuple], rf64: int = 0
-) -> cnt_out:
-    """Create an object for writing a .cnt file.
-
-    Parameters
-    ----------
-    filename : str
-        Path to the .cnt file.
-    rate : float
-        Sampling rate in Hz.
-    channels : list of tuple
-        List of channel names.
-    rf64 : int
-        If 0, creates default 32-bit CNT data, otherwise 64 bit (for larger than 2GB
-        files).
-    """
-    if not filename.endswith(".cnt"):
-        raise RuntimeError("Unsupported file extension.")
-    channels_handle = pyeep.create_channel_info()
-    for c in channels:
-        pyeep.add_channel(channels_handle, c[0], c[1], c[2])
-    rv = cnt_out(pyeep.write_cnt(filename, rate, channels_handle, rf64), len(channels))
-    pyeep.close_channel_info(channels_handle)
-    return rv
+    return InputCNT(pyeep.read(str(fname)))

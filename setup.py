@@ -36,24 +36,24 @@ class build_ext(_build_ext):
         # (no way to use before-build to inject env vars back to the env)
         check_env = os.environ
         if "GITHUB_ENV" in check_env:
-            print("Using GITHUB_ENV instead of os.environ:")
+            print("Using GITHUB_ENV instead of os.environ:")  # noqa: T201
             check_env = dict(
                 line.split("=", maxsplit=1)
-                for line in Path(
-                    os.environ["GITHUB_ENV"]
-                ).read_text("utf-8").splitlines()
+                for line in Path(os.environ["GITHUB_ENV"])
+                .read_text("utf-8")
+                .splitlines()
                 if "=" in line
             )
-            pprint.pprint(check_env)
+            pprint.pprint(check_env)  # noqa: T203
         with TemporaryDirectory() as build_dir:  # str
             args = [
-                    "cmake",
-                    "-S",
-                    str(src_dir),
-                    "-B",
-                    build_dir,
-                    "-DCMAKE_BUILD_TYPE=Release",
-                    f"-DPython3_EXECUTABLE={sys.executable}",
+                "cmake",
+                "-S",
+                str(src_dir),
+                "-B",
+                build_dir,
+                "-DCMAKE_BUILD_TYPE=Release",
+                f"-DPython3_EXECUTABLE={sys.executable}",
             ]
             for key in (
                 "CMAKE_GENERATOR",

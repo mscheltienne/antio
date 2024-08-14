@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-import logging
 import operator
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
-
-from ._docs import fill_doc
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
@@ -171,51 +168,6 @@ def check_value(
         raise ValueError(
             msg.format(item_name=item_name, extra=extra, options=options, item=item)
         )
-
-
-@fill_doc
-def check_verbose(verbose: Any) -> int:
-    """Check that the value of verbose is valid.
-
-    Parameters
-    ----------
-    %(verbose)s
-
-    Returns
-    -------
-    verbose : int
-        The verbosity level as an integer.
-    """
-    logging_types = dict(
-        DEBUG=logging.DEBUG,
-        INFO=logging.INFO,
-        WARNING=logging.WARNING,
-        ERROR=logging.ERROR,
-        CRITICAL=logging.CRITICAL,
-    )
-
-    check_type(verbose, (bool, str, "int-like", None), item_name="verbose")
-
-    if verbose is None:
-        verbose = logging.WARNING
-    elif isinstance(verbose, str):
-        verbose = verbose.upper()
-        check_value(verbose, logging_types, item_name="verbose")
-        verbose = logging_types[verbose]
-    elif isinstance(verbose, bool):
-        if verbose:
-            verbose = logging.INFO
-        else:
-            verbose = logging.WARNING
-    elif isinstance(verbose, int):
-        verbose = ensure_int(verbose)
-        if verbose <= 0:
-            raise ValueError(
-                f"Argument 'verbose' can not be a negative integer, {verbose} is "
-                "invalid."
-            )
-
-    return verbose
 
 
 def ensure_path(item: Any, must_exist: bool) -> Path:

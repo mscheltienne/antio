@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import psutil
 from packaging.requirements import Requirement
 
+from ..libeep import pyeep
 from ._checks import check_type
 
 if TYPE_CHECKING:
@@ -48,6 +49,7 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     out(f"{psutil.swap_memory().total / float(2 ** 30):0.1f} GB\n")
     # package information
     out(f"{package}:".ljust(ljust) + version(package) + "\n")
+    out("libeep:".ljust(ljust) + pyeep.get_version() + "\n")
 
     # dependencies
     out("\nCore dependencies\n")
@@ -58,9 +60,9 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     # extras
     if developer:
         keys = (
-            "test",
-            "stubs",
+            "mne",
             "style",
+            "test",
         )
         for key in keys:
             extra_dependencies = [
