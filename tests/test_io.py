@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-import antio
+from antio.io import read_raw_ant
 
 
 @pytest.fixture()
@@ -23,5 +23,4 @@ def ca_208() -> dict[str, dict[str, Path]]:
 @pytest.mark.filterwarnings("ignore:Omitted .* annotation.*:RuntimeWarning")
 def test_io(ca_208):
     """Test loading of .cnt file."""
-    pytest.importorskip("mne")
-    antio.io.read_raw_ant(ca_208["cnt"]["short"])
+    read_raw_ant(ca_208["cnt"]["short"])

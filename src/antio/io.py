@@ -59,7 +59,7 @@ class RawANT(BaseRaw):
         eog: Optional[str],
         misc: Optional[str],
         verbose=None,
-    ):
+    ) -> None:
         logger.info("Reading ANT file %s", fname)
         fname = ensure_path(fname, must_exist=True)
         cnt = read_cnt(str(fname))
@@ -71,16 +71,10 @@ class RawANT(BaseRaw):
         data = _parse_data(cnt, ch_units)  # read data array
         super().__init__(info, preload=data, filenames=[fname], verbose=verbose)
         # look for annotations (called trigger by ant)
-        n_triggers = cnt.get_trigger_count()
-        labels, onsets, durations = [], [], []
-        for k in range(n_triggers):
-            label, idx, duration, _, _, _ = cnt.get_trigger(k)
-            labels.append(label)
-            onsets.append(idx)
-            durations.append(duration)
+        onsets, durations, descriptions, _ = _parse_triggers(cnt)
         onsets = np.array(onsets) / self.info["sfreq"]
         durations = np.array(durations) / self.info["sfreq"]
-        annotations = Annotations(onsets, duration=durations, description=labels)
+        annotations = Annotations(onsets, duration=durations, description=descriptions)
         self.set_annotations(annotations)
 
 
@@ -124,8 +118,47 @@ def _parse_data(cnt: InputCNT, ch_units: list[str]) -> NDArray[np.float64]:
         if unit in units:
             data[np.array(value, dtype=np.int16), :] *= units[unit]
         else:
-            logger.warning("Unit %s not recognized, not scaling.", unit)
+            warn(f"Unit {unit} not recognized, not scaling.")
     return data
+
+
+def _parse_triggers(
+    cnt: InputCNT,
+) -> tuple[list[int], list[int], list[str], dict[int, list[float]]]:
+    """Parse triggers into annotations."""
+    n_triggers = cnt.get_trigger_count()
+    onsets, durations, descriptions = [], [], [], []
+    impedances = dict()
+    disconnect = dict(start=[], stop=[])
+    for k in range(n_triggers):
+        code, idx, duration, condition, description, impedance = cnt.get_trigger(k)
+        # detect impedance measurements
+        if (
+            description is not None
+            and description.lower() == "impedance"
+            and impedance is not None
+        ):
+            impedances[idx] = [float(elt) for elt in impedance.split(" ")]
+            # create a BAD_impedance annotation to mark the bad segment
+            onsets.append(idx)
+            durations.append(duration)
+            description.append("BAD_impedance")
+            continue
+        # detect amplifier disconnection
+        if condition is not None and condition.lower() == "amplifier disconnected":
+            disconnect["start"].append(idx)
+            continue
+        elif condition is not None and condition.lower() == "amplifier reconnected":
+            disconnect["stop"].append(idx)
+            continue
+        # treat all the other triggers as regular event annotations
+        onsets.append(idx)
+        durations.append(duration)
+        if description is not None:
+            descriptions.append(description)
+        else:
+            descriptions.append(code)
+    return onsets, durations, descriptions, impedances
 
 
 @copy_doc(RawANT)

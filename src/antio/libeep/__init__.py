@@ -122,10 +122,10 @@ class InputCNT(BaseCNT):
         -------
         trigger : tuple of shape (6,)
             The tuple contains the following elements:
-            - 0: unknown
+            - 0: code
             - 1: sample index
             - 2: duration in samples
-            - 3: unknown
+            - 3: condition
             - 4: description
             - 5: impedance, as a string separated by spaces.
         """
