@@ -86,6 +86,8 @@ tracker = 'https://github.com/mscheltienne/antio/issues'
 build = "cp312-*"
 skip = "*musllinux*"
 archs = "native"
+test-command = "pytest {project}/tests"
+test-extras = ["mne", "test"]
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = [
@@ -104,11 +106,6 @@ repair-wheel-command = [
   "delvewheel repair -w {dest_dir} {wheel}",
   "pipx run abi3audit --strict --report {wheel}",
 ]
-
-[[tool.cibuildwheel.overrides]]
-select = "*aarch64*"
-test-command = "pytest {project}/tests"
-test-extras = ["mne", "test"]
 
 [tool.codespell]
 check-filenames = true

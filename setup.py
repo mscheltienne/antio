@@ -1,4 +1,6 @@
+import os
 import platform
+import pprint
 import subprocess
 import sys
 from pathlib import Path
@@ -30,9 +32,21 @@ class build_ext(_build_ext):
     def run(self):
         """Build libeep with cmake as part of the extension build process."""
         src_dir = Path(__file__).parent / "src" / "libeep"
+        # This is an unfortunate hack to get new env vars within a GH Actions step
+        # (no way to use before-build to inject env vars back to the env)
+        check_env = os.environ
+        if "GITHUB_ENV" in check_env:
+            print("Using GITHUB_ENV instead of os.environ:")
+            check_env = dict(
+                line.split("=", maxsplit=1)
+                for line in Path(
+                    os.environ["GITHUB_ENV"]
+                ).read_text("utf-8").splitlines()
+                if "=" in line
+            )
+            pprint.pprint(check_env)
         with TemporaryDirectory() as build_dir:  # str
-            subprocess.run(
-                [
+            args = [
                     "cmake",
                     "-S",
                     str(src_dir),
@@ -40,9 +54,15 @@ class build_ext(_build_ext):
                     build_dir,
                     "-DCMAKE_BUILD_TYPE=Release",
                     f"-DPython3_EXECUTABLE={sys.executable}",
-                ],
-                check=True,
-            )
+            ]
+            for key in (
+                "CMAKE_GENERATOR",
+                "CMAKE_GENERATOR_PLATFORM",
+                "Python3_SABI_LIBRARY",
+            ):
+                if key in check_env:
+                    args.append(f"-D{key}={check_env[key]}")
+            subprocess.run(args, check=True)
             subprocess.run(
                 ["cmake", "--build", build_dir, "--config", "Release"], check=True
             )

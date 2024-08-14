@@ -33,7 +33,7 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-native
           path: ./wheelhouse/*.whl
 
-  cibuildwheel_emulated:  # separate out because it's slower and not tested separately
+  cibuildwheel_emulated_cross:  # separate out because it's slower and not tested separately
     timeout-minutes: 10
     strategy:
       fail-fast: false
@@ -41,16 +41,24 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: aarch64
+          - os: windows-latest
+            arch: ARM64
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-qemu-action@v3
+      - name: Setup emulation on Linux
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
+        if: runner.os == 'Linux'
       - uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
+          # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
+          CIBW_TEST_SKIP: "*-win_arm64"
+          CIBW_BEFORE_BUILD_WINDOWS: bash ./.github/workflows/cibw_before_build_windows_cross.sh
+          CIBW_BUILD_VERBOSITY: 3
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
@@ -102,7 +110,7 @@ jobs:
           path: ./dist/*.tar.gz
 
   check:
-    needs: [cibuildwheel, cibuildwheel_emulated, sdist]
+    needs: [cibuildwheel, cibuildwheel_emulated_cross, sdist]
     timeout-minutes: 10
     name: run twine check
     runs-on: ubuntu-latest
