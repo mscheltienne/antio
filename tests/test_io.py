@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from antio.io import read_raw_ant
+import antio
 
 
 @pytest.fixture()
@@ -17,4 +17,4 @@ def datafiles() -> Path:
 def test_io(datafiles):
     """Test loading of .cnt file."""
     pytest.importorskip("mne")
-    read_raw_ant(datafiles)
+    antio.io.read_raw_ant(datafiles)

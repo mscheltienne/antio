@@ -73,11 +73,10 @@ class RawANT(BaseRaw):
             label, idx, duration, _, _, _ = cnt.get_trigger(k)
             labels.append(label)
             onsets.append(idx)
-            durations.append(duration)  # TODO: handle duration
+            durations.append(duration)
         onsets = np.array(onsets) / self.info["sfreq"]
-        annotations = Annotations(
-            onsets, duration=np.zeros_like(onsets), description=labels
-        )
+        durations = np.array(durations) / self.info["sfreq"]
+        annotations = Annotations(onsets, duration=durations, description=labels)
         self.set_annotations(annotations)
 
 
