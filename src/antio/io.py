@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from .utils.logs import logger, verbose, warn
+from .utils._docs import fill_doc
+from .utils._logs import logger, verbose, warn
 
 if TYPE_CHECKING:
-    from typing import Optional
+    from typing import Optional, Union
 
     from numpy.typing import NDArray
 
@@ -19,8 +20,15 @@ if TYPE_CHECKING:
 units = {"uv": 1e-6}
 
 
+@fill_doc
 @verbose
-def read_info(cnt: InputCNT, eog: Optional[str], misc: Optional[str], *, verbose):
+def read_info(
+    cnt: InputCNT,
+    eog: Optional[str],
+    misc: Optional[str],
+    *,
+    verbose: Optional[Union[bool, str, int]] = None,
+) -> tuple[list[str], list[str], list[str], list[str]]:
     """Parse the channel information from the cnt file.
 
     Parameters
@@ -34,6 +42,17 @@ def read_info(cnt: InputCNT, eog: Optional[str], misc: Optional[str], *, verbose
         Regex pattern to find MISC channel labels. If None, no MISC channels are
         automatically detected.
     %(verbose)s
+
+    Returns
+    -------
+    ch_names : list of str
+        List of channel names.
+    ch_units : list of str
+        List of human-readable units for each channel.
+    ch_refs : list of str
+        List of channel reference electrodes.
+    ch_types : list of str
+        List of channel types, default is "eeg".
     """
     ch_names, ch_units, ch_refs, ch_types = [], [], [], []
     eog = re.compile(eog) if eog is not None else None
@@ -59,16 +78,22 @@ def read_info(cnt: InputCNT, eog: Optional[str], misc: Optional[str], *, verbose
     return ch_names, ch_units, ch_refs, ch_types
 
 
+@fill_doc
 @verbose
-def read_data(cnt: InputCNT, ch_units: list[str], *, verbose) -> NDArray[np.float64]:
+def read_data(
+    cnt: InputCNT,
+    ch_units: list[str],
+    *,
+    verbose: Optional[Union[bool, str, int]] = None,
+) -> NDArray[np.float64]:
     """Read the data array.
 
     Parameters
     ----------
     cnt : InputCNT
         The cnt object from which the data is read.
-    ch_units : list[str]
-        List of units for each channel.
+    ch_units : list of str
+        List of human-readable units for each channel.
     %(verbose)s
 
     Returns
@@ -91,9 +116,13 @@ def read_data(cnt: InputCNT, ch_units: list[str], *, verbose) -> NDArray[np.floa
     return data
 
 
+@fill_doc
 @verbose
 def read_triggers(
-    cnt: InputCNT, impedance_annotation: str, *, verbose
+    cnt: InputCNT,
+    impedance_annotation: str,
+    *,
+    verbose: Optional[Union[bool, str, int]] = None,
 ) -> tuple[list[int], list[int], list[str], list[list[float]]]:
     """Read triggers into the attribute of MNE's annotation.
 
