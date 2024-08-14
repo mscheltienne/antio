@@ -145,7 +145,7 @@ def _parse_triggers(
 ) -> tuple[list[int], list[int], list[str], dict[int, list[float]]]:
     """Parse triggers into annotations."""
     n_triggers = cnt.get_trigger_count()
-    onsets, durations, descriptions = [], [], [], []
+    onsets, durations, descriptions = [], [], []
     impedances = dict()
     disconnect = dict(start=[], stop=[])
     for k in range(n_triggers):
