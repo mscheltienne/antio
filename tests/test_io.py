@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+from mne import Annotations
 from mne.io import read_raw_brainvision
 from numpy.testing import assert_allclose
 
@@ -74,3 +75,26 @@ def test_io_amp_disconnection(ca_208: dict[str, dict[str, Path]]) -> None:
     raw_cnt = read_raw_ant(ca_208["cnt"]["amp-dc"])
     raw_bv = read_raw_bv(ca_208["bv"]["amp-dc"])
     assert_allclose(raw_cnt.get_data(), raw_bv.get_data(), atol=1e-8)
+    assert (
+        raw_cnt.get_data(reject_by_annotation="omit").shape != raw_bv.get_data().shape
+    )
+    # create annotation on the BV file
+    idx = [
+        k
+        for k, elt in enumerate(raw_bv.annotations.description)
+        if any(code in elt for code in ("9001", "9002"))
+    ]
+    assert len(idx) == 2
+    start = raw_bv.annotations.onset[idx[0]]
+    stop = raw_bv.annotations.onset[idx[1]]
+    annotations = Annotations(
+        onset=start,
+        duration=stop - start + 1 / raw_bv.info["sfreq"],  # estimate is 1 sample short
+        description="BAD_segment",
+    )
+    raw_bv.set_annotations(annotations)
+    assert_allclose(
+        raw_cnt.get_data(reject_by_annotation="omit"),
+        raw_bv.get_data(reject_by_annotation="omit"),
+        atol=1e-8,
+    )
