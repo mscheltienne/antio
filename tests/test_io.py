@@ -102,3 +102,20 @@ def test_io_amp_disconnection(ca_208: dict[str, dict[str, Path]]) -> None:
 
 def test_io_impedance(ca_208: dict[str, dict[str, Path]]) -> None:
     """Test loading of impedances from a .cnt file."""
+    raw_cnt = read_raw_ant(ca_208["cnt"]["amp-dc"])
+    assert isinstance(raw_cnt.impedances, list)
+    for elt in raw_cnt.impedances:
+        assert isinstance(elt, dict)
+        assert list(elt) == raw_cnt.ch_names
+        assert all(isinstance(val, float) for val in elt.values())
+    annotations = [
+        annot for annot in raw_cnt.annotations if annot["description"] == "impedance"
+    ]
+    assert len(annotations) == len(raw_cnt.impedances)
+
+
+def test_io_segments(ca_208: dict[str, dict[str, Path]]) -> None:
+    """Test reading a .cnt file with segents (start/stop)."""
+    raw_cnt = read_raw_ant(ca_208["cnt"]["start-stop"])
+    raw_bv = read_raw_bv(ca_208["bv"]["start-stop"])
+    assert_allclose(raw_cnt.get_data(), raw_bv.get_data(), atol=1e-8)
