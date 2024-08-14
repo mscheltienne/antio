@@ -32,7 +32,7 @@ jobs:
           CIBW_TEST_SKIP: "{*macosx*,*win*}"
       - uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ matrix.os }}-native
+          name: cibw-wheels-${{ matrix.os }}-native-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
 
   cibuildwheel_emulated_cross:  # separate out because it's slower and not tested separately

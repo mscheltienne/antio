@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING
 import psutil
 from packaging.requirements import Requirement
 
-from ._checks import check_type
 from ..libeep import pyeep
+from ._checks import check_type
 
 if TYPE_CHECKING:
     from typing import IO, Callable, Optional
@@ -60,9 +60,9 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     # extras
     if developer:
         keys = (
-            "test",
-            "stubs",
+            "mne",
             "style",
+            "test",
         )
         for key in keys:
             extra_dependencies = [

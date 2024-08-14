@@ -1,6 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
+pip install delvewheel
 echo "CMAKE_GENERATOR=Visual Studio 17 2022" | tee -a $GITHUB_ENV
 echo "CMAKE_GENERATOR_PLATFORM=$CIBW_ARCHS" | tee -a $GITHUB_ENV
 PY_VER=$(python -c "import sys; print('.'.join(map(str, sys.version_info[:3])))")

@@ -1,9 +1,6 @@
 [build-system]
 build-backend = 'setuptools.build_meta'
-requires = [
-  'delvewheel; platform_system == "Windows"',
-  'setuptools >= 64.0.0',
-]
+requires = ['setuptools >= 64.0.0']
 
 [project]
 authors = [
@@ -46,16 +43,9 @@ version = '0.1.0'
 
 [project.optional-dependencies]
 all = [
-  'antio[build]',
   'antio[mne]',
   'antio[style]',
   'antio[test]',
-]
-build = [
-  'build',
-  'cibuildwheel',
-  'setuptools>= 64.0.0',
-  'twine',
 ]
 full = [
   'antio[all]',
@@ -104,6 +94,7 @@ repair-wheel-command = [
 ]
 
 [tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
 repair-wheel-command = [
   "delvewheel repair -w {dest_dir} {wheel}",
   "pipx run abi3audit --strict --report {wheel}",
