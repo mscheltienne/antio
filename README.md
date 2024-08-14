@@ -2,7 +2,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![codecov](https://codecov.io/gh/mscheltienne/antio/graph/badge.svg?token=ebC07d0dyM)](https://codecov.io/gh/mscheltienne/antio)
-[![unittests](https://github.com/mscheltienne/antio/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/mscheltienne/antio/actions/workflows/build.yaml)
+[![ci](https://github.com/mscheltienne/antio/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/mscheltienne/antio/actions/workflows/ci.yaml)
 
 # ANT I/O
 
