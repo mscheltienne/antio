@@ -87,6 +87,7 @@ class RawANT(BaseRaw):
         misc: Optional[str],
         bipolars: Optional[Union[list[str], tuple[str, ...]]],
         impedance_annotation: str,
+        *,
         verbose=None,
     ) -> None:
         logger.info("Reading ANT file %s", fname)
@@ -279,6 +280,7 @@ def read_raw_ant(
     misc: Optional[str] = r"BIP\d+",
     bipolars: Optional[Union[list[str], tuple[str, ...]]] = None,
     impedance_annotation: str = "impedance",
+    *,
     verbose=None,
 ) -> RawANT:
     """
