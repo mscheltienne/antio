@@ -52,6 +52,8 @@ class RawANT(BaseRaw):
     %(verbose)s
     """
 
+    _extra_attributes = ("impedances",)
+
     @verbose
     def __init__(
         self,
@@ -71,22 +73,35 @@ class RawANT(BaseRaw):
         data = _parse_data(cnt, ch_units)  # read data array
         super().__init__(info, preload=data, filenames=[fname], verbose=verbose)
         # look for annotations (called trigger by ant)
-        onsets, durations, descriptions, _ = _parse_triggers(cnt)
+        onsets, durations, descriptions, impedances = _parse_triggers(cnt)
         onsets = np.array(onsets) / self.info["sfreq"]
         durations = np.array(durations) / self.info["sfreq"]
         annotations = Annotations(onsets, duration=durations, description=descriptions)
         self.set_annotations(annotations)
+        # set impedance similarly as for brainvision files
+        self._impedances = {
+            key: {ch: impedances[key][k] for k, ch in enumerate(ch_names)}
+            for key in impedances
+        }
+
+    @property
+    def impedances(self) -> dict[int, dict[str, float]]:
+        """Impedances for each impedance measurement event.
+
+        The key represent the sample idx at which the impedance measurement took place.
+        The value contain the measured impedance values in kOhm, per channel.
+        """
+        return self._impedances
 
 
 def _parse_channels(
     cnt: InputCNT, eog: Optional[str], misc: Optional[str]
 ) -> tuple[list[str], list[str], list[str], list[str]]:
     """Parse the channel names annd attempt to find channel type."""
-    n_channels = cnt.get_channel_count()
     ch_names, ch_units, ch_refs, ch_types = [], [], [], []
     eog = re.compile(eog) if eog is not None else None
     misc = re.compile(misc) if misc is not None else None
-    for k in range(n_channels):
+    for k in range(cnt.get_channel_count()):
         ch_curr = cnt.get_channel(k)
         ch_names.append(ch_curr[0])
         ch_units.append(ch_curr[1].lower())  # always lower the unit for mapping
@@ -97,10 +112,13 @@ def _parse_channels(
             ch_types.append("misc")
         else:
             ch_types.append("eeg")
-    if len(set(ch_refs)) == 1:
-        logger.info("All %i channels are referenced to %s.", len(ch_refs), ch_refs[0])
+    eeg_refs = [ch_refs[k] for k, elt in enumerate(ch_types) if elt == "eeg"]
+    if len(set(eeg_refs)) == 1:
+        logger.info(
+            "All %i EEG channels are referenced to %s.", len(eeg_refs), eeg_refs[0]
+        )
     else:
-        warn("All channels are not referenced to the same electrode.")
+        warn("All EEG channels are not referenced to the same electrode.")
     return ch_names, ch_units, ch_refs, ch_types
 
 
