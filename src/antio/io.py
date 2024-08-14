@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from .libeep import read_cnt
-from .utils._checks import ensure_path
+from .utils._checks import check_type, ensure_path
 from .utils._imports import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 import_optional_dependency("mne")
 
 from mne import Annotations, create_info  # noqa: E402
+from mne._fiff.constants import FIFF  # noqa: E402
 from mne.io import BaseRaw  # noqa: E402
 from mne.utils import copy_doc, fill_doc, logger, verbose, warn  # noqa: E402
 
@@ -49,7 +50,26 @@ class RawANT(BaseRaw):
             which might have a dedicated channel type in MNE-Python. In this case, use
             :meth:`mne.io.Raw.set_channel_types` to change the channel type of the
             channel.
+    bipolars : list of str | tuple of str | None
+        The list of channels to treat as bipolar EEG channels. Each element should be
+        a string of the form ``'anode-cathode'`` or in ANT terminology as ``'label-
+        reference'``. If None, all channels are interpreted as ``'eeg'`` channels
+        referenced to the same reference electrode. See notes for additional
+        information.
+
+        .. warning::
+
+            Do not provide auxiliary channels in this argument, provide them in the
+            ``eog`` and ``misc`` arguments.
     %(verbose)s
+
+    Notes
+    -----
+    By default, all channels are interpreted as ``'eeg'`` channels, referenced to the
+    same reference electrode. However, channels which have a different reference are
+    handled differently by MNE-Python and should be provided in the arguments
+    ``bipolars`` as a list of strings ``'anode-cathode'``, or in ANT terminology as
+    ``'label-reference'``. See also :func:`mne.set_bipolar_reference`.
     """
 
     _extra_attributes = ("impedances",)
@@ -60,16 +80,34 @@ class RawANT(BaseRaw):
         fname: Union[str, Path],
         eog: Optional[str],
         misc: Optional[str],
+        bipolars: Optional[Union[list[str], tuple[str, ...]]],
         verbose=None,
     ) -> None:
         logger.info("Reading ANT file %s", fname)
         fname = ensure_path(fname, must_exist=True)
+        check_type(eog, (str, None), "eog")
+        check_type(misc, (str, None), "misc")
+        check_type(bipolars, (list, tuple, None), "bipolar")
         cnt = read_cnt(str(fname))
         # parse channels, sampling frequency, and create info
         ch_names, ch_units, ch_refs, ch_types = _parse_channels(cnt, eog, misc)
+        if bipolars is not None:  # handle bipolar channels
+            bipolars_idx = _handle_bipolar_channels(ch_names, ch_refs, bipolars)
+            for idx, ch in zip(bipolars_idx, bipolars):
+                if ch_types[idx] != "eeg":
+                    warn(
+                        f"Channel {ch} was not parsed as an EEG channel, changing to "
+                        "EEG channel type since bipolar EEG was requested."
+                    )
+                ch_names[idx] = ch
+                ch_types[idx] = "eeg"
         info = create_info(
             ch_names, sfreq=cnt.get_sample_frequency(), ch_types=ch_types
         )
+        if bipolars is not None:
+            with info._unlock():
+                for idx in bipolars_idx:
+                    info["chs"][idx]["coil_type"] = FIFF.FIFFV_COIL_EEG_BIPOLAR
         data = _parse_data(cnt, ch_units)  # read data array
         super().__init__(info, preload=data, filenames=[fname], verbose=verbose)
         # look for annotations (called trigger by ant)
@@ -122,6 +160,31 @@ def _parse_channels(
     return ch_names, ch_units, ch_refs, ch_types
 
 
+def _handle_bipolar_channels(
+    ch_names: list[str], ch_refs: list[str], bipolars: Union[list[str], tuple[str, ...]]
+) -> list[int]:
+    """Handle bipolar channels."""
+    bipolars_idx = []
+    for ch in bipolars:
+        check_type(ch, (str,), "bipolar_channel")
+        if "-" not in ch:
+            raise ValueError(
+                "Bipolar channels should be provided as 'anode-cathode' or "
+                f"'label-reference'. '{ch}' is not valid."
+            )
+        anode, cathode = ch.split("-")
+        if anode not in ch_names:
+            raise ValueError(f"Anode channel {anode} not found in the channels.")
+        idx = ch_names.index(anode)
+        if cathode != ch_refs[idx]:
+            raise ValueError(
+                f"Reference electrode for {anode} is {ch_refs[idx]}, not {cathode}."
+            )
+        # store idx for later FIFF coil type change
+        bipolars_idx.append(idx)
+    return bipolars_idx
+
+
 def _parse_data(cnt: InputCNT, ch_units: list[str]) -> NDArray[np.float64]:
     """Parse the data array."""
     n_channels = cnt.get_channel_count()
@@ -166,7 +229,10 @@ def _parse_triggers(
         if condition is not None and condition.lower() == "amplifier disconnected":
             disconnect["start"].append(idx)
             continue
-        elif condition is not None and condition.lower() == "amplifier reconnected":
+        elif (
+            condition is not None
+            and condition.lower() == "amplifbipolarier reconnected"
+        ):
             disconnect["stop"].append(idx)
             continue
         # treat all the other triggers as regular event annotations
@@ -206,6 +272,7 @@ def read_raw_ant(
     fname: Union[str, Path],
     eog: Optional[str] = None,
     misc: Optional[str] = r"BIP\d+",
+    bipolars: Optional[Union[list[str], tuple[str, ...]]] = None,
     verbose=None,
 ) -> RawANT:
-    return RawANT(fname, eog=eog, misc=misc, verbose=verbose)
+    return RawANT(fname, eog=eog, misc=misc, bipolars=bipolars, verbose=verbose)
