@@ -58,6 +58,7 @@ style = [
   'yamllint',
 ]
 test = [
+  'mne',
   'pytest-cov',
   'pytest>=8.0',
 ]
