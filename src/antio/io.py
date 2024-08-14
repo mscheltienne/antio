@@ -68,6 +68,12 @@ class RawANT(BaseRaw):
         a new segment, in which case a discontinuity similar to what
         :func:`mne.concatenate_raws` produces is present. In this case, it's better to
         include a `BAD_xxx` annotation to mark the discontinuity.
+
+        .. note::
+
+            Note that the impedance annotation will likely have a duration of ``0``.
+            If the measurement marks a discontinuity, the duration should be modified to
+            cover the discontinuity in its entirety.
     %(verbose)s
     """
 
