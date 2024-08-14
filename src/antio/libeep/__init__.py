@@ -108,7 +108,9 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_trigger_count(self._handle)
 
-    def get_trigger(self, index: int) -> tuple[str, int, int, Optional[str], str, str]:
+    def get_trigger(
+        self, index: int
+    ) -> tuple[str, int, int, Optional[str], Optional[str], Optional[str]]:
         """Get the trigger (annotation) at a given index.
 
         Parameters
