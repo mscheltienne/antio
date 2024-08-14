@@ -219,19 +219,16 @@ def _parse_triggers(
             and impedance is not None
         ):
             impedances[idx] = [float(elt) for elt in impedance.split(" ")]
-            # create a BAD_impedance annotation to mark the bad segment
+            # create an impedance annotation to mark the measurement
             onsets.append(idx)
             durations.append(duration)
-            descriptions.append("BAD_impedance")
+            descriptions.append("impedance")
             continue
         # detect amplifier disconnection
         if condition is not None and condition.lower() == "amplifier disconnected":
             disconnect["start"].append(idx)
             continue
-        elif (
-            condition is not None
-            and condition.lower() == "amplifbipolarier reconnected"
-        ):
+        elif condition is not None and condition.lower() == "amplifier reconnected":
             disconnect["stop"].append(idx)
             continue
         # treat all the other triggers as regular event annotations
