@@ -142,6 +142,7 @@ match-dir = '^.*antio.*'
 addopts = ['--color=yes', '--cov-report=', '--durations=20', '--junit-xml=junit-results.xml', '--strict-config', '--tb=short', '-ra', '-v']
 filterwarnings = [
   "error",
+  "ignore:.*interactive_bk.*:matplotlib._api.deprecation.MatplotlibDeprecationWarning",
 ]
 junit_family = 'xunit2'
 minversion = '8.0'
