@@ -160,7 +160,7 @@ def _parse_triggers(
             # create a BAD_impedance annotation to mark the bad segment
             onsets.append(idx)
             durations.append(duration)
-            description.append("BAD_impedance")
+            descriptions.append("BAD_impedance")
             continue
         # detect amplifier disconnection
         if condition is not None and condition.lower() == "amplifier disconnected":
