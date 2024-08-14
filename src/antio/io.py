@@ -1,25 +1,40 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import TYPE_CHECKING
 
-import nump as np
+import numpy as np
 
 from .libeep import read_cnt
 from .utils._checks import ensure_path
 from .utils._imports import import_optional_dependency
 
+if TYPE_CHECKING:
+    from pathlib import Path
+    from typing import Union
+
 import_optional_dependency("mne")
 
 from mne import Annotations, create_info  # noqa: E402
 from mne.io import BaseRaw  # noqa: E402
-from mne.utils import logger, verbose  # noqa: E402
+from mne.utils import fill_doc, logger, verbose  # noqa: E402
 
 units = {"uv": 1e-6}
 
 
+@fill_doc
 class RawANT(BaseRaw):
+    """Raw data in ANT .cnt format.
+
+    Parameters
+    ----------
+    fname : str | Path
+        Path to the ANT raw file to load. The file should have the extension .cnt.
+    %(verbose)s
+    """
+
     @verbose
-    def __init__(self, fname, verbose=None):
+    def __init__(self, fname: Union[str, Path], verbose=None):
         logger.info("Reading ANT file %s", fname)
         fname = ensure_path(fname, must_exist=True)
         cnt = read_cnt(str(fname))
@@ -64,3 +79,21 @@ class RawANT(BaseRaw):
             onsets, duration=np.zeros_like(onsets), description=labels
         )
         self.set_annotations(annotations)
+
+
+@verbose
+def read_raw_ant(fname: str | Path, verbose=None) -> RawANT:
+    """Reader function for Raw ANT files in .cnt format.
+
+    Parameters
+    ----------
+    fname : str | Path
+        Path to the ANT raw file to load. The file should have the extension .cnt.
+    %(verbose)s
+
+    Returns
+    -------
+    raw : instance of RawANT
+        A Raw object containing ANT data.
+    """
+    return RawANT(fname, verbose=verbose)
