@@ -158,6 +158,28 @@ def _parse_triggers(
             descriptions.append(description)
         else:
             descriptions.append(code)
+    # create BAD_disconnection annotations, don't bother with all the special cases, if
+    # the annotations look weird, just add the bare 9001 and 9002 disconnect/reconnect
+    # annotations.
+    if (
+        len(disconnect["start"]) == len(disconnect["stop"])
+        and len(disconnect["start"]) != 0
+        and disconnect["start"][0] < disconnect["stop"][0]
+        and disconnect["start"][-1] < disconnect["stop"][-1]
+    ):
+        for start, stop in zip(disconnect["start"], disconnect["stop"]):
+            onsets.append(start)
+            durations.append(stop - start)
+            descriptions.append("BAD_disconnection")
+    else:
+        for elt in disconnect["start"]:
+            onsets.append(elt)
+            durations.append(0)
+            descriptions.append("Amplifier disconnected")
+        for elt in disconnect["stop"]:
+            onsets.append(elt)
+            durations.append(0)
+            descriptions.append("Amplifier reconnected")
     return onsets, durations, descriptions, impedances
 
 
