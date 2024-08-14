@@ -62,6 +62,12 @@ class RawANT(BaseRaw):
 
             Do not provide auxiliary channels in this argument, provide them in the
             ``eog`` and ``misc`` arguments.
+    impedance_annotation : str
+        The string to use for impedance annotations. Defaults to "impedance", however,
+        the impedance measurement might mark the end of a segment and the beginning of
+        a new segment, in which case a discontinuity similar to what
+        :func:`mne.concatenate_raws` produces is present. In this case, it's better to
+        include a `BAD_xxx` annotation to mark the discontinuity.
     %(verbose)s
     """
 
@@ -74,6 +80,7 @@ class RawANT(BaseRaw):
         eog: Optional[str],
         misc: Optional[str],
         bipolars: Optional[Union[list[str], tuple[str, ...]]],
+        impedance_annotation: str,
         verbose=None,
     ) -> None:
         logger.info("Reading ANT file %s", fname)
@@ -81,6 +88,9 @@ class RawANT(BaseRaw):
         check_type(eog, (str, None), "eog")
         check_type(misc, (str, None), "misc")
         check_type(bipolars, (list, tuple, None), "bipolar")
+        check_type(impedance_annotation, (str,), "impedance_annotation")
+        if len(impedance_annotation) == 0:
+            raise ValueError("The impedance annotation cannot be an empty string.")
         cnt = read_cnt(str(fname))
         # parse channels, sampling frequency, and create info
         ch_names, ch_units, ch_refs, ch_types = _parse_channels(cnt, eog, misc)
@@ -104,7 +114,9 @@ class RawANT(BaseRaw):
         data = _parse_data(cnt, ch_units)  # read data array
         super().__init__(info, preload=data, filenames=[fname], verbose=verbose)
         # look for annotations (called trigger by ant)
-        onsets, durations, descriptions, impedances = _parse_triggers(cnt)
+        onsets, durations, descriptions, impedances = _parse_triggers(
+            cnt, impedance_annotation
+        )
         onsets = np.array(onsets) / self.info["sfreq"]
         durations = np.array(durations) / self.info["sfreq"]
         annotations = Annotations(onsets, duration=durations, description=descriptions)
@@ -195,6 +207,7 @@ def _parse_data(cnt: InputCNT, ch_units: list[str]) -> NDArray[np.float64]:
 
 def _parse_triggers(
     cnt: InputCNT,
+    impedance_annotation: str,
 ) -> tuple[list[int], list[int], list[str], list[list[float]]]:
     """Parse triggers into annotations."""
     n_triggers = cnt.get_trigger_count()
@@ -212,7 +225,7 @@ def _parse_triggers(
             # create an impedance annotation to mark the measurement
             onsets.append(idx)
             durations.append(duration)
-            descriptions.append("impedance")
+            descriptions.append(impedance_annotation)
             continue
         # detect amplifier disconnection
         if condition is not None and condition.lower() == "amplifier disconnected":
@@ -259,6 +272,7 @@ def read_raw_ant(
     eog: Optional[str] = None,
     misc: Optional[str] = r"BIP\d+",
     bipolars: Optional[Union[list[str], tuple[str, ...]]] = None,
+    impedance_annotation: str = "impedance",
     verbose=None,
 ) -> RawANT:
     """
@@ -269,4 +283,11 @@ def read_raw_ant(
         The ANT raw object containing the channel information, data and relevant
         :class:`~mne.Annotations`.
     """
-    return RawANT(fname, eog=eog, misc=misc, bipolars=bipolars, verbose=verbose)
+    return RawANT(
+        fname,
+        eog=eog,
+        misc=misc,
+        bipolars=bipolars,
+        impedance_annotation=impedance_annotation,
+        verbose=verbose,
+    )
