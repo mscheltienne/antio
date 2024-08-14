@@ -28,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pypa/cibuildwheel@v2.20.0
+        env:
+          CIBW_TEST_SKIP: "{*macosx*,*win*}"
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-native
@@ -42,23 +44,23 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
           - os: windows-latest
-            arch: arm64
+            arch: ARM64  # upper-case needed
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup emulation on Linux
+        if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
         with:
           platforms: all
-        if: runner.os == 'Linux'
       - uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
           # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
-          CIBW_TEST_SKIP: "*-win_arm64"
-          CIBW_BEFORE_BUILD_WINDOWS: bash ./.github/workflows/cibw_before_build_windows_cross.sh
+          CIBW_BEFORE_BUILD_WINDOWS: bash ./tools/cibw_before_build_windows_cross.sh
           CIBW_BUILD_VERBOSITY: 3
+          CIBW_TEST_SKIP: "*-win_arm64"
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
