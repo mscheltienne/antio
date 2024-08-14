@@ -13,6 +13,7 @@ def datafiles() -> Path:
     return Path(__file__).parent / "data" / "test_test_2023-06-07_18-54-58.cnt"
 
 
+@pytest.mark.filterwarnings("ignore:Omitted .* annotation.*:RuntimeWarning")
 def test_io(datafiles):
     """Test loading of .cnt file."""
     pytest.importorskip("mne")
