@@ -43,15 +43,11 @@ version = '0.2.0.dev0'
 
 [project.optional-dependencies]
 all = [
-  'antio[mne]',
   'antio[style]',
   'antio[test]',
 ]
 full = [
   'antio[all]',
-]
-mne = [
-  'mne',
 ]
 style = [
   'codespell[toml]>=2.2.4',
@@ -62,7 +58,7 @@ style = [
   'yamllint',
 ]
 test = [
-  'antio[mne]',
+  'mne',
   'pytest-cov',
   'pytest>=8.0',
 ]
@@ -120,7 +116,6 @@ branch = true
 cover_pylib = false
 omit = [
   '**/__init__.py',
-  '**/conftest.py',
   '**/antio/_version.py',
 ]
 

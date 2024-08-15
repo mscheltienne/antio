@@ -10,7 +10,6 @@ import psutil
 from packaging.requirements import Requirement
 
 from ..libeep import pyeep
-from ._checks import check_type
 
 if TYPE_CHECKING:
     from typing import IO, Callable, Optional
@@ -27,8 +26,7 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     developer : bool
         If True, display information about optional dependencies.
     """
-    check_type(developer, (bool,), "developer")
-
+    developer = bool(developer)
     ljust = 26
     out = partial(print, end="", file=fid)
     package = __package__.split(".")[0]
@@ -60,7 +58,6 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     # extras
     if developer:
         keys = (
-            "mne",
             "style",
             "test",
         )

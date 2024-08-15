@@ -1,12 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ..utils._checks import ensure_path
 from . import pyeep
 
 if TYPE_CHECKING:
-    from pathlib import Path
     from typing import Optional, Union
 
 
@@ -145,7 +144,9 @@ def read_cnt(fname: Union[str, Path]) -> InputCNT:
     cnt : InputCNT
         An object representing the CNT file.
     """
-    fname = ensure_path(fname, must_exist=True)
+    fname = Path(fname)
     if fname.suffix != ".cnt":
-        raise RuntimeError("Unsupported file extension.")
+        raise RuntimeError(f"Unsupported file extension '{fname.suffix}'.")
+    if not fname.exists():
+        raise FileNotFoundError(f"File {fname} not found.")
     return InputCNT(pyeep.read(str(fname)))
