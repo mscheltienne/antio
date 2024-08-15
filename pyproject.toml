@@ -35,7 +35,8 @@ keywords = [
 ]
 license = {file = 'LICENSE'}
 maintainers = [
-  {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
+  {email = 'mathieu.scheltienne@gmail.com', name = 'Mathieu Scheltienne'},
+  {name= 'Eric Larson'},
 ]
 name = 'antio'
 readme = 'README.md'
