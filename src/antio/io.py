@@ -1,47 +1,22 @@
 from __future__ import annotations
 
-import re
-from collections import defaultdict
 from typing import TYPE_CHECKING
 
 import numpy as np
 
-from .utils._docs import fill_doc
-from .utils._logs import logger, verbose, warn
-
 if TYPE_CHECKING:
-    from typing import Optional, Union
-
     from numpy.typing import NDArray
 
     from .libeep import InputCNT
 
 
-units = {"uv": 1e-6}
-
-
-@fill_doc
-@verbose
-def read_info(
-    cnt: InputCNT,
-    eog: Optional[str],
-    misc: Optional[str],
-    *,
-    verbose: Optional[Union[bool, str, int]] = None,
-) -> tuple[list[str], list[str], list[str], list[str]]:
+def read_info(cnt: InputCNT) -> tuple[list[str], list[str], list[str], list[str]]:
     """Parse the channel information from the cnt file.
 
     Parameters
     ----------
     cnt : InputCNT
         The cnt object from which the information is read.
-    eog : str | None
-        Regex pattern to find EOG channel labels. If None, no EOG channels are
-        automatically detected.
-    misc : str | None
-        Regex pattern to find MISC channel labels. If None, no MISC channels are
-        automatically detected.
-    %(verbose)s
 
     Returns
     -------
@@ -51,50 +26,23 @@ def read_info(
         List of human-readable units for each channel.
     ch_refs : list of str
         List of channel reference electrodes.
-    ch_types : list of str
-        List of channel types, default is "eeg".
     """
-    ch_names, ch_units, ch_refs, ch_types = [], [], [], []
-    eog = re.compile(eog) if eog is not None else None
-    misc = re.compile(misc) if misc is not None else None
+    ch_names, ch_units, ch_refs = [], [], []
     for k in range(cnt.get_channel_count()):
         ch_curr = cnt.get_channel(k)
         ch_names.append(ch_curr[0])
         ch_units.append(ch_curr[1].lower())  # always lower the unit for mapping
         ch_refs.append(ch_curr[2])
-        if eog is not None and re.fullmatch(eog, ch_curr[0]):
-            ch_types.append("eog")
-        elif misc is not None and re.fullmatch(misc, ch_curr[0]):
-            ch_types.append("misc")
-        else:
-            ch_types.append("eeg")
-    eeg_refs = [ch_refs[k] for k, elt in enumerate(ch_types) if elt == "eeg"]
-    if len(set(eeg_refs)) == 1:
-        logger.info(
-            "All %i EEG channels are referenced to %s.", len(eeg_refs), eeg_refs[0]
-        )
-    else:
-        warn("All EEG channels are not referenced to the same electrode.")
-    return ch_names, ch_units, ch_refs, ch_types
+    return ch_names, ch_units, ch_refs
 
 
-@fill_doc
-@verbose
-def read_data(
-    cnt: InputCNT,
-    ch_units: list[str],
-    *,
-    verbose: Optional[Union[bool, str, int]] = None,
-) -> NDArray[np.float64]:
+def read_data(cnt: InputCNT) -> NDArray[np.float64]:
     """Read the data array.
 
     Parameters
     ----------
     cnt : InputCNT
         The cnt object from which the data is read.
-    ch_units : list of str
-        List of human-readable units for each channel.
-    %(verbose)s
 
     Returns
     -------
@@ -103,26 +51,11 @@ def read_data(
     """
     n_samples = cnt.get_sample_count()  # sample = (n_channels,)
     data = cnt.get_samples(0, n_samples)
-    data = np.array(data).reshape(n_samples, -1).T  # (n_channels, n_samples)
-    # apply scalings to SI units if able
-    units_index = defaultdict(list)
-    for idx, unit in enumerate(ch_units):
-        units_index[unit].append(idx)
-    for unit, value in units_index.items():
-        if unit in units:
-            data[np.array(value, dtype=np.int16), :] *= units[unit]
-        else:
-            warn(f"Unit {unit} not recognized, not scaling.")
-    return data
+    return np.array(data).reshape(n_samples, -1).T  # (n_channels, n_samples)
 
 
-@fill_doc
-@verbose
 def read_triggers(
-    cnt: InputCNT,
-    impedance_annotation: str,
-    *,
-    verbose: Optional[Union[bool, str, int]] = None,
+    cnt: InputCNT, impedance_annotation: str
 ) -> tuple[list[int], list[int], list[str], list[list[float]]]:
     """Read triggers into the attribute of MNE's annotation.
 
@@ -132,7 +65,6 @@ def read_triggers(
         The cnt object from which the triggers are read.
     impedance_annotation : str
         The description of the annotation for impedance measurements.
-    %(verbose)s
 
     Returns
     -------
