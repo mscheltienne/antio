@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .._checks import ensure_path
+from ..utils._checks import ensure_path
 from . import pyeep
 
 if TYPE_CHECKING:
