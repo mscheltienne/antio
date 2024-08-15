@@ -33,24 +33,31 @@ def _make_registry(
     pooch.make_registry(folder, output=output, recursive=True)
 
 
-def data_path() -> Path:  # pragma: no cover
+def data_path(path: str | Path | None) -> Path:  # pragma: no cover
     """Return the path to the dataset, downloaded if needed.
+
+    Parameters
+    ----------
+    path : str | Path | None
+        Path where the dataset should be downloaded. If None, the path in the
+        environment variable ``MNE_DATA`` or ``"~/mne_data/`` is used.
 
     Returns
     -------
     path : Path
-        Path to the sample dataset, by default in ``"~/mne_data/MNE-LSL"``.
+        Path to the sample dataset, by default in ``"~/mne_data/antio-data"``.
     """
     if importlib.util.find_spec("mne") is None:
         raise ImportError("Missing 'mne'. Use pip or conda to install 'mne'.")
 
     from mne.utils import get_config
 
-    path = (
-        Path(get_config("MNE_DATA", Path.home())).expanduser()
-        / "mne_data"
-        / "antio-data"
-        / "sample"
-    )
+    if path is None:
+        path = (
+            Path(get_config("MNE_DATA", Path.home() / "mne_data")).expanduser()
+            / "antio-data"
+        )
+    else:
+        path = ensure_path(path, must_exist=True)
     base_url = "https://github.com/mscheltienne/antio/raw/main/tests/data/CA_208"
-    return fetch_dataset(path, base_url, _REGISTRY)
+    return fetch_dataset(path / "CA_208", base_url, _REGISTRY)
