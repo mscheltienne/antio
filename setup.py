@@ -99,5 +99,4 @@ setup(
         "bdist_wheel": bdist_wheel_abi3,
     },
     distclass=BinaryDistribution,  # to handle binary files
-    include_package_data=False,
 )

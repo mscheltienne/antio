@@ -22,6 +22,7 @@ dependencies = [
   'click',
   'numpy>=1.21,<3',
   'packaging',
+  'pooch',
   'psutil',
 ]
 description = 'Python package to handle I/O with the CNT format from ANT Neuro. '
@@ -34,7 +35,8 @@ keywords = [
 ]
 license = {file = 'LICENSE'}
 maintainers = [
-  {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
+  {email = 'mathieu.scheltienne@gmail.com', name = 'Mathieu Scheltienne'},
+  {name= 'Eric Larson'},
 ]
 name = 'antio'
 readme = 'README.md'
@@ -161,6 +163,12 @@ select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
 ]
 '*.pyi' = ['E501']
 '__init__.py' = ['F401']
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.package-data]
+'antio.datasets' = ['*registry.txt']
 
 [tool.tomlsort]
 all = true
