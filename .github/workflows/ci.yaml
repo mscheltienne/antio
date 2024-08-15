@@ -90,7 +90,7 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
-      - run: pip install --only-binary antio antio[test] --find-links dist
+      - run: pip install --only-binary antio antio[test] --find-links dist --pre --no-index
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v4
