@@ -24,7 +24,7 @@ def read_raw_ant(
 
     from mne.utils import check_version
 
-    if check_version("mne", "1.9"):
+    if not check_version("mne", "1.9"):
         raise RuntimeError(
             "The ANT-Neuro reader was added to MNE-Python 1.9. Either upgrade MNE "
             "or use 'antio' version 0.1.0 to read the CNT file to a Raw object."
