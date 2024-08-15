@@ -116,7 +116,6 @@ branch = true
 cover_pylib = false
 omit = [
   '**/__init__.py',
-  '**/conftest.py',
   '**/antio/_version.py',
 ]
 
