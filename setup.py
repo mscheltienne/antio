@@ -23,12 +23,12 @@ else:
     lib_files = []
 
 
-class BinaryDistribution(Distribution):
-    def has_ext_modules(self):
+class BinaryDistribution(Distribution):  # noqa: D101
+    def has_ext_modules(self):  # noqa: D102
         return True
 
 
-class build_ext(_build_ext):
+class build_ext(_build_ext):  # noqa: D101
     def run(self):
         """Build libeep with cmake as part of the extension build process."""
         src_dir = Path(__file__).parent / "src" / "libeep"
@@ -81,8 +81,8 @@ class build_ext(_build_ext):
 
 # Adapted from
 # https://github.com/joerick/python-abi3-package-sample/blob/main/setup.py
-class bdist_wheel_abi3(bdist_wheel):
-    def get_tag(self):
+class bdist_wheel_abi3(bdist_wheel):  # noqa: D101
+    def get_tag(self):  # noqa: D102
         python, abi, plat = super().get_tag()
 
         if python.startswith("cp"):

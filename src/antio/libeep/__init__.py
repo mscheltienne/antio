@@ -18,7 +18,7 @@ class BaseCNT:
         if self._handle == -1:
             raise RuntimeError("Not a valid libeep handle.")
 
-    def __del__(self) -> None:
+    def __del__(self) -> None:  # noqa: D105
         if self._handle != -1:
             pyeep.close(self._handle)
 
