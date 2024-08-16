@@ -5,10 +5,8 @@ repos:
           - id: ruff
             name: ruff linter
             args: [--fix, --show-fixes]
-            files: (src/antio|tests|setup.py)
           - id: ruff-format
             name: ruff formatter
-            files: (src/antio|tests|setup.py)
 
     - repo: https://github.com/codespell-project/codespell
       rev: v2.3.0
