@@ -680,6 +680,18 @@ libeep_get_channel_label(cntfile_t handle, int index) {
 }
 ///////////////////////////////////////////////////////////////////////////////
 const char *
+libeep_get_channel_status(cntfile_t handle, int index) {
+  struct _libeep_entry * obj=_libeep_get_object(handle, om_read);
+  return eep_get_chan_status(obj->eep, index);
+}
+///////////////////////////////////////////////////////////////////////////////
+const char *
+libeep_get_channel_type(cntfile_t handle, int index) {
+  struct _libeep_entry * obj=_libeep_get_object(handle, om_read);
+  return eep_get_chan_type(obj->eep, index);
+}
+///////////////////////////////////////////////////////////////////////////////
+const char *
 libeep_get_channel_unit(cntfile_t handle, int index) {
   struct _libeep_entry * obj=_libeep_get_object(handle, om_read);
   return eep_get_chan_unit(obj->eep, index);

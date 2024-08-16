@@ -98,6 +98,18 @@ const char * libeep_get_channel_label(cntfile_t handle, int index);
  * @param handle handle obtained by a call to libeep_read()
  * @return a channel unit(do not free this string)
  */
+const char * libeep_get_channel_status(cntfile_t handle, int index);
+/**
+ * @brief get a channel status
+ * @param handle handle obtained by a call to libeep_read()
+ * @return a channel status(do not free this string)
+ */
+const char * libeep_get_channel_type(cntfile_t handle, int index);
+/**
+ * @brief get a channel type
+ * @param handle handle obtained by a call to libeep_read()
+ * @return a channel type(do not free this string)
+ */
 const char * libeep_get_channel_unit(cntfile_t handle, int index);
 /**
  * @brief get a channel reference
