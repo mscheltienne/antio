@@ -27,16 +27,16 @@ dependencies = [
 ]
 description = 'Python package to handle I/O with the CNT format from ANT Neuro. '
 keywords = [
-  'python',
-  'eeg',
   'ant neuro',
-  'eego',
   'cnt',
+  'eeg',
+  'eego',
+  'python',
 ]
 license = {file = 'LICENSE'}
 maintainers = [
   {email = 'mathieu.scheltienne@gmail.com', name = 'Mathieu Scheltienne'},
-  {name= 'Eric Larson'},
+  {name = 'Eric Larson'},
 ]
 name = 'antio'
 readme = 'README.md'
@@ -53,9 +53,7 @@ full = [
 ]
 style = [
   'codespell[toml]>=2.2.4',
-  'isort',
-  'pydocstyle[toml]',
-  'ruff>=0.1.8',
+  'ruff>=0.6.0',
   'toml-sort',
   'yamllint',
 ]
@@ -75,9 +73,9 @@ source = 'https://github.com/mscheltienne/antio'
 tracker = 'https://github.com/mscheltienne/antio/issues'
 
 [tool.cibuildwheel]
+archs = "native"
 build = "cp312-*"
 skip = "*musllinux*"
-archs = "native"
 test-command = "pytest {project}/tests"
 test-extras = ["test"]
 
@@ -86,6 +84,7 @@ repair-wheel-command = [
   "auditwheel repair -w {dest_dir} {wheel}",
   "pipx run abi3audit --strict --report {wheel}",
 ]
+
 [tool.cibuildwheel.macos]
 repair-wheel-command = [
   "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}",
@@ -121,20 +120,6 @@ omit = [
   '**/antio/_version.py',
 ]
 
-[tool.isort]
-extend_skip_glob = []
-line_length = 88
-multi_line_output = 3
-profile = 'black'
-py_version = 39
-
-[tool.pydocstyle]
-add_ignore = 'D100,D104,D107'
-convention = 'numpy'
-ignore-decorators = '(copy_doc|property|.*setter|.*getter|pyqtSlot|Slot)'
-match = '^(?!__init__|test_).*\.py'
-match-dir = '^.*antio.*'
-
 [tool.pytest.ini_options]
 addopts = ['--color=yes', '--cov-report=', '--durations=20', '--junit-xml=junit-results.xml', '--strict-config', '--tb=short', '-ra', '-v']
 filterwarnings = [
@@ -154,15 +139,22 @@ line-ending = "lf"
 
 [tool.ruff.lint]
 ignore = []
-select = ['A', 'B', 'E', 'F', 'G', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
+select = ['A', 'B', 'D', 'E', 'F', 'G', 'I', 'LOG', 'NPY', 'PIE', 'PT', 'T20', 'UP', 'W']
+
+[tool.ruff.lint.isort]
+known-first-party = ["antio"]
 
 [tool.ruff.lint.per-file-ignores]
 '*' = [
   'B904', # 'Within an except clause, raise exceptions with raise ... from ...'
+  'D100', # 'Missing docstring in public module'
+  'D104', # 'Missing docstring in public package'
   'UP007', # 'Use `X | Y` for type annotations', requires python 3.10
 ]
-'*.pyi' = ['E501']
 '__init__.py' = ['F401']
+
+[tool.ruff.lint.pydocstyle]
+convention = 'numpy'
 
 [tool.setuptools]
 include-package-data = false

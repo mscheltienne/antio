@@ -31,14 +31,6 @@ def read_raw_ant(
         )
 
     from mne.io import read_raw_ant
-    from mne.utils import warn
-
-    warn(
-        "This function is deprecated in favor of mne.io.read_raw_ant() and will be "
-        "removed in the future.",
-        DeprecationWarning,
-        module="antio",
-    )
 
     return read_raw_ant(
         fname=fname,

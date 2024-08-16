@@ -17,6 +17,7 @@ def sha256sum(fname) -> str:
 
 
 def test_ca_208():
+    """Test the download of the CA_208 dataset in an existing folder."""
     data_path = ca_208.data_path(Path(__file__).parent.parent / "data")
     assert data_path.exists()
     for elt in (
@@ -29,7 +30,7 @@ def test_ca_208():
 
 
 def test_make_registry(tmp_path):
-    """Test the registry"""
+    """Test the registry making."""
     ca_208._make_registry(
         Path(__file__).parent.parent / "data" / "CA_208",
         output=tmp_path / "registry.txt",

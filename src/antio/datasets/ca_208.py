@@ -33,7 +33,7 @@ def _make_registry(
     pooch.make_registry(folder, output=output, recursive=True)
 
 
-def data_path(path: str | Path | None) -> Path:  # pragma: no cover
+def data_path(path: str | Path | None = None) -> Path:  # pragma: no cover
     """Return the path to the dataset, downloaded if needed.
 
     Parameters
