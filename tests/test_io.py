@@ -6,7 +6,7 @@ from antio.datasets import ca_208
 from antio.io import read_raw_ant
 
 
-@pytest.fixture()
+@pytest.fixture
 def fname() -> Path:
     """Path to a test file from the CA_208 dataset."""
     directory = ca_208.data_path(Path(__file__).parent / "data")
