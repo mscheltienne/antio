@@ -41,4 +41,6 @@ def test_read_info(fname):
     raw = read_raw_bv(fname["bv"])
     assert ch_names == raw.ch_names
     assert ch_units == ["uv"] * len(ch_names)
-    assert ch_refs == ["CPz"] * len(ch_names) + [""] * 24
+    assert ch_refs == ["CPz"] * 64 + [""] * 24
+    assert len(ch_names) == len(ch_units)
+    assert len(ch_names) == len(ch_refs)

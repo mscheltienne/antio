@@ -11,7 +11,7 @@ from antio.libeep import read_cnt
 @pytest.fixture
 def ca_208_short() -> Path:
     """Return the paths to a CA_208 file containing 64 channel gel recordings."""
-    directory = ca_208.data_path(Path(__file__).parent / "data")
+    directory = ca_208.data_path(Path(__file__).parent.parent / "data")
     return directory / "test_CA_208.cnt"
 
 
