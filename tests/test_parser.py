@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 from mne.io import read_raw_brainvision
+from numpy.testing import assert_allclose
 
 from antio import read_cnt
 from antio.datasets import ca_208
-from antio.parser import read_info
+from antio.parser import read_data, read_info
 
 if TYPE_CHECKING:
     from mne.io import BaseRaw
@@ -44,3 +45,13 @@ def test_read_info(fname):
     assert ch_refs == ["CPz"] * 64 + [""] * 24
     assert len(ch_names) == len(ch_units)
     assert len(ch_names) == len(ch_refs)
+
+
+def test_read_data(fname):
+    """Test reading the data array."""
+    cnt = read_cnt(fname["cnt"])
+    data = read_data(cnt)
+    data *= 1e-6  # convert from uV to V
+    raw = read_raw_bv(fname["bv"])
+    assert data.shape == raw.get_data().shape
+    assert_allclose(data, raw.get_data(), atol=1e-8)
