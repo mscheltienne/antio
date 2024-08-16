@@ -4,13 +4,14 @@ from pathlib import Path
 
 import pytest
 
+from antio.datasets import ca_208
 from antio.libeep import read_cnt
 
 
 @pytest.fixture
 def ca_208_short() -> Path:
     """Return the paths to a CA_208 file containing 64 channel gel recordings."""
-    directory = Path(__file__).parent.parent / "data" / "CA_208"
+    directory = ca_208.data_path(Path(__file__).parent / "data")
     return directory / "test_CA_208.cnt"
 
 
