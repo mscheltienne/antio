@@ -21,7 +21,7 @@ def test_InputCNT(ca_208_short):
     assert cnt.get_channel_count() == 88  # 64 EEG + 24 BIP
     assert cnt.get_channel(0) == ("Fp1", "uV", "CPz", "", "")
     assert cnt.get_channel(87) == ("BIP24", "uV", "", "", "")
-    with pytest.raises(RuntimeError, match="exceeds total chanel count"):
+    with pytest.raises(RuntimeError, match="exceeds total channel count"):
         cnt.get_channel(88)
     assert cnt.get_sample_frequency() == 1000
     assert 0 < cnt.get_sample_count()
@@ -35,9 +35,9 @@ def test_InputCNT(ca_208_short):
         cnt.get_trigger(7)
 
     assert cnt.get_hospital() == ""
-    name, id, sex, dob = cnt.get_patient_info()
+    name, pt_id, sex, dob = cnt.get_patient_info()
     assert name == 'antio test'
-    assert id == ''
+    assert pt_id == ''
     assert sex == ''
     assert dob.day == 14
     assert dob.month == 8
