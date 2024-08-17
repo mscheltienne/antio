@@ -30,15 +30,15 @@ def test_InputCNT(ca_208_short):
     assert 0 < cnt.get_trigger_count()
     assert len(cnt.get_trigger(0)) == 6
     assert cnt.get_trigger(0)[4] == "Impedance"
-    assert len(cnt.get_trigger(0)[5].split(' ')) == 88 # 64 EEG + 24 BIP
+    assert len(cnt.get_trigger(0)[5].split(" ")) == 88  # 64 EEG + 24 BIP
     with pytest.raises(RuntimeError, match="exceeds total trigger count"):
         cnt.get_trigger(7)
 
     assert cnt.get_hospital() == ""
     name, pt_id, sex, dob = cnt.get_patient_info()
-    assert name == 'antio test'
-    assert pt_id == ''
-    assert sex == ''
+    assert name == "antio test"
+    assert pt_id == ""
+    assert sex == ""
     assert dob.day == 14
     assert dob.month == 8
     assert dob.year == 2024
@@ -51,7 +51,7 @@ def test_InputCNT(ca_208_short):
     assert meas_date.minute == 44
     assert meas_date.second == 47
 
-    assert cnt.get_machine_info() == ('eego', 'EE_225', '')
+    assert cnt.get_machine_info() == ("eego", "EE_225", "")
 
 
 def test_read_invalid_cnt(tmp_path):
