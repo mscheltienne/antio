@@ -35,10 +35,10 @@ def test_InputCNT(ca_208_short):
         cnt.get_trigger(7)
 
     assert cnt.get_hospital() == ""
-    name, id, sex, dob = cnt.get_patient_info()
-    assert name == "antio test"
-    assert id == ""
-    assert sex == ""
+    name, pt_id, sex, dob = cnt.get_patient_info()
+    assert name == 'antio test'
+    assert pt_id == ''
+    assert sex == ''
     assert dob.day == 14
     assert dob.month == 8
     assert dob.year == 2024

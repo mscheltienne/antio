@@ -67,9 +67,8 @@ class InputCNT(BaseCNT):
                 pyeep.get_channel_type(self._handle, index),
             )
         else:
-            raise RuntimeError(
-                f"Channel index exceeds total channel count, {self.get_channel_count()}."
-            )
+            raise RuntimeError(f"Channel index exceeds total channel count" \
+                               f", {self.get_channel_count()}.")
 
     def get_sample_frequency(self) -> int:
         """Get the sampling frequency of the recording in Hz.
@@ -139,7 +138,7 @@ class InputCNT(BaseCNT):
         return pyeep.get_hospital(self._handle)
 
     def get_machine_info(self):
-        """Get machine information
+        """Get machine information.
 
         Returns
         -------
@@ -156,11 +155,11 @@ class InputCNT(BaseCNT):
         )
 
     def get_patient_info(self):
-        """Get patient info
+        """Get patient info.
 
         Returns
         -------
-        pt_info: tuple of shape (3,)
+        pt_info : tuple of shape (3,)
             The tuple contains the following elements:
             - 0: patient name
             - 1: patient id
@@ -171,8 +170,8 @@ class InputCNT(BaseCNT):
             pyeep.get_patient_name(self._handle),
             pyeep.get_patient_id(self._handle),
             ""
-            if pyeep.get_patient_sex(self._handle) is None
-            else pyeep.get_patient_sex(self._handle),
+            if pyeep.get_patient_sex(self._handle) is None \
+                else pyeep.get_patient_sex(self._handle),
             self._get_date_of_birth(),
         )
 
@@ -221,10 +220,8 @@ class InputCNT(BaseCNT):
         if index < self.get_trigger_count():
             return pyeep.get_trigger(self._handle, index)
         else:
-            raise RuntimeError(
-                "Trigger index exceeds total trigger count {self.get_trigger_count()}."
-            )
-
+            raise RuntimeError("Trigger index exceeds total trigger count" \
+                               f", {self.get_trigger_count()}.")
 
 def read_cnt(fname: Union[str, Path]) -> InputCNT:
     """Read a CNT file.
