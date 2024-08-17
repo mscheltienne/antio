@@ -21,7 +21,7 @@ def test_InputCNT(ca_208_short):
     assert cnt.get_channel_count() == 88  # 64 EEG + 24 BIP
     assert cnt.get_channel(0) == ("Fp1", "uV", "CPz", "", "")
     assert cnt.get_channel(87) == ("BIP24", "uV", "", "", "")
-    with pytest.raises(RuntimeError, match="exceeds total chanel count"):
+    with pytest.raises(RuntimeError, match="exceeds total channel count"):
         cnt.get_channel(88)
     assert cnt.get_sample_frequency() == 1000
     assert 0 < cnt.get_sample_count()
@@ -30,15 +30,15 @@ def test_InputCNT(ca_208_short):
     assert 0 < cnt.get_trigger_count()
     assert len(cnt.get_trigger(0)) == 6
     assert cnt.get_trigger(0)[4] == "Impedance"
-    assert len(cnt.get_trigger(0)[5].split(' ')) == 88 # 64 EEG + 24 BIP
+    assert len(cnt.get_trigger(0)[5].split(" ")) == 88  # 64 EEG + 24 BIP
     with pytest.raises(RuntimeError, match="exceeds total trigger count"):
         cnt.get_trigger(7)
 
     assert cnt.get_hospital() == ""
     name, id, sex, dob = cnt.get_patient_info()
-    assert name == 'antio test'
-    assert id == ''
-    assert sex == ''
+    assert name == "antio test"
+    assert id == ""
+    assert sex == ""
     assert dob.day == 14
     assert dob.month == 8
     assert dob.year == 2024
@@ -51,7 +51,7 @@ def test_InputCNT(ca_208_short):
     assert meas_date.minute == 44
     assert meas_date.second == 47
 
-    assert cnt.get_machine_info() == ('eego', 'EE_225', '')
+    assert cnt.get_machine_info() == ("eego", "EE_225", "")
 
 
 def test_read_invalid_cnt(tmp_path):
