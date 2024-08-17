@@ -128,9 +128,8 @@ class InputCNT(BaseCNT):
             start time.
         """
         return datetime.datetime.fromtimestamp(
-            self._get_start_time(),
-            datetime.timezone.utc
-            )
+            self._get_start_time(), datetime.timezone.utc
+        )
 
     def get_hospital(self):
         """Get hospital name of the recording.
@@ -190,11 +189,8 @@ class InputCNT(BaseCNT):
         """
         year, month, date = pyeep.get_date_of_birth(self._handle)
         return datetime.datetime(
-            year=year,
-            month=month,
-            day=date,
-            tzinfo=datetime.timezone.utc
-            )
+            year=year, month=month, day=date, tzinfo=datetime.timezone.utc
+        )
 
     def get_trigger_count(self) -> int:
         """Get the total number of triggers (annotations).
