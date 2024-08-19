@@ -1,33 +1,13 @@
 from __future__ import annotations
 
-import warnings
-from pathlib import Path
-from typing import TYPE_CHECKING
-
 import numpy as np
-from mne.io import read_raw_brainvision
 from numpy.testing import assert_allclose
 
 from antio import read_cnt
 from antio.parser import read_data, read_info, read_triggers
 
-if TYPE_CHECKING:
-    from mne.io import BaseRaw
 
-
-def read_raw_bv(fname: Path) -> BaseRaw:
-    """Read a brainvision file exported from eego."""
-    with warnings.catch_warnings():
-        warnings.filterwarnings(
-            "ignore",
-            message="Limited .* annotation.*outside the data range.",
-            category=RuntimeWarning,
-        )
-        raw_bv = read_raw_brainvision(fname)
-    return raw_bv
-
-
-def test_read_info(ca_208):
+def test_read_info(ca_208, read_raw_bv):
     """Test parsing channel information."""
     cnt = read_cnt(ca_208["cnt"]["short"])
     ch_names, ch_units, ch_refs = read_info(cnt)
@@ -39,7 +19,7 @@ def test_read_info(ca_208):
     assert len(ch_names) == len(ch_refs)
 
 
-def test_read_data(ca_208):
+def test_read_data(ca_208, read_raw_bv):
     """Test reading the data array."""
     cnt = read_cnt(ca_208["cnt"]["short"])
     data = read_data(cnt)
@@ -49,7 +29,7 @@ def test_read_data(ca_208):
     assert_allclose(data, raw.get_data(), atol=1e-8)
 
 
-def test_read_triggers(ca_208):
+def test_read_triggers(ca_208, read_raw_bv):
     """Test reading the triggers from a cnt file."""
     onsets, durations, descriptions, impedances, disconnect = read_triggers(
         read_cnt(ca_208["cnt"]["short"])
@@ -74,7 +54,7 @@ def test_read_triggers(ca_208):
     )
 
 
-def test_read_triggers_disconnet(ca_208):
+def test_read_triggers_disconnet(ca_208, read_raw_bv):
     """Test reading the triggers from a cnt file with amplifier disconnect."""
     onsets, durations, descriptions, impedances, disconnect = read_triggers(
         read_cnt(ca_208["cnt"]["amp-dc"])
