@@ -1,23 +1,13 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
-from antio.datasets import ca_208
 from antio.libeep import read_cnt
 
 
-@pytest.fixture
-def ca_208_short() -> Path:
-    """Return the paths to a CA_208 file containing 64 channel gel recordings."""
-    directory = ca_208.data_path(Path(__file__).parent.parent / "data")
-    return directory / "test_CA_208.cnt"
-
-
-def test_InputCNT(ca_208_short):
+def test_InputCNT(ca_208):
     """Test the methods in InputCNT."""
-    cnt = read_cnt(ca_208_short)
+    cnt = read_cnt(ca_208["cnt"]["short"])
     assert cnt.get_channel_count() == 88  # 64 EEG + 24 BIP
     assert cnt.get_channel(0) == ("Fp1", "uV", "CPz", "", "")
     assert cnt.get_channel(87) == ("BIP24", "uV", "", "", "")
