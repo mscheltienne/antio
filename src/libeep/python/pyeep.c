@@ -431,7 +431,6 @@ static PyMethodDef methods[] = {
 // void libeep_set_start_time(recinfo_t handle, time_t start_time);
 // void libeep_set_start_date_and_fraction(recinfo_t handle, double start_date, double start_fraction);
   {"get_hospital",            pyeep_get_hospital,              METH_VARARGS, "get hospital"},
-// const char *libeep_get_hospital(cntfile_t handle);
 // void libeep_set_hospital(recinfo_t handle, const char *value);
 // const char *libeep_get_test_name(cntfile_t handle);
 // void libeep_set_test_name(recinfo_t handle, const char *value);
@@ -462,7 +461,6 @@ static PyMethodDef methods[] = {
 // char libeep_get_patient_handedness(cntfile_t handle);
 // void libeep_set_patient_handedness(recinfo_t handle, char value);
   {"get_date_of_birth",          pyeep_get_date_of_birth,          METH_VARARGS, "get date of birth (yy/mm/dd)"},
-// void libeep_get_date_of_birth(cntfile_t handle, int * year, int * month, int *day);
 // void libeep_set_date_of_birth(recinfo_t handle, int year, int month, int day);
 // int libeep_add_trigger(cntfile_t handle, uint64_t sample, const char *code);
   {"get_trigger_count",        pyeep_get_trigger_count,        METH_VARARGS, "get trigger count"},
