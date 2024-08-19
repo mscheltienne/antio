@@ -40,7 +40,7 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_channel_count(self._handle)
 
-    def get_channel(self, index: int) -> tuple[str, str, str]:
+    def get_channel(self, index: int) -> tuple[str, str, str, str, str]:
         """Get the channel information at a given index.
 
         Parameters
@@ -50,7 +50,7 @@ class InputCNT(BaseCNT):
 
         Returns
         -------
-        channel : tuple of shape (3,)
+        channel : tuple of shape (5,)
             The tuple contains the following elements:
             - 0: label
             - 1: unit
@@ -58,7 +58,8 @@ class InputCNT(BaseCNT):
             - 3: status
             - 4: type
         """
-        if index < self.get_channel_count():
+        n_channels = self.get_channel_count()
+        if index < n_channels:
             return (
                 pyeep.get_channel_label(self._handle, index),
                 pyeep.get_channel_unit(self._handle, index),
@@ -68,8 +69,7 @@ class InputCNT(BaseCNT):
             )
         else:
             raise RuntimeError(
-                f"Channel index exceeds total channel count"
-                f", {self.get_channel_count()}."
+                f"Channel index exceeds total channel count, {n_channels}."
             )
 
     def get_sample_frequency(self) -> int:
@@ -109,39 +109,39 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_samples(self._handle, fro, to)
 
-    def _get_start_time(self):
+    def _get_start_time(self) -> int:
         """Get start time in UNIX format.
 
         Returns
         -------
-        time_t : int
-            start time.
+        start_time : int
+            Acquisition start time.
         """
         return pyeep.get_start_time(self._handle)
 
-    def get_start_time(self):
+    def get_start_time(self) -> datetime.datetime:
         """Get start time in datetime format.
 
         Returns
         -------
-        time_t : datetime.datetime
-            start time.
+        start_time : datetime.datetime
+            Acquisition start time.
         """
         return datetime.datetime.fromtimestamp(
             self._get_start_time(), datetime.timezone.utc
         )
 
-    def get_hospital(self):
+    def get_hospital(self) -> str:
         """Get hospital name of the recording.
 
         Returns
         -------
-        Hospital : str
-            hospital name.
+        hospital : str
+            Hospital name.
         """
         return pyeep.get_hospital(self._handle)
 
-    def get_machine_info(self):
+    def get_machine_info(self) -> tuple[str, str, str]:
         """Get machine information.
 
         Returns
@@ -158,28 +158,27 @@ class InputCNT(BaseCNT):
             pyeep.get_machine_serial_number(self._handle),
         )
 
-    def get_patient_info(self):
+    def get_patient_info(self) -> tuple[str, str, str, datetime.datetime]:
         """Get patient info.
 
         Returns
         -------
-        pt_info : tuple of shape (3,)
+        pt_info : tuple of shape (4,)
             The tuple contains the following elements:
             - 0: patient name
             - 1: patient id
             - 2: patient sex
             - 3: patient date of birth
         """
+        sex = pyeep.get_patient_sex(self._handle)
         return (
             pyeep.get_patient_name(self._handle),
             pyeep.get_patient_id(self._handle),
-            ""
-            if pyeep.get_patient_sex(self._handle) is None
-            else pyeep.get_patient_sex(self._handle),
+            "" if sex is None else sex,
             self._get_date_of_birth(),
         )
 
-    def _get_date_of_birth(self):
+    def _get_date_of_birth(self) -> datetime.datetime:
         """Get date of birth of the patient.
 
         Returns
@@ -223,12 +222,12 @@ class InputCNT(BaseCNT):
             - 4: description
             - 5: impedance, as a string separated by spaces.
         """
-        if index < self.get_trigger_count():
+        n_triggers = self.get_trigger_count()
+        if index < n_triggers:
             return pyeep.get_trigger(self._handle, index)
         else:
             raise RuntimeError(
-                "Trigger index exceeds total trigger count"
-                f", {self.get_trigger_count()}."
+                f"Trigger index exceeds total trigger count, {n_triggers}."
             )
 
 
