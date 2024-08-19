@@ -10,7 +10,9 @@ if TYPE_CHECKING:
     from .libeep import InputCNT
 
 
-def read_info(cnt: InputCNT) -> tuple[list[str], list[str], list[str], list[str]]:
+def read_info(
+    cnt: InputCNT,
+) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
     """Parse the channel information from the cnt file.
 
     Parameters
@@ -26,14 +28,20 @@ def read_info(cnt: InputCNT) -> tuple[list[str], list[str], list[str], list[str]
         List of human-readable units for each channel.
     ch_refs : list of str
         List of channel reference electrodes.
+    ch_status : list of str
+        List of channel status. Added in version 0.3.0.
+    ch_types : list of str
+        List of channel types. Added in version 0.3.0.
     """
-    ch_names, ch_units, ch_refs = [], [], []
+    ch_names, ch_units, ch_refs, ch_status, ch_types = [], [], [], [], []
     for k in range(cnt.get_channel_count()):
-        ch_curr = cnt.get_channel(k)
-        ch_names.append(ch_curr[0])
-        ch_units.append(ch_curr[1].lower())  # always lower the unit for mapping
-        ch_refs.append(ch_curr[2])
-    return ch_names, ch_units, ch_refs
+        channel = cnt.get_channel(k)
+        ch_names.append(channel[0])
+        ch_units.append(channel[1].lower())  # always lower the unit for mapping
+        ch_refs.append(channel[2])
+        ch_status.append(channel[3])
+        ch_types.append(channel[4])
+    return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
 def read_data(cnt: InputCNT) -> NDArray[np.float64]:

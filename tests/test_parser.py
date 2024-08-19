@@ -8,15 +8,20 @@ from antio.parser import read_data, read_info, read_triggers
 
 
 def test_read_info(ca_208, read_raw_bv):
-    """Test parsing channel information."""
+    """Test parsing basic channel information."""
     cnt = read_cnt(ca_208["cnt"]["short"])
-    ch_names, ch_units, ch_refs = read_info(cnt)
+    ch_names, ch_units, ch_refs, _, _ = read_info(cnt)
     raw = read_raw_bv(ca_208["bv"]["short"])
     assert ch_names == raw.ch_names
     assert ch_units == ["uv"] * len(ch_names)
     assert ch_refs == ["CPz"] * 64 + [""] * 24
     assert len(ch_names) == len(ch_units)
     assert len(ch_names) == len(ch_refs)
+
+
+def test_read_info_status_types():
+    """Test parsing channel status and types."""
+    # TODO: Placeholder for when we have a test file with channel status and types
 
 
 def test_read_data(ca_208, read_raw_bv):
