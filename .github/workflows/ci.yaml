@@ -126,9 +126,10 @@ jobs:
           pattern: cibw-wheels-*
           merge-multiple: true
           path: dist
-      - run: ls -alt . && ls -alt dist/
+      - run: ls -alt . && ls -alt dist/ && ls -alt mne-python/
       - run: pip install --only-binary antio antio[test] --find-links dist --pre
       - run: antio sys-info --developer
+      - uses: ./.github/actions/get-testing-dataset
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v4
         with:
