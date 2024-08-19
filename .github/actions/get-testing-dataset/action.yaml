@@ -1,22 +1,16 @@
 name: "Get MNE testing dataset"
 description: "A composite action to get MNE testing dataset from cache or remote."
-inputs:
-  mne-testing:
-    description: "If True, retrieve MNE's testing dataset."
-    required: false
-    default: "true"
 
 runs:
   using: "composite"
   steps:
     - name: Cache MNE testing dataset
-      if: ${{ inputs.mne-testing == 'true' }}
       id: cache_mne_testing
       uses: actions/cache@v4
       with:
         key: mne-python-sample-${{ runner.os }}
         path: ~/mne_data/MNE-testing-data
     - name: Download MNE testing dataset
-      if: ${{ inputs.mne-testing == 'true' && steps.cache_mne_testing.outputs.cache-hit != 'true' }}
+      if: ${{ steps.cache_mne_testing.outputs.cache-hit != 'true' }}
       shell: bash
       run: python -c "import mne; mne.datasets.testing.data_path()"
