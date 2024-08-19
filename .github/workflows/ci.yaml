@@ -170,7 +170,7 @@ jobs:
       - run: twine check --strict dist/*
 
   publish:
-    needs: [check, test]
+    needs: [check, test, test-mne]
     name: publish PyPI
     runs-on: ubuntu-latest
     permissions:
