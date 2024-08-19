@@ -99,7 +99,7 @@ jobs:
 
   test-mne:
     needs: cibuildwheel
-    timeout-minutes: 20
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
