@@ -376,8 +376,7 @@ pyeep_get_patient_sex(PyObject* self, PyObject* args) {
   if(!PyArg_ParseTuple(args, "i", & handle)) {
     return NULL;
   }
-
-  return Py_BuildValue("s", libeep_get_patient_sex(handle));
+  return Py_BuildValue("C", libeep_get_patient_sex(handle));
 }
 ///////////////////////////////////////////////////////////////////////////////
 static

@@ -193,7 +193,7 @@ class InputCNT(BaseCNT):
         return (
             pyeep.get_patient_name(self._handle),
             pyeep.get_patient_id(self._handle),
-            "" if sex is None else sex,
+            "" if sex == "\x00" else sex,
             self._get_date_of_birth(),
         )
 
