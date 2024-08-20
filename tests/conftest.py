@@ -27,6 +27,17 @@ def ca_208() -> dict[str, dict[str, Path]]:
 
 
 @pytest.fixture(scope="session")
+def andy_101() -> dict[str, dict[str, Path]]:
+    """Return the path to the andy_101 dataset containing 128 channel gel recordings."""
+    directory = Path(__file__).parent / "data" / "andy_101"
+    cnt = {
+        "short": directory / "Andy_101-raw.cnt",
+    }
+    bv = {key: value.with_suffix(".vhdr") for key, value in cnt.items()}
+    return {"cnt": cnt, "bv": bv}
+
+
+@pytest.fixture(scope="session")
 def read_raw_bv() -> Callable[[Path], BaseRaw]:
     """Fixture to read a brainvision file exported from eego."""
 
