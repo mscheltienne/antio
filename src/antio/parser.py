@@ -58,8 +58,7 @@ def read_data(cnt: InputCNT) -> NDArray[np.float64]:
         The numpy array containing the data.
     """
     n_samples = cnt.get_sample_count()  # sample = (n_channels,)
-    data = cnt.get_samples(0, n_samples)
-    return np.array(data).reshape(n_samples, -1).T  # (n_channels, n_samples)
+    return cnt.get_samples_as_nparray(0, n_samples).astype('float64')
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:

@@ -7,6 +7,8 @@
 #define _DEBUG
 #else
 #include <Python.h>
+#include<numpy/ndarrayobject.h>
+#include <numpy/arrayobject.h>
 #endif
 // libeep
 #include <v4/eep.h>
@@ -196,6 +198,36 @@ pyeep_get_samples(PyObject* self, PyObject* args) {
   }
   libeep_free_samples(libeep_sample_data);
   return python_list;
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_samples_as_nparray(PyObject* self, PyObject* args) {
+  int handle;
+  int fro;
+  int to;
+  int nd = 2;
+  npy_intp dims[2];
+
+  Py_ssize_t i;
+
+  if(!PyArg_ParseTuple(args, "iii", & handle, & fro, & to)) {
+    return NULL;
+  }
+
+  float * libeep_sample_data = libeep_get_samples(handle, fro, to);
+  if(libeep_sample_data == NULL) {
+    return NULL;
+  }
+
+  dims[0] = to - fro;
+  dims[1] = libeep_get_channel_count(handle);
+  PyObject * numpy_array = PyArray_SimpleNewFromData(nd, dims, PyArray_FLOAT32, libeep_sample_data);
+  if(!numpy_array) {
+    return NULL;
+  }
+  PyObject * numpy_array_transposed = PyArray_Transpose(numpy_array, NULL);
+  return numpy_array_transposed;
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -421,6 +453,7 @@ static PyMethodDef methods[] = {
   {"get_sample_count",         pyeep_get_sample_count,         METH_VARARGS, "get sample count"},
   {"get_samples",              pyeep_get_samples,              METH_VARARGS, "get samples"},
   {"add_samples",              pyeep_add_samples,              METH_VARARGS, "add samples"},
+  {"get_samples_as_nparray",   pyeep_get_samples_as_nparray,   METH_VARARGS, "get samples as np array"},
 // void libeep_add_raw_samples(cntfile_t handle, const int32_t *data, int n);
 // int32_t * libeep_get_raw_samples(cntfile_t handle, long from, long to);
 // void libeep_free_raw_samples(int32_t *data);
@@ -464,7 +497,7 @@ static PyMethodDef methods[] = {
 // void libeep_set_date_of_birth(recinfo_t handle, int year, int month, int day);
 // int libeep_add_trigger(cntfile_t handle, uint64_t sample, const char *code);
   {"get_trigger_count",        pyeep_get_trigger_count,        METH_VARARGS, "get trigger count"},
-  {"get_trigger",              pyeep_get_trigger,              METH_VARARGS, "get samples"},
+  {"get_trigger",              pyeep_get_trigger,              METH_VARARGS, "get triggers"},
 // long libeep_get_zero_offset(cntfile_t handle);
 // const char * libeep_get_condition_label(cntfile_t handle);
 // const char * libeep_get_condition_color(cntfile_t handle);
@@ -495,6 +528,7 @@ PyMODINIT_FUNC PyInit_pyeep(void) {
 #define INITERROR return
 PyMODINIT_FUNC initpyeep(void) {
 #endif
+  import_array();  /*https://stackoverflow.com/questions/25494858/creating-numpy-array-in-c-extension-segfaults/25496494#25496494*/
   // init libeep
   libeep_init();
 

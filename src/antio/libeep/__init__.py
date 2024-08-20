@@ -4,6 +4,8 @@ import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ..utils._checks import ensure_path
 from . import pyeep
 
@@ -109,7 +111,24 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_samples(self._handle, fro, to)
 
-    def _get_start_time(self) -> int:
+    def get_samples_as_nparray(self, fro: int, to: int) -> np.ndarray[float]:
+        """Get samples between 2 index as numpy array.
+
+        Parameters
+        ----------
+        fro : int
+            Start index.
+        to : int
+            End index.
+
+        Returns
+        -------
+        samples : ndarray of shape (n_channels, n_samples)
+            List of retrieved samples as 2-dimensional numpy array.
+        """
+        return pyeep.get_samples_as_nparray(self._handle, fro, to)
+
+    def _get_start_time(self):
         """Get start time in UNIX format.
 
         Returns
