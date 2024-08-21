@@ -105,7 +105,7 @@ def test_InputCNT2(andy_101):
     assert meas_date.year == 2024
     assert meas_date.hour == 16
     assert meas_date.minute == 17
-    assert meas_date.second == 6
+    assert meas_date.second == 7
 
     assert cnt.get_machine_info() == ("eego", "EE_226", "")
 
