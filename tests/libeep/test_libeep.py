@@ -22,13 +22,13 @@ def test_InputCNT1(ca_208):
     assert cnt.get_samples_as_nparray(0, 2).shape == (88, 2)
     np.testing.assert_allclose(
         cnt.get_samples(0, 1), cnt.get_samples_as_nparray(0, 1)[:, 0]
-        )
+    )
     np.testing.assert_allclose(
         cnt.get_samples_as_nparray(0, 1), cnt.get_samples_as_nparray(0, 2)[:, :1]
-        )
+    )
     np.testing.assert_allclose(
         cnt.get_samples_as_nparray(1, 2), cnt.get_samples_as_nparray(0, 2)[:, 1:]
-        )
+    )
     assert 0 < cnt.get_trigger_count()
     assert len(cnt.get_trigger(0)) == 6
     assert cnt.get_trigger(0)[4] == "Impedance"
@@ -72,13 +72,13 @@ def test_InputCNT2(andy_101):
     assert cnt.get_samples_as_nparray(0, 2).shape == (128, 2)
     np.testing.assert_allclose(
         cnt.get_samples(0, 1), cnt.get_samples_as_nparray(0, 1)[:, 0]
-        )
+    )
     np.testing.assert_allclose(
         cnt.get_samples_as_nparray(0, 1), cnt.get_samples_as_nparray(0, 2)[:, :1]
-        )
+    )
     np.testing.assert_allclose(
         cnt.get_samples_as_nparray(1, 2), cnt.get_samples_as_nparray(0, 2)[:, 1:]
-        )
+    )
     assert 0 < cnt.get_trigger_count()
     assert len(cnt.get_trigger(0)) == 6
     assert cnt.get_trigger(0)[4] == "Impedance"
