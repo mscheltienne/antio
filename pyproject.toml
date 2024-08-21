@@ -1,7 +1,7 @@
 [build-system]
 build-backend = 'setuptools.build_meta'
 requires = [
-  'numpy>=1.21,<3',
+  'numpy>=2.0,<3',
   'setuptools >= 64.0.0',
 ]
 
