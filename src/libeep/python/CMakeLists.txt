@@ -7,7 +7,7 @@ message("numpy include...... ${Python3_SITELIB}/numpy/_core/include")
 message("python 3 abi3 lib..... ${Python3_SABI_LIBRARIES}")
 set(Python_SOABI "abi3")
 include_directories(SYSTEM
-  ${Python3_SITELIB}/numpy/core/include
+  ${Python3_SITELIB}/numpy/_core/include
 )
 Python3_add_library(pyeep3 MODULE ./pyeep.c USE_SABI 3.9 WITH_SOABI)
 set_target_properties(pyeep3 PROPERTIES OUTPUT_NAME pyeep)
