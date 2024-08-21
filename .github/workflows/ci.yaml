@@ -107,7 +107,7 @@ jobs:
           - os: ubuntu-latest
             python: 3.9
             numpy: 1.21.0
-    name: test numpy compatibility on ${{ matrix.os }} - py${{ matrix.python }}
+    name: test numpy compat on ${{ matrix.os }} - py${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -123,8 +123,7 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
-      - run: pip install --only-binary antio antio[test] --find-links dist --pre
-      - run: pip install numpy==${{ matrix.numpy }}
+      - run: pip install --only-binary antio antio[test] numpy==${{ matrix.numpy }} --find-links dist --pre
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v4
