@@ -1,6 +1,7 @@
 [build-system]
 build-backend = 'setuptools.build_meta'
-requires = ['setuptools >= 64.0.0']
+requires = ['setuptools >= 64.0.0',
+            'numpy>=1.21,<3']
 
 [project]
 authors = [
