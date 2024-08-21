@@ -222,7 +222,7 @@ pyeep_get_samples_as_nparray(PyObject* self, PyObject* args) {
 
   dims[0] = to - fro;
   dims[1] = libeep_get_channel_count(handle);
-  PyObject * numpy_array = PyArray_SimpleNewFromData(nd, dims, PyArray_FLOAT32, libeep_sample_data);
+  PyObject * numpy_array = PyArray_SimpleNewFromData(nd, dims, NPY_FLOAT32, libeep_sample_data);
   if(!numpy_array) {
     return NULL;
   }
