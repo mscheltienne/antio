@@ -94,8 +94,7 @@ repair-wheel-command = [
 ]
 
 [tool.cibuildwheel.windows]
-before-build = "pip install delvewheel"
-before-build = "pip install numpy"
+before-build = "pip install delvewheel numpy"
 repair-wheel-command = [
   "delvewheel repair -w {dest_dir} {wheel}",
   "pipx run abi3audit --strict --report {wheel}",
