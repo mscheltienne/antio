@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
   'click',
-  'numpy>=1.21,<3',
+  'numpy>=1.23,<3',
   'packaging',
   'psutil',
 ]

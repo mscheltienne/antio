@@ -106,7 +106,7 @@ jobs:
         include:
           - os: ubuntu-latest
             python: 3.9
-            numpy: 1.21.0
+            numpy: 1.23.0
     name: test numpy compat on ${{ matrix.os }} - py${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     defaults:
