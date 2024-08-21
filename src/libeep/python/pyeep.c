@@ -7,7 +7,7 @@
 #define _DEBUG
 #else
 #include <Python.h>
-#include<numpy/ndarrayobject.h>
+#include <numpy/ndarrayobject.h>
 #include <numpy/arrayobject.h>
 #endif
 // libeep

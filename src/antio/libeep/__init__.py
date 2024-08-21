@@ -12,6 +12,8 @@ from . import pyeep
 if TYPE_CHECKING:
     from typing import Optional, Union
 
+    from numpy.typing import NDArray
+
 
 class BaseCNT:
     """Object representing a CNT file."""
@@ -111,7 +113,7 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_samples(self._handle, fro, to)
 
-    def get_samples_as_nparray(self, fro: int, to: int) -> np.ndarray[float]:
+    def get_samples_as_nparray(self, fro: int, to: int) -> NDArray[np.float32]:
         """Get samples between 2 index as numpy array.
 
         Parameters
@@ -123,7 +125,7 @@ class InputCNT(BaseCNT):
 
         Returns
         -------
-        samples : ndarray of shape (n_channels, n_samples)
+        samples : array of shape (n_channels, n_samples)
             List of retrieved samples as 2-dimensional numpy array.
         """
         return pyeep.get_samples_as_nparray(self._handle, fro, to)
