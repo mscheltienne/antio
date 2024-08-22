@@ -62,7 +62,7 @@ def read_data(cnt: InputCNT) -> NDArray[np.float64]:
     The type casting makes the output array writeable.
     """
     n_samples = cnt.get_sample_count()  # sample = (n_channels,)
-    return cnt.get_samples_as_nparray(0, n_samples).astype("float64")
+    return cnt.get_samples_as_nparray(0, n_samples).astype(np.float64)
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:
