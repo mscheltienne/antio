@@ -134,7 +134,7 @@ class InputCNT(BaseCNT):
         This array is read-only.
         """
         buffer = self._get_samples_as_buffer(fro, to)
-        return np.frombuffer(buffer, dtype=np.float32).reshape((to-fro, -1)).T
+        return np.frombuffer(buffer, dtype=np.float32).reshape((to - fro, -1)).T
 
     def _get_samples_as_buffer(self, fro: int, to: int) -> ByteString:
         """Get samples between 2 index as memoryview.
