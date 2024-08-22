@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -167,7 +167,7 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_start_time(self._handle)
 
-    def get_start_time(self) -> datetime.datetime:
+    def get_start_time(self) -> datetime:
         """Get start time in datetime format.
 
         Returns
@@ -175,9 +175,7 @@ class InputCNT(BaseCNT):
         start_time : datetime.datetime
             Acquisition start time.
         """
-        return datetime.datetime.fromtimestamp(
-            self._get_start_time(), datetime.timezone.utc
-        )
+        return datetime.fromtimestamp(self._get_start_time(), timezone.utc)
 
     def get_hospital(self) -> str:
         """Get hospital name of the recording.
@@ -206,7 +204,7 @@ class InputCNT(BaseCNT):
             pyeep.get_machine_serial_number(self._handle),
         )
 
-    def get_patient_info(self) -> tuple[str, str, str, datetime.datetime]:
+    def get_patient_info(self) -> tuple[str, str, str, datetime]:
         """Get patient info.
 
         Returns
@@ -226,7 +224,7 @@ class InputCNT(BaseCNT):
             self._get_date_of_birth(),
         )
 
-    def _get_date_of_birth(self) -> datetime.datetime:
+    def _get_date_of_birth(self) -> datetime:
         """Get date of birth of the patient.
 
         Returns
@@ -235,9 +233,7 @@ class InputCNT(BaseCNT):
             date of birth in datetime format.
         """
         year, month, date = pyeep.get_date_of_birth(self._handle)
-        return datetime.datetime(
-            year=year, month=month, day=date, tzinfo=datetime.timezone.utc
-        )
+        return datetime(year=year, month=month, day=date, tzinfo=timezone.utc)
 
     def get_trigger_count(self) -> int:
         """Get the total number of triggers (annotations).

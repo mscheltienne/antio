@@ -31,6 +31,7 @@ def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
         "ch_unit": "uv",
         "n_channels": 64,
         "n_bips": 24,
+        "meas_date": "2024-08-14-10-44-47+0000",
     }
 
 
@@ -49,7 +50,14 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
         "ch_unit": "uv",
         "n_channels": 128,
         "n_bips": 0,
+        "meas_date": "2024-08-19-16-17-07+0000",
     }
+
+
+@pytest.fixture(scope="session")
+def meas_date_format() -> str:
+    """Return the format of the measurement date."""
+    return "%Y-%m-%d-%H-%M-%S%z"
 
 
 @pytest.fixture(scope="session")
