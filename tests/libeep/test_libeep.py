@@ -109,6 +109,8 @@ def test_get_samples(dataset, read_raw_bv, request):
     # compare with brainvision files
     raw = read_raw_bv(dataset["bv"]["short"])
     for start, stop in ((10, 25), (100, 200)):
+        if raw.times.size < stop:
+            pytest.skip("Raw file is too short to run this test.")
         raw_data = raw.get_data(start=start, stop=stop)
         samples = (
             np.array(cnt.get_samples(start, stop)).reshape((stop - start), -1).T * 1e-6
@@ -116,3 +118,29 @@ def test_get_samples(dataset, read_raw_bv, request):
         assert_allclose(raw_data, samples, atol=1e-8)
         samples_np = cnt.get_samples_as_nparray(start, stop) * 1e-6
         assert_allclose(raw_data, samples_np, atol=1e-8)
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_invalid_samples(dataset, request):
+    """Test retrieving samples outside of the range of the file."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    n_samples = cnt.get_sample_count()
+    # end index exceeds total sample count
+    with pytest.raises(RuntimeError, match="End index exceeds total sample count."):
+        cnt.get_samples(0, n_samples + 1)
+    with pytest.raises(RuntimeError, match="End index exceeds total sample count."):
+        cnt.get_samples_as_nparray(0, n_samples + 1)
+    # negative values
+    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+        cnt.get_samples(-1, n_samples - 1)
+    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+        cnt.get_samples(0, -1)
+    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+        cnt.get_samples_as_nparray(-1, n_samples - 1)
+    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+        cnt.get_samples_as_nparray(0, -1)
+    # maximum range
+    samples = cnt.get_samples(0, n_samples)
+    samples_np = cnt.get_samples_as_nparray(0, n_samples)
+    assert samples_np.size == len(samples)

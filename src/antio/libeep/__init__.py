@@ -112,6 +112,10 @@ class InputCNT(BaseCNT):
         samples : list of shape (n_channels * n_samples)
             List of retrieved samples, ordered by (n_channels,) samples.
         """
+        if fro < 0 or to < 0:
+            raise RuntimeError("Start/Stop index cannot be negative.")
+        if self.get_sample_count() < to:
+            raise RuntimeError("End index exceeds total sample count.")
         return pyeep.get_samples(self._handle, fro, to)
 
     def get_samples_as_nparray(self, fro: int, to: int) -> NDArray[np.float32]:
@@ -133,6 +137,10 @@ class InputCNT(BaseCNT):
         -----
         This array is read-only.
         """
+        if fro < 0 or to < 0:
+            raise RuntimeError("Start/Stop index cannot be negative.")
+        if self.get_sample_count() < to:
+            raise RuntimeError("End index exceeds total sample count.")
         buffer = self._get_samples_as_buffer(fro, to)
         return np.frombuffer(buffer, dtype=np.float32).reshape((to - fro, -1)).T
 
