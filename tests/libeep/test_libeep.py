@@ -178,6 +178,6 @@ def test_get_invalid_triggers(dataset, request):
         cnt.get_trigger(cnt.get_trigger_count())
     with pytest.raises(RuntimeError, match="cannot be negative"):
         cnt.get_trigger(-1)
-    trigger = cnt.get_trigger_count(cnt.get_trigger_count() - 1)
+    trigger = cnt.get_trigger(cnt.get_trigger_count() - 1)
     assert isinstance(trigger, tuple)
     assert len(trigger) != 0
