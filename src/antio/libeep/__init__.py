@@ -110,7 +110,7 @@ class InputCNT(BaseCNT):
         Returns
         -------
         samples : list of shape (n_channels * n_samples)
-            List of retrieved samples, ordered by (n_channels, ) samples.
+            List of retrieved samples, ordered by (n_channels,) samples.
         """
         return pyeep.get_samples(self._handle, fro, to)
 
@@ -149,7 +149,7 @@ class InputCNT(BaseCNT):
         Returns
         -------
         samples : buffer of shape (n_channels * n_samples)
-            List of retrieved samples, ordered by (n_channels, ) samples.
+            List of retrieved samples, ordered by (n_channels,) samples.
 
         Notes
         -----
