@@ -63,19 +63,20 @@ class InputCNT(BaseCNT):
             - 3: status
             - 4: type
         """
+        if index < 0:
+            raise RuntimeError(f"Channel index {index} cannot be negative.")
         n_channels = self.get_channel_count()
-        if index < n_channels:
-            return (
-                pyeep.get_channel_label(self._handle, index),
-                pyeep.get_channel_unit(self._handle, index),
-                pyeep.get_channel_reference(self._handle, index),
-                pyeep.get_channel_status(self._handle, index),
-                pyeep.get_channel_type(self._handle, index),
-            )
-        else:
+        if n_channels <= index:
             raise RuntimeError(
-                f"Channel index exceeds total channel count, {n_channels}."
+                f"Channel index {index} exceeds total channel count {n_channels}."
             )
+        return (
+            pyeep.get_channel_label(self._handle, index),
+            pyeep.get_channel_unit(self._handle, index),
+            pyeep.get_channel_reference(self._handle, index),
+            pyeep.get_channel_status(self._handle, index),
+            pyeep.get_channel_type(self._handle, index),
+        )
 
     def get_sample_frequency(self) -> int:
         """Get the sampling frequency of the recording in Hz.
@@ -113,9 +114,9 @@ class InputCNT(BaseCNT):
             List of retrieved samples, ordered by (n_channels,) samples.
         """
         if fro < 0 or to < 0:
-            raise RuntimeError("Start/Stop index cannot be negative.")
+            raise RuntimeError(f"Start/Stop index {fro}/{to} cannot be negative.")
         if self.get_sample_count() < to:
-            raise RuntimeError("End index exceeds total sample count.")
+            raise RuntimeError(f"End index {to} exceeds total sample count.")
         return pyeep.get_samples(self._handle, fro, to)
 
     def get_samples_as_nparray(self, fro: int, to: int) -> NDArray[np.float32]:
@@ -138,9 +139,9 @@ class InputCNT(BaseCNT):
         This array is read-only.
         """
         if fro < 0 or to < 0:
-            raise RuntimeError("Start/Stop index cannot be negative.")
+            raise RuntimeError(f"Start/Stop index {fro}/{to} cannot be negative.")
         if self.get_sample_count() < to:
-            raise RuntimeError("End index exceeds total sample count.")
+            raise RuntimeError(f"End index {to} exceeds total sample count.")
         buffer = self._get_samples_as_buffer(fro, to)
         return np.frombuffer(buffer, dtype=np.float32).reshape((to - fro, -1)).T
 
@@ -274,13 +275,14 @@ class InputCNT(BaseCNT):
             - 4: description
             - 5: impedance, as a string separated by spaces.
         """
+        if index < 0:
+            raise RuntimeError(f"Trigger index {index} cannot be negative.")
         n_triggers = self.get_trigger_count()
-        if index < n_triggers:
-            return pyeep.get_trigger(self._handle, index)
-        else:
+        if n_triggers <= index:
             raise RuntimeError(
-                f"Trigger index exceeds total trigger count, {n_triggers}."
+                f"Trigger index {index} exceeds total trigger count {n_triggers}."
             )
+        return pyeep.get_trigger(self._handle, index)
 
 
 def read_cnt(fname: Union[str, Path]) -> InputCNT:

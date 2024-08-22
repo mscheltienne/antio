@@ -10,44 +10,39 @@ from numpy.testing import assert_allclose
 from antio.libeep import read_cnt
 
 
-def test_InputCNT1(ca_208):
-    """Test the methods in InputCNT."""
-    cnt = read_cnt(ca_208["cnt"]["short"])
-    assert cnt.get_channel_count() == 88  # 64 EEG + 24 BIP
-    assert cnt.get_channel(0) == ("Fp1", "uV", "CPz", "", "")
-    assert cnt.get_channel(87) == ("BIP24", "uV", "", "", "")
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_channel_information(dataset, read_raw_bv, request):
+    """Test getting channel information from a CNT file."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    assert cnt.get_channel_count() == dataset["n_channels"] + dataset["n_bips"]
+    assert cnt.get_sample_frequency() == dataset["sfreq"]
+    raw = read_raw_bv(dataset["bv"]["short"])
+    for k in range(dataset["n_channels"]):
+        label, unit, ref, status, ch_type = cnt.get_channel(k)
+        assert label == raw.ch_names[k]
+        assert unit.lower() == dataset["ch_unit"]
+        assert ref == dataset["ch_ref"]
+        assert status == ""
+        assert ch_type == ""
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_invalid_channel(dataset, request):
+    """Test getting an invalid channel."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    n_channels = cnt.get_channel_count()
+    assert n_channels == dataset["n_channels"] + dataset["n_bips"]
     with pytest.raises(RuntimeError, match="exceeds total channel count"):
-        cnt.get_channel(88)
-    assert cnt.get_sample_frequency() == 1000
-    assert 0 < cnt.get_sample_count()
-    assert 0 < cnt.get_trigger_count()
-    assert len(cnt.get_trigger(0)) == 6
-    assert cnt.get_trigger(0)[4] == "Impedance"
-    assert len(cnt.get_trigger(0)[5].split(" ")) == 88  # 64 EEG + 24 BIP
-    with pytest.raises(RuntimeError, match="exceeds total trigger count"):
-        cnt.get_trigger(7)
-
-
-def test_InputCNT2(andy_101):
-    """Test the methods in InputCNT."""
-    cnt = read_cnt(andy_101["cnt"]["short"])
-    assert cnt.get_channel_count() == 128  # 128 EEG
-    assert cnt.get_channel(0) == ("Lm", "uV", "Z3", "", "")
-    assert cnt.get_channel(127) == ("LE4", "uV", "Z3", "", "")
+        cnt.get_channel(n_channels + 1)
     with pytest.raises(RuntimeError, match="exceeds total channel count"):
-        cnt.get_channel(128)
-    assert cnt.get_sample_frequency() == 2000
-    assert 0 < cnt.get_sample_count()
-    assert 0 < cnt.get_trigger_count()
-    assert len(cnt.get_trigger(0)) == 6
-    assert cnt.get_trigger(0)[4] == "Impedance"
-    assert len(cnt.get_trigger(0)[5].split(" ")) == 128  # 128 EEG
-    assert len(cnt.get_trigger(1)) == 6
-    assert cnt.get_trigger(1)[4] == "Impedance"
-    assert len(cnt.get_trigger(1)[5].split(" ")) == 128  # 128 EEG
-
-    with pytest.raises(RuntimeError, match="exceeds total trigger count"):
-        cnt.get_trigger(7)
+        cnt.get_channel(n_channels)
+    with pytest.raises(RuntimeError, match="cannot be negative"):
+        cnt.get_channel(-1)
+    info = cnt.get_channel(n_channels - 1)
+    assert isinstance(info, tuple)
+    assert len(info) != 0
 
 
 def test_read_invalid_cnt(tmp_path):
@@ -66,6 +61,14 @@ def test_read_meas_date(dataset, meas_date_format, request):
     start_time = cnt.get_start_time()
     assert isinstance(start_time, datetime)
     assert start_time.strftime(meas_date_format) == dataset["meas_date"]
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_sample_count(dataset, request):
+    """Test getting the sample count from a CNT file."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    assert 0 < cnt.get_sample_count()
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
@@ -105,18 +108,18 @@ def test_get_invalid_samples(dataset, request):
     cnt = read_cnt(dataset["cnt"]["short"])
     n_samples = cnt.get_sample_count()
     # end index exceeds total sample count
-    with pytest.raises(RuntimeError, match="End index exceeds total sample count."):
+    with pytest.raises(RuntimeError, match="exceeds total sample count"):
         cnt.get_samples(0, n_samples + 1)
-    with pytest.raises(RuntimeError, match="End index exceeds total sample count."):
+    with pytest.raises(RuntimeError, match="exceeds total sample count."):
         cnt.get_samples_as_nparray(0, n_samples + 1)
     # negative values
-    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+    with pytest.raises(RuntimeError, match="cannot be negative."):
         cnt.get_samples(-1, n_samples - 1)
-    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+    with pytest.raises(RuntimeError, match="cannot be negative."):
         cnt.get_samples(0, -1)
-    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+    with pytest.raises(RuntimeError, match="cannot be negative."):
         cnt.get_samples_as_nparray(-1, n_samples - 1)
-    with pytest.raises(RuntimeError, match="Start/Stop index cannot be negative."):
+    with pytest.raises(RuntimeError, match="cannot be negative."):
         cnt.get_samples_as_nparray(0, -1)
     # maximum range
     samples = cnt.get_samples(0, n_samples)
@@ -151,3 +154,30 @@ def test_get_machine_information(dataset, request):
     cnt = read_cnt(dataset["cnt"]["short"])
     # TODO: Investigate why the serial number is missing in both datasets.
     assert cnt.get_machine_info() == dataset["machine_info"]
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_base_triggers(dataset, request):
+    """Test getting trigger information from a file with basic triggers."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    assert 0 < cnt.get_trigger_count()
+    n_channels = cnt.get_channel_count()
+    assert n_channels == dataset["n_channels"] + dataset["n_bips"]
+    assert len(cnt.get_trigger(0)) == 6
+    assert cnt.get_trigger(0)[4] == "Impedance"
+    assert len(cnt.get_trigger(0)[5].split(" ")) == n_channels
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_invalid_triggers(dataset, request):
+    """Test getting triggers from an invalid index."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    with pytest.raises(RuntimeError, match="exceeds total trigger count"):
+        cnt.get_trigger(cnt.get_trigger_count())
+    with pytest.raises(RuntimeError, match="cannot be negative"):
+        cnt.get_trigger(-1)
+    trigger = cnt.get_trigger_count(cnt.get_trigger_count() - 1)
+    assert isinstance(trigger, tuple)
+    assert len(trigger) != 0

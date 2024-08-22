@@ -31,6 +31,7 @@ def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
         "ch_unit": "uv",  # common unit on all channels
         "n_channels": 64,
         "n_bips": 24,
+        "sfreq": 1000,
         "meas_date": "2024-08-14-10-44-47+0000",
         "patient_info": {
             "name": "antio test",
@@ -58,6 +59,7 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
         "ch_unit": "uv",  # common unit on all channels
         "n_channels": 128,
         "n_bips": 0,
+        "sfreq": 2000,
         "meas_date": "2024-08-19-16-17-07+0000",
         "patient_info": {
             "name": "Andy test_middle_name EEG_Exam",
