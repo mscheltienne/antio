@@ -10,7 +10,9 @@ if TYPE_CHECKING:
     from .libeep import InputCNT
 
 
-def read_info(cnt: InputCNT) -> tuple[list[str], list[str], list[str], list[str]]:
+def read_info(
+    cnt: InputCNT,
+) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
     """Parse the channel information from the cnt file.
 
     Parameters
@@ -26,14 +28,20 @@ def read_info(cnt: InputCNT) -> tuple[list[str], list[str], list[str], list[str]
         List of human-readable units for each channel.
     ch_refs : list of str
         List of channel reference electrodes.
+    ch_status : list of str
+        List of channel status. Added in version 0.3.0.
+    ch_types : list of str
+        List of channel types. Added in version 0.3.0.
     """
-    ch_names, ch_units, ch_refs = [], [], []
+    ch_names, ch_units, ch_refs, ch_status, ch_types = [], [], [], [], []
     for k in range(cnt.get_channel_count()):
-        ch_curr = cnt.get_channel(k)
-        ch_names.append(ch_curr[0])
-        ch_units.append(ch_curr[1].lower())  # always lower the unit for mapping
-        ch_refs.append(ch_curr[2])
-    return ch_names, ch_units, ch_refs
+        channel = cnt.get_channel(k)
+        ch_names.append(channel[0])
+        ch_units.append(channel[1].lower())  # always lower the unit for mapping
+        ch_refs.append(channel[2])
+        ch_status.append(channel[3])
+        ch_types.append(channel[4])
+    return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
 def read_data(cnt: InputCNT) -> NDArray[np.float64]:
@@ -48,10 +56,13 @@ def read_data(cnt: InputCNT) -> NDArray[np.float64]:
     -------
     data : array of shape (n_channels, n_samples)
         The numpy array containing the data.
+
+    Notes
+    -----
+    The type casting makes the output array writeable.
     """
     n_samples = cnt.get_sample_count()  # sample = (n_channels,)
-    data = cnt.get_samples(0, n_samples)
-    return np.array(data).reshape(n_samples, -1).T  # (n_channels, n_samples)
+    return cnt.get_samples_as_nparray(0, n_samples).astype(np.float64)
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:

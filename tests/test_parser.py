@@ -1,38 +1,54 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from numpy.testing import assert_allclose
 
 from antio import read_cnt
 from antio.parser import read_data, read_info, read_triggers
 
 
-def test_read_info(ca_208, read_raw_bv):
-    """Test parsing channel information."""
-    cnt = read_cnt(ca_208["cnt"]["short"])
-    ch_names, ch_units, ch_refs = read_info(cnt)
-    raw = read_raw_bv(ca_208["bv"]["short"])
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_read_info(dataset, read_raw_bv, request):
+    """Test parsing basic channel information."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    ch_names, ch_units, ch_refs, _, _ = read_info(cnt)
+    raw = read_raw_bv(dataset["bv"]["short"])
     assert ch_names == raw.ch_names
-    assert ch_units == ["uv"] * len(ch_names)
-    assert ch_refs == ["CPz"] * 64 + [""] * 24
+    assert len(ch_names) == dataset["n_channels"] + dataset["n_bips"]
+    assert ch_units == [dataset["ch_unit"]] * len(ch_names)
+    assert (
+        ch_refs
+        == [dataset["ch_ref"]] * dataset["n_channels"] + [""] * dataset["n_bips"]
+    )
     assert len(ch_names) == len(ch_units)
     assert len(ch_names) == len(ch_refs)
 
 
-def test_read_data(ca_208, read_raw_bv):
+def test_read_info_status_types():
+    """Test parsing channel status and types."""
+    # TODO: Placeholder for when we have a test file with channel status and types
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_read_data(dataset, read_raw_bv, request):
     """Test reading the data array."""
-    cnt = read_cnt(ca_208["cnt"]["short"])
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
     data = read_data(cnt)
     data *= 1e-6  # convert from uV to V
-    raw = read_raw_bv(ca_208["bv"]["short"])
+    raw = read_raw_bv(dataset["bv"]["short"])
     assert data.shape == raw.get_data().shape
     assert_allclose(data, raw.get_data(), atol=1e-8)
 
 
-def test_read_triggers(ca_208, read_raw_bv):
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_read_triggers(dataset, read_raw_bv, request):
     """Test reading the triggers from a cnt file."""
+    dataset = request.getfixturevalue(dataset)
     onsets, durations, descriptions, impedances, disconnect = read_triggers(
-        read_cnt(ca_208["cnt"]["short"])
+        read_cnt(dataset["cnt"]["short"])
     )
     assert len(disconnect["start"]) == len(disconnect["stop"])
     assert len(disconnect["start"]) == 0  # no disconnect in this test file
@@ -42,7 +58,7 @@ def test_read_triggers(ca_208, read_raw_bv):
     assert all([0 <= elt for elt in onsets])
     assert all([0 <= elt for elt in durations])
     # compare with brainvision file
-    raw = read_raw_bv(ca_208["bv"]["short"])
+    raw = read_raw_bv(dataset["bv"]["short"])
     idx = np.where(raw.annotations.description != "New Segment/")[0]
     assert len(raw.annotations[idx]) == len(onsets)
     # give a bit of jitter as the trigger might not land on the exact same sample

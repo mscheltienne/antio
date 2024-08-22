@@ -7,9 +7,16 @@
 #define _DEBUG
 #else
 #include <Python.h>
+#include <pybuffer.h>
 #endif
 // libeep
 #include <v4/eep.h>
+// PyMemoryView_FromMemory is part of stable ABI but the
+// flag constants (PyBUF_READ, etc.) are not.
+// https://github.com/python/cpython/issues/98680
+#ifndef PyBUF_READ
+#define PyBUF_READ 0x100
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
@@ -85,6 +92,32 @@ pyeep_get_channel_label(PyObject* self, PyObject* args) {
   }
 
   return Py_BuildValue("s", libeep_get_channel_label(handle, index));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_channel_status(PyObject* self, PyObject* args) {
+  int handle;
+  int index;
+
+  if(!PyArg_ParseTuple(args, "ii", & handle, & index)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_channel_status(handle, index));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_channel_type(PyObject* self, PyObject* args) {
+  int handle;
+  int index;
+
+  if(!PyArg_ParseTuple(args, "ii", & handle, & index)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_channel_type(handle, index));
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -174,6 +207,28 @@ pyeep_get_samples(PyObject* self, PyObject* args) {
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
+pyeep_get_samples_as_buffer(PyObject* self, PyObject* args) {
+  int handle;
+  int fro;
+  int to;
+
+  if(!PyArg_ParseTuple(args, "iii", & handle, & fro, & to)) {
+    return NULL;
+  }
+
+  float * libeep_sample_data = libeep_get_samples(handle, fro, to);
+  if(libeep_sample_data == NULL) {
+    return NULL;
+  }
+
+  Py_ssize_t array_len = (to - fro) * libeep_get_channel_count(handle);
+
+  PyObject * buf = PyMemoryView_FromMemory(libeep_sample_data, array_len * sizeof(*libeep_sample_data), PyBUF_READ);
+  return buf;
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
 pyeep_add_samples(PyObject* self, PyObject* args) {
   int        handle;
   PyObject * obj;
@@ -228,6 +283,116 @@ pyeep_get_trigger(PyObject* self, PyObject* args) {
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
+pyeep_get_start_time(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("i", libeep_get_start_time(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_hospital(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_hospital(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_machine_make(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_machine_make(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_machine_model(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_machine_model(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_machine_serial_number(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_machine_serial_number(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_patient_id(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_patient_id(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_patient_name(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+
+  return Py_BuildValue("s", libeep_get_patient_name(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_patient_sex(PyObject* self, PyObject* args) {
+  int handle;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+  return Py_BuildValue("C", libeep_get_patient_sex(handle));
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
+pyeep_get_date_of_birth(PyObject* self, PyObject* args) {
+  int handle;
+  int year = 0;
+  int month = 0;
+  int day = 0;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+  libeep_get_date_of_birth(handle, & year, & month, & day);
+  return Py_BuildValue("iii", year, month, day);
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
 pyeep_create_channel_info(PyObject* self, PyObject* args) {
   if(!PyArg_ParseTuple(args, "")) {
     return NULL;
@@ -274,6 +439,8 @@ static PyMethodDef methods[] = {
   {"close",                    pyeep_close,                    METH_VARARGS, "close handle"},
   {"get_channel_count",        pyeep_get_channel_count,        METH_VARARGS, "get channel count"},
   {"get_channel_label",        pyeep_get_channel_label,        METH_VARARGS, "get channel label"},
+  {"get_channel_status",       pyeep_get_channel_status,       METH_VARARGS, "get channel status"},
+  {"get_channel_type",         pyeep_get_channel_type,         METH_VARARGS, "get channel type"},
   {"get_channel_unit",         pyeep_get_channel_unit,         METH_VARARGS, "get channel unit"},
   {"get_channel_reference",    pyeep_get_channel_reference,    METH_VARARGS, "get channel reference"},
 // float libeep_get_channel_scale(cntfile_t handle, int index);
@@ -282,16 +449,17 @@ static PyMethodDef methods[] = {
   {"get_sample_count",         pyeep_get_sample_count,         METH_VARARGS, "get sample count"},
   {"get_samples",              pyeep_get_samples,              METH_VARARGS, "get samples"},
   {"add_samples",              pyeep_add_samples,              METH_VARARGS, "add samples"},
+  {"get_samples_as_buffer",    pyeep_get_samples_as_buffer,    METH_VARARGS, "get samples as memoryview"},
 // void libeep_add_raw_samples(cntfile_t handle, const int32_t *data, int n);
 // int32_t * libeep_get_raw_samples(cntfile_t handle, long from, long to);
 // void libeep_free_raw_samples(int32_t *data);
 // recinfo_t libeep_create_recinfo();
 // void libeep_add_recording_info(cntfile_t cnt_handle, recinfo_t recinfo_handle);
-// time_t libeep_get_start_time(cntfile_t handle);
+  {"get_start_time",           pyeep_get_start_time,           METH_VARARGS, "get start time"},
 // void libeep_get_start_date_and_fraction(recinfo_t handle, double* start_date, double* start_fraction);
 // void libeep_set_start_time(recinfo_t handle, time_t start_time);
 // void libeep_set_start_date_and_fraction(recinfo_t handle, double start_date, double start_fraction);
-// const char *libeep_get_hospital(cntfile_t handle);
+  {"get_hospital",            pyeep_get_hospital,              METH_VARARGS, "get hospital"},
 // void libeep_set_hospital(recinfo_t handle, const char *value);
 // const char *libeep_get_test_name(cntfile_t handle);
 // void libeep_set_test_name(recinfo_t handle, const char *value);
@@ -301,15 +469,15 @@ static PyMethodDef methods[] = {
 // void libeep_set_physician(recinfo_t handle, const char *value);
 // const char *libeep_get_technician(cntfile_t handle);
 // void libeep_set_technician(recinfo_t handle, const char *value);
-// const char *libeep_get_machine_make(cntfile_t handle);
+  {"get_machine_make",          pyeep_get_machine_make,          METH_VARARGS, "get machine make"},
 // void libeep_set_machine_make(recinfo_t handle, const char *value);
-// const char *libeep_get_machine_model(cntfile_t handle);
+  {"get_machine_model",         pyeep_get_machine_model,         METH_VARARGS, "get machine model"},
 // void libeep_set_machine_model(recinfo_t handle, const char *value);
-// const char *libeep_get_machine_serial_number(cntfile_t handle);
+  {"get_machine_serial_number", pyeep_get_machine_serial_number, METH_VARARGS, "get machine serial number"},
 // void libeep_set_machine_serial_number(recinfo_t handle, const char *value);
-// const char *libeep_get_patient_name(cntfile_t handle);
+  {"get_patient_name",          pyeep_get_patient_name,          METH_VARARGS, "get patient name"},
 // void libeep_set_patient_name(recinfo_t handle, const char *value);
-// const char *libeep_get_patient_id(cntfile_t handle);
+  {"get_patient_id",            pyeep_get_patient_id,            METH_VARARGS, "get patient ID"},
 // void libeep_set_patient_id(recinfo_t handle, const char *value);
 // const char *libeep_get_patient_address(cntfile_t handle);
 // void libeep_set_patient_address(recinfo_t handle, const char *value);
@@ -317,15 +485,15 @@ static PyMethodDef methods[] = {
 // void libeep_set_patient_phone(recinfo_t handle, const char *value);
 // const char *libeep_get_comment(cntfile_t handle);
 // void libeep_set_comment(recinfo_t handle, const char *value);
-// char libeep_get_patient_sex(cntfile_t handle);
+  {"get_patient_sex",            pyeep_get_patient_sex,            METH_VARARGS, "get patient sex"},
 // void libeep_set_patient_sex(recinfo_t handle, char value);
 // char libeep_get_patient_handedness(cntfile_t handle);
 // void libeep_set_patient_handedness(recinfo_t handle, char value);
-// void libeep_get_date_of_birth(cntfile_t handle, int * year, int * month, int *day);
+  {"get_date_of_birth",          pyeep_get_date_of_birth,          METH_VARARGS, "get date of birth (yy/mm/dd)"},
 // void libeep_set_date_of_birth(recinfo_t handle, int year, int month, int day);
 // int libeep_add_trigger(cntfile_t handle, uint64_t sample, const char *code);
   {"get_trigger_count",        pyeep_get_trigger_count,        METH_VARARGS, "get trigger count"},
-  {"get_trigger",              pyeep_get_trigger,              METH_VARARGS, "get samples"},
+  {"get_trigger",              pyeep_get_trigger,              METH_VARARGS, "get triggers"},
 // long libeep_get_zero_offset(cntfile_t handle);
 // const char * libeep_get_condition_label(cntfile_t handle);
 // const char * libeep_get_condition_color(cntfile_t handle);

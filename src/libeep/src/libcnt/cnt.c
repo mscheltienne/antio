@@ -3089,9 +3089,8 @@ eep_exceldate_to_unixdate(double excel, double fraction, time_t *epoch) {
   // 27538 -> 1970jan1
   // 2958464 -> 30dec9999
   if( excel >= 27538 && excel <= 2958464 ) {
-    return_value=(time_t)((excel*3600.0*24.0)-2209161600);
+    return_value=(time_t)(round(excel*3600.0*24.0)-2209161600);
   }
-
   (*epoch) = return_value;
 }
 
