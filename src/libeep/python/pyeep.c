@@ -7,11 +7,16 @@
 #define _DEBUG
 #else
 #include <Python.h>
-#include <numpy/ndarrayobject.h>
-#include <numpy/arrayobject.h>
+#include <pybuffer.h>
 #endif
 // libeep
 #include <v4/eep.h>
+// PyMemoryView_FromMemory is part of stable ABI but the
+// flag constants (PyBUF_READ, etc.) are not.
+// https://github.com/python/cpython/issues/98680
+#ifndef PyBUF_READ
+#define PyBUF_READ 0x100
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
@@ -202,14 +207,10 @@ pyeep_get_samples(PyObject* self, PyObject* args) {
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
-pyeep_get_samples_as_nparray(PyObject* self, PyObject* args) {
+pyeep_get_samples_as_buffer(PyObject* self, PyObject* args) {
   int handle;
   int fro;
   int to;
-  int nd = 2;
-  npy_intp dims[2];
-
-  Py_ssize_t i;
 
   if(!PyArg_ParseTuple(args, "iii", & handle, & fro, & to)) {
     return NULL;
@@ -220,14 +221,10 @@ pyeep_get_samples_as_nparray(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  dims[0] = to - fro;
-  dims[1] = libeep_get_channel_count(handle);
-  PyObject * numpy_array = PyArray_SimpleNewFromData(nd, dims, NPY_FLOAT32, libeep_sample_data);
-  if(!numpy_array) {
-    return NULL;
-  }
-  PyObject * numpy_array_transposed = PyArray_Transpose(numpy_array, NULL);
-  return numpy_array_transposed;
+  Py_ssize_t array_len = (to - fro) * libeep_get_channel_count(handle);
+
+  PyObject * buf = PyMemoryView_FromMemory(libeep_sample_data, array_len * sizeof(*libeep_sample_data), PyBUF_READ);
+  return buf;
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -452,7 +449,7 @@ static PyMethodDef methods[] = {
   {"get_sample_count",         pyeep_get_sample_count,         METH_VARARGS, "get sample count"},
   {"get_samples",              pyeep_get_samples,              METH_VARARGS, "get samples"},
   {"add_samples",              pyeep_add_samples,              METH_VARARGS, "add samples"},
-  {"get_samples_as_nparray",   pyeep_get_samples_as_nparray,   METH_VARARGS, "get samples as np array"},
+  {"get_samples_as_buffer",    pyeep_get_samples_as_buffer,    METH_VARARGS, "get samples as memoryview"},
 // void libeep_add_raw_samples(cntfile_t handle, const int32_t *data, int n);
 // int32_t * libeep_get_raw_samples(cntfile_t handle, long from, long to);
 // void libeep_free_raw_samples(int32_t *data);
@@ -527,7 +524,6 @@ PyMODINIT_FUNC PyInit_pyeep(void) {
 #define INITERROR return
 PyMODINIT_FUNC initpyeep(void) {
 #endif
-  import_array();  /*https://stackoverflow.com/questions/25494858/creating-numpy-array-in-c-extension-segfaults/25496494#25496494*/
   // init libeep
   libeep_init();
 

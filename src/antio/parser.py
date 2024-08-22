@@ -56,6 +56,10 @@ def read_data(cnt: InputCNT) -> NDArray[np.float64]:
     -------
     data : array of shape (n_channels, n_samples)
         The numpy array containing the data.
+
+    Notes
+    -----
+    The type casting makes the output array writeable.
     """
     n_samples = cnt.get_sample_count()  # sample = (n_channels,)
     return cnt.get_samples_as_nparray(0, n_samples).astype("float64")

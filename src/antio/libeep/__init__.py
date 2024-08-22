@@ -10,6 +10,7 @@ from ..utils._checks import ensure_path
 from . import pyeep
 
 if TYPE_CHECKING:
+    from collections.abc import ByteString
     from typing import Optional, Union
 
     from numpy.typing import NDArray
@@ -127,8 +128,34 @@ class InputCNT(BaseCNT):
         -------
         samples : array of shape (n_channels, n_samples)
             List of retrieved samples as 2-dimensional numpy array.
+
+        Notes
+        -----
+        This array is read-only.
         """
-        return pyeep.get_samples_as_nparray(self._handle, fro, to)
+        buffer = self._get_samples_as_buffer(fro, to)
+        return np.frombuffer(buffer, dtype=np.float32).reshape((to-fro, -1)).T
+
+    def _get_samples_as_buffer(self, fro: int, to: int) -> ByteString:
+        """Get samples between 2 index as memoryview.
+
+        Parameters
+        ----------
+        fro : int
+            Start index.
+        to : int
+            End index.
+
+        Returns
+        -------
+        samples : buffer of shape (n_channels * n_samples)
+            List of retrieved samples, ordered by (n_channels, ) samples.
+
+        Notes
+        -----
+        This buffer is read-only.
+        """
+        return pyeep.get_samples_as_buffer(self._handle, fro, to)
 
     def _get_start_time(self):
         """Get start time in UNIX format.
