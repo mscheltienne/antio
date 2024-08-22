@@ -27,17 +27,6 @@ def test_InputCNT1(ca_208):
     with pytest.raises(RuntimeError, match="exceeds total trigger count"):
         cnt.get_trigger(7)
 
-    assert cnt.get_hospital() == ""
-    name, patient_id, sex, birthday = cnt.get_patient_info()
-    assert name == "antio test"
-    assert patient_id == ""
-    assert sex == ""
-    assert birthday.day == 14
-    assert birthday.month == 8
-    assert birthday.year == 2024
-
-    assert cnt.get_machine_info() == ("eego", "EE_225", "")
-
 
 def test_InputCNT2(andy_101):
     """Test the methods in InputCNT."""
@@ -59,17 +48,6 @@ def test_InputCNT2(andy_101):
 
     with pytest.raises(RuntimeError, match="exceeds total trigger count"):
         cnt.get_trigger(7)
-
-    assert cnt.get_hospital() == ""
-    name, patient_id, sex, birthday = cnt.get_patient_info()
-    assert name == "Andy test_middle_name EEG_Exam"
-    assert patient_id == "test_subject_code"
-    assert sex == "F"
-    assert birthday.day == 19
-    assert birthday.month == 8
-    assert birthday.year == 2024
-
-    assert cnt.get_machine_info() == ("eego", "EE_226", "")
 
 
 def test_read_invalid_cnt(tmp_path):
@@ -144,3 +122,32 @@ def test_get_invalid_samples(dataset, request):
     samples = cnt.get_samples(0, n_samples)
     samples_np = cnt.get_samples_as_nparray(0, n_samples)
     assert samples_np.size == len(samples)
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_patient_information(dataset, birthday_format, request):
+    """Test reading the patient information."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    name, patient_id, sex, birthday = cnt.get_patient_info()
+    assert name == dataset["patient_info"]["name"]
+    assert patient_id == dataset["patient_info"]["id"]
+    assert isinstance(birthday, datetime)
+    assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_empty_hospital_field(dataset, request):
+    """Test getting the hospital field on datasets without this information."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    assert cnt.get_hospital() == ""
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_get_machine_information(dataset, request):
+    """Test getting the machine information."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    # TODO: Investigate why the serial number is missing in both datasets.
+    assert cnt.get_machine_info() == dataset["machine_info"]

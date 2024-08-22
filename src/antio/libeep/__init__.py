@@ -240,8 +240,8 @@ class InputCNT(BaseCNT):
         dob : datetime.datetime
             date of birth in datetime format.
         """
-        year, month, date = pyeep.get_date_of_birth(self._handle)
-        return datetime(year=year, month=month, day=date, tzinfo=timezone.utc)
+        year, month, day = pyeep.get_date_of_birth(self._handle)
+        return datetime(year=year, month=month, day=day, tzinfo=timezone.utc)
 
     def get_trigger_count(self) -> int:
         """Get the total number of triggers (annotations).

@@ -27,11 +27,19 @@ def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
     return {
         "cnt": cnt,
         "bv": bv,
-        "ch_ref": "CPz",
-        "ch_unit": "uv",
+        "ch_ref": "CPz",  # common ref on all channels
+        "ch_unit": "uv",  # common unit on all channels
         "n_channels": 64,
         "n_bips": 24,
         "meas_date": "2024-08-14-10-44-47+0000",
+        "patient_info": {
+            "name": "antio test",
+            "id": "",
+            "birthday": "2024-08-14+0000",
+            "sex": "",
+        },
+        # TODO: Investigate why the serial number is missing.
+        "machine_info": ("eego", "EE_225", ""),
     }
 
 
@@ -46,11 +54,19 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
     return {
         "cnt": cnt,
         "bv": bv,
-        "ch_ref": "Z3",
-        "ch_unit": "uv",
+        "ch_ref": "Z3",  # common ref on all channels
+        "ch_unit": "uv",  # common unit on all channels
         "n_channels": 128,
         "n_bips": 0,
         "meas_date": "2024-08-19-16-17-07+0000",
+        "patient_info": {
+            "name": "Andy test_middle_name EEG_Exam",
+            "id": "test_subject_code",
+            "birthday": "2024-08-19+0000",
+            "sex": "F",
+        },
+        # TODO: Investigate why the serial number is missing.
+        "machine_info": ("eego", "EE_226", ""),
     }
 
 
@@ -58,6 +74,12 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
 def meas_date_format() -> str:
     """Return the format of the measurement date."""
     return "%Y-%m-%d-%H-%M-%S%z"
+
+
+@pytest.fixture(scope="session")
+def birthday_format() -> str:
+    """Return the format of the birthday."""
+    return "%Y-%m-%d%z"
 
 
 @pytest.fixture(scope="session")
