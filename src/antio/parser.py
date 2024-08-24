@@ -45,7 +45,6 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_data(cnt: InputCNT) -> NDArray[np.float64]:
 def read_subject_info(
         cnt: InputCNT
         ) -> list[str, str, int, datetime.date]:
@@ -114,12 +113,19 @@ def read_meas_date(cnt: InputCNT) -> datetime.datetime:
     return cnt.get_start_time()
 
 
+def read_data(
+        cnt: InputCNT, first_samp: int = 0, n_samples: int | None = None
+        ) -> NDArray[np.float64]:
     """Read the data array.
 
     Parameters
     ----------
     cnt : InputCNT
         The cnt object from which the data is read.
+        fro : int
+            Start index.
+        to : int
+            End index.
 
     Returns
     -------
@@ -130,8 +136,9 @@ def read_meas_date(cnt: InputCNT) -> datetime.datetime:
     -----
     The type casting makes the output array writeable.
     """
-    n_samples = cnt.get_sample_count()  # sample = (n_channels,)
-    return cnt.get_samples_as_nparray(0, n_samples).astype(np.float64)
+    if n_samples is None:
+        n_samples = cnt.get_sample_count()  # sample = (n_channels,)
+    return cnt.get_samples_as_nparray(first_samp, n_samples).astype("float64")
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:
