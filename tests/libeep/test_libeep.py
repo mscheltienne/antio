@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from itertools import product
 
 import numpy as np
@@ -135,7 +135,8 @@ def test_get_patient_information(dataset, birthday_format, request):
     name, patient_id, sex, birthday = cnt.get_patient_info()
     assert name == dataset["patient_info"]["name"]
     assert patient_id == dataset["patient_info"]["id"]
-    assert isinstance(birthday, datetime)
+    assert sex == dataset["patient_info"]["sex"]
+    assert isinstance(birthday, date)
     assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
 
 
