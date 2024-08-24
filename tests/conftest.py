@@ -36,11 +36,12 @@ def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
         "patient_info": {
             "name": "antio test",
             "id": "",
-            "birthday": "2024-08-14+0000",
+            "birthday": "2024-08-14",
             "sex": "",
         },
         # TODO: Investigate why the serial number is missing.
         "machine_info": ("eego", "EE_225", ""),
+        "hospital": "",
     }
 
 
@@ -64,11 +65,12 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
         "patient_info": {
             "name": "Andy test_middle_name EEG_Exam",
             "id": "test_subject_code",
-            "birthday": "2024-08-19+0000",
+            "birthday": "2024-08-19",
             "sex": "F",
         },
         # TODO: Investigate why the serial number is missing.
         "machine_info": ("eego", "EE_226", ""),
+        "hospital": "",
     }
 
 
