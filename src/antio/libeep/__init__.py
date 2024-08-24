@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -233,7 +233,7 @@ class InputCNT(BaseCNT):
             self._get_date_of_birth(),
         )
 
-    def _get_date_of_birth(self) -> datetime:
+    def _get_date_of_birth(self) -> date:
         """Get date of birth of the patient.
 
         Returns
@@ -242,7 +242,9 @@ class InputCNT(BaseCNT):
             date of birth in datetime format.
         """
         year, month, day = pyeep.get_date_of_birth(self._handle)
-        return datetime(year=year, month=month, day=day, tzinfo=timezone.utc)
+        return datetime(
+            year=year, month=month, day=day, tzinfo=timezone.utc
+            ).date()
 
     def get_trigger_count(self) -> int:
         """Get the total number of triggers (annotations).
