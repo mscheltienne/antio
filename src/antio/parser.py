@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -45,6 +46,74 @@ def read_info(
 
 
 def read_data(cnt: InputCNT) -> NDArray[np.float64]:
+def read_subject_info(
+        cnt: InputCNT
+        ) -> list[str, str, int, datetime.date]:
+    """Parse the channel information from the cnt file.
+
+    Parameters
+    ----------
+    cnt : InputCNT
+        The cnt object from which the information is read.
+
+    Returns
+    -------
+    his_id : str
+        String subject identifier.
+    name: list of str
+        Name.
+    sex : int
+        Subject sex (0=unknown, 1=male, 2=female).
+    birthday : datetime.date
+        The subject birthday.
+    """
+    name, his_id, sex, birthday = cnt.get_patient_info()
+    sex = {"": 0, "M": 1, "F": 2}[sex]
+    return his_id, name, sex, birthday
+
+
+def read_device_info(
+        cnt: InputCNT
+        ) -> list[str, str, str, str]:
+    """Parse the machine information from the cnt file.
+
+    Parameters
+    ----------
+    cnt : InputCNT
+        The cnt object from which the information is read.
+
+    Returns
+    -------
+    make : str
+        Device type.
+    model : str
+        Device model.
+    serial : str
+        Device serial.
+    site : str
+        Device site.
+    """
+    make, mode, serial = cnt.get_machine_info()
+    site = cnt.get_hospital()
+    return make, mode, serial, site
+
+
+def read_meas_date(cnt: InputCNT) -> datetime.datetime:
+    """Parse the measurement from the cnt file.
+
+    Parameters
+    ----------
+    cnt : InputCNT
+        The cnt object from which the information is read.
+
+    Returns
+    -------
+    meas_date : datetime
+        The time (UTC) of the recording.
+    """
+    return cnt.get_start_time()
+
+
     """Read the data array.
 
     Parameters
