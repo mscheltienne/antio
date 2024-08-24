@@ -114,7 +114,7 @@ def read_meas_date(cnt: InputCNT) -> datetime.datetime:
 
 
 def read_data(
-        cnt: InputCNT, first_samp: int = 0, n_samples: int | None = None
+        cnt: InputCNT, first_samp: int = 0, last_samp: int | None = None
         ) -> NDArray[np.float64]:
     """Read the data array.
 
@@ -124,7 +124,7 @@ def read_data(
         The cnt object from which the data is read.
         first_samp : int
             Start index.
-        n_samples : int
+        last_samp : int
             End index.
 
     Returns
@@ -136,10 +136,10 @@ def read_data(
     -----
     The type casting makes the output array writeable.
     """
-    if n_samples is None:
-        n_samples = cnt.get_sample_count() - first_samp  # sample = (n_channels,)
+    if last_samp is None:
+        last_samp = cnt.get_sample_count()  # sample = (n_channels,)
     return cnt.get_samples_as_nparray(
-        first_samp, first_samp + n_samples
+        first_samp, last_samp
         ).astype("float64")
 
 
