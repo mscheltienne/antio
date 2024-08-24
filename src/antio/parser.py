@@ -122,9 +122,9 @@ def read_data(
     ----------
     cnt : InputCNT
         The cnt object from which the data is read.
-        fro : int
+        first_samp : int
             Start index.
-        to : int
+        n_samples : int
             End index.
 
     Returns
@@ -137,8 +137,10 @@ def read_data(
     The type casting makes the output array writeable.
     """
     if n_samples is None:
-        n_samples = cnt.get_sample_count()  # sample = (n_channels,)
-    return cnt.get_samples_as_nparray(first_samp, n_samples).astype("float64")
+        n_samples = cnt.get_sample_count() - first_samp  # sample = (n_channels,)
+    return cnt.get_samples_as_nparray(
+        first_samp, first_samp + n_samples
+        ).astype("float64")
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:
