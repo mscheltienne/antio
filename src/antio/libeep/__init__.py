@@ -176,6 +176,22 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_start_time(self._handle)
 
+    def _get_start_time(self):
+        """Get start time in UNIX format.
+
+        Returns
+        -------
+        start_time : float
+            Acquisition start time.
+        """
+        start_date, start_fraction = pyeep.get_start_date_and_fraction(self._handle)
+        # start date is in EXCEL format
+        if start_date >= 27538 and start_date <= 2958464:
+            start_date = np.round(start_date * 3600.0 * 24.0) - 2209161600
+        else:
+            start_date = 0
+        return start_date + start_fraction
+
     def get_start_time(self) -> datetime:
         """Get start time in datetime format.
 
