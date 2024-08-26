@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from typing import Optional
+
     from numpy.typing import NDArray
 
     from .libeep import InputCNT
@@ -45,8 +47,8 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_subject_info(cnt: InputCNT) -> list[str, str, int, datetime.date]:
-    """Parse the channel information from the cnt file.
+def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, datetime.date]:
+    """Parse the subject information from the cnt file.
 
     Parameters
     ----------
@@ -57,7 +59,7 @@ def read_subject_info(cnt: InputCNT) -> list[str, str, int, datetime.date]:
     -------
     his_id : str
         String subject identifier.
-    name: list of str
+    name : str
         Name.
     sex : int
         Subject sex (0=unknown, 1=male, 2=female).
@@ -69,7 +71,7 @@ def read_subject_info(cnt: InputCNT) -> list[str, str, int, datetime.date]:
     return his_id, name, sex, birthday
 
 
-def read_device_info(cnt: InputCNT) -> list[str, str, str, str]:
+def read_device_info(cnt: InputCNT) -> tuple[str, str, str, str]:
     """Parse the machine information from the cnt file.
 
     Parameters
@@ -110,7 +112,7 @@ def read_meas_date(cnt: InputCNT) -> datetime.datetime:
 
 
 def read_data(
-    cnt: InputCNT, first_samp: int = 0, last_samp: int | None = None
+    cnt: InputCNT, first_samp: int = 0, last_samp: Optional[int] = None
 ) -> NDArray[np.float64]:
     """Read the data array.
 
