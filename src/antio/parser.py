@@ -118,10 +118,10 @@ def read_data(
     ----------
     cnt : InputCNT
         The cnt object from which the data is read.
-        first_samp : int
-            Start index.
-        last_samp : int
-            End index.
+    first_samp : int
+        Start index.
+    last_samp : int
+        End index.
 
     Returns
     -------
