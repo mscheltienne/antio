@@ -61,6 +61,10 @@ def test_read_meas_date(dataset, meas_date_format, request):
     start_time = cnt.get_start_time()
     assert isinstance(start_time, datetime)
     assert start_time.strftime(meas_date_format) == dataset["meas_date"]
+    start_time_fraction = cnt.get_start_time_and_fraction()
+    assert isinstance(start_time_fraction, datetime)
+    assert start_time_fraction.strftime(meas_date_format) == dataset["meas_date"]
+    assert start_time != start_time_fraction
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])

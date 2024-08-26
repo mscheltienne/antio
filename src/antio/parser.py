@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import datetime
 from typing import TYPE_CHECKING
 
 import numpy as np
 
 if TYPE_CHECKING:
+    from datetime import date, datetime
     from typing import Optional
 
     from numpy.typing import NDArray
@@ -47,7 +47,7 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, datetime.date]:
+def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
     """Parse the subject information from the cnt file.
 
     Parameters
@@ -95,7 +95,7 @@ def read_device_info(cnt: InputCNT) -> tuple[str, str, str, str]:
     return make, mode, serial, site
 
 
-def read_meas_date(cnt: InputCNT) -> datetime.datetime:
+def read_meas_date(cnt: InputCNT) -> Optional[datetime]:
     """Parse the measurement from the cnt file.
 
     Parameters
@@ -105,10 +105,10 @@ def read_meas_date(cnt: InputCNT) -> datetime.datetime:
 
     Returns
     -------
-    meas_date : datetime
-        The time (UTC) of the recording.
+    meas_date : datetime | None
+        The measurement time of the recording (in the UTC timezone).
     """
-    return cnt.get_start_time()
+    return cnt.get_start_time_and_fraction()
 
 
 def read_data(

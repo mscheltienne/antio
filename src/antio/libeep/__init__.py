@@ -167,41 +167,31 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_samples_as_buffer(self._handle, fro, to)
 
-    def _get_start_time(self):
-        """Get start time in UNIX format.
+    def get_start_time(self) -> datetime:
+        """Get start time.
 
         Returns
         -------
-        start_time : int
+        start_time : datetime
             Acquisition start time.
         """
-        return pyeep.get_start_time(self._handle)
+        start_time = pyeep.get_start_time(self._handle)
+        return datetime.fromtimestamp(start_time, timezone.utc)
 
-    def _get_start_time(self):
-        """Get start time in UNIX format.
+    def get_start_time_and_fraction(self) -> Optional[datetime]:
+        """Get start time with second fraction.
 
         Returns
         -------
-        start_time : float
-            Acquisition start time.
+        start_time : datetime | None
+            The measurement time of the recording (in the UTC timezone). None if the
+            start date parsed was not a valid EXCEL format start date.
         """
         start_date, start_fraction = pyeep.get_start_date_and_fraction(self._handle)
         # start date is in EXCEL format
         if start_date >= 27538 and start_date <= 2958464:
             start_date = np.round(start_date * 3600.0 * 24.0) - 2209161600
-        else:
-            start_date = 0
-        return start_date + start_fraction
-
-    def get_start_time(self) -> datetime:
-        """Get start time in datetime format.
-
-        Returns
-        -------
-        start_time : datetime.datetime
-            Acquisition start time.
-        """
-        return datetime.fromtimestamp(self._get_start_time(), timezone.utc)
+            return datetime.fromtimestamp(start_date + start_fraction, timezone.utc)
 
     def get_hospital(self) -> str:
         """Get hospital name of the recording.
