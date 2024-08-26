@@ -295,6 +295,20 @@ pyeep_get_start_time(PyObject* self, PyObject* args) {
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
+pyeep_get_start_date_and_fraction(PyObject* self, PyObject* args) {
+  int handle;
+  double start_date;
+  double start_fraction;
+
+  if(!PyArg_ParseTuple(args, "i", & handle)) {
+    return NULL;
+  }
+  libeep_get_start_date_and_fraction(handle, &start_date, &start_fraction);
+  return Py_BuildValue("dd", start_date, start_fraction);
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
 pyeep_get_hospital(PyObject* self, PyObject* args) {
   int handle;
 
@@ -455,8 +469,8 @@ static PyMethodDef methods[] = {
 // void libeep_free_raw_samples(int32_t *data);
 // recinfo_t libeep_create_recinfo();
 // void libeep_add_recording_info(cntfile_t cnt_handle, recinfo_t recinfo_handle);
-  {"get_start_time",           pyeep_get_start_time,           METH_VARARGS, "get start time"},
-// void libeep_get_start_date_and_fraction(recinfo_t handle, double* start_date, double* start_fraction);
+  {"get_start_time",           pyeep_get_start_time,           METH_VARARGS, "get start time in UNIX format"},
+  {"get_start_date_and_fraction",     pyeep_get_start_date_and_fraction,    METH_VARARGS, "get start date and fraction in EXCEL format"},
 // void libeep_set_start_time(recinfo_t handle, time_t start_time);
 // void libeep_set_start_date_and_fraction(recinfo_t handle, double start_date, double start_fraction);
   {"get_hospital",            pyeep_get_hospital,              METH_VARARGS, "get hospital"},

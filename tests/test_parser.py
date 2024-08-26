@@ -5,7 +5,14 @@ import pytest
 from numpy.testing import assert_allclose
 
 from antio import read_cnt
-from antio.parser import read_data, read_info, read_triggers
+from antio.parser import (
+    read_data,
+    read_device_info,
+    read_info,
+    read_meas_date,
+    read_subject_info,
+    read_triggers,
+)
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
@@ -29,6 +36,37 @@ def test_read_info(dataset, read_raw_bv, request):
 def test_read_info_status_types():
     """Test parsing channel status and types."""
     # TODO: Placeholder for when we have a test file with channel status and types
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_read_subject_info(dataset, birthday_format, request):
+    """Test reading the data array."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    his_id, name, sex, birthday = read_subject_info(cnt)
+    assert his_id == dataset["patient_info"]["id"]
+    assert name == dataset["patient_info"]["name"]
+    assert ("", "M", "F")[sex] == dataset["patient_info"]["sex"]
+    assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_read_device_info(dataset, request):
+    """Test reading the data array."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    *machine_info, site = read_device_info(cnt)
+    assert tuple(machine_info) == dataset["machine_info"]
+    assert site == dataset["hospital"]
+
+
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+def test_read_meas_date(dataset, meas_date_format, request):
+    """Test reading the data array."""
+    dataset = request.getfixturevalue(dataset)
+    cnt = read_cnt(dataset["cnt"]["short"])
+    meas_date = read_meas_date(cnt)
+    assert meas_date.strftime(meas_date_format) == dataset["meas_date"]
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])

@@ -5,6 +5,9 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from datetime import date, datetime
+    from typing import Optional
+
     from numpy.typing import NDArray
 
     from .libeep import InputCNT
@@ -44,13 +47,83 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_data(cnt: InputCNT) -> NDArray[np.float64]:
+def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
+    """Parse the subject information from the cnt file.
+
+    Parameters
+    ----------
+    cnt : InputCNT
+        The cnt object from which the information is read.
+
+    Returns
+    -------
+    his_id : str
+        String subject identifier.
+    name : str
+        Name.
+    sex : int
+        Subject sex (0=unknown, 1=male, 2=female).
+    birthday : datetime.date
+        The subject birthday.
+    """
+    name, his_id, sex, birthday = cnt.get_patient_info()
+    sex = {"": 0, "M": 1, "F": 2}[sex]
+    return his_id, name, sex, birthday
+
+
+def read_device_info(cnt: InputCNT) -> tuple[str, str, str, str]:
+    """Parse the machine information from the cnt file.
+
+    Parameters
+    ----------
+    cnt : InputCNT
+        The cnt object from which the information is read.
+
+    Returns
+    -------
+    make : str
+        Device type.
+    model : str
+        Device model.
+    serial : str
+        Device serial.
+    site : str
+        Device site.
+    """
+    make, mode, serial = cnt.get_machine_info()
+    site = cnt.get_hospital()
+    return make, mode, serial, site
+
+
+def read_meas_date(cnt: InputCNT) -> Optional[datetime]:
+    """Parse the measurement from the cnt file.
+
+    Parameters
+    ----------
+    cnt : InputCNT
+        The cnt object from which the information is read.
+
+    Returns
+    -------
+    meas_date : datetime | None
+        The measurement time of the recording (in the UTC timezone).
+    """
+    return cnt.get_start_time_and_fraction()
+
+
+def read_data(
+    cnt: InputCNT, first_samp: int = 0, last_samp: Optional[int] = None
+) -> NDArray[np.float64]:
     """Read the data array.
 
     Parameters
     ----------
     cnt : InputCNT
         The cnt object from which the data is read.
+    first_samp : int
+        Start index.
+    last_samp : int
+        End index.
 
     Returns
     -------
@@ -61,8 +134,9 @@ def read_data(cnt: InputCNT) -> NDArray[np.float64]:
     -----
     The type casting makes the output array writeable.
     """
-    n_samples = cnt.get_sample_count()  # sample = (n_channels,)
-    return cnt.get_samples_as_nparray(0, n_samples).astype(np.float64)
+    if last_samp is None:
+        last_samp = cnt.get_sample_count()  # sample = (n_channels,)
+    return cnt.get_samples_as_nparray(first_samp, last_samp).astype("float64")
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:
