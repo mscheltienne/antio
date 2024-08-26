@@ -45,9 +45,7 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_subject_info(
-        cnt: InputCNT
-        ) -> list[str, str, int, datetime.date]:
+def read_subject_info(cnt: InputCNT) -> list[str, str, int, datetime.date]:
     """Parse the channel information from the cnt file.
 
     Parameters
@@ -71,9 +69,7 @@ def read_subject_info(
     return his_id, name, sex, birthday
 
 
-def read_device_info(
-        cnt: InputCNT
-        ) -> list[str, str, str, str]:
+def read_device_info(cnt: InputCNT) -> list[str, str, str, str]:
     """Parse the machine information from the cnt file.
 
     Parameters
@@ -114,8 +110,8 @@ def read_meas_date(cnt: InputCNT) -> datetime.datetime:
 
 
 def read_data(
-        cnt: InputCNT, first_samp: int = 0, last_samp: int | None = None
-        ) -> NDArray[np.float64]:
+    cnt: InputCNT, first_samp: int = 0, last_samp: int | None = None
+) -> NDArray[np.float64]:
     """Read the data array.
 
     Parameters
@@ -138,9 +134,7 @@ def read_data(
     """
     if last_samp is None:
         last_samp = cnt.get_sample_count()  # sample = (n_channels,)
-    return cnt.get_samples_as_nparray(
-        first_samp, last_samp
-        ).astype("float64")
+    return cnt.get_samples_as_nparray(first_samp, last_samp).astype("float64")
 
 
 def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list[int]]]:
