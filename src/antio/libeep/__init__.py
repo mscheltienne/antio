@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -11,6 +11,7 @@ from . import pyeep
 
 if TYPE_CHECKING:
     from collections.abc import ByteString
+    from datetime import date
     from typing import Optional, Union
 
     from numpy.typing import NDArray
