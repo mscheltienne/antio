@@ -7,7 +7,6 @@
 #define _DEBUG
 #else
 #include <Python.h>
-#include <pybuffer.h>
 #endif
 // libeep
 #include <v4/eep.h>
