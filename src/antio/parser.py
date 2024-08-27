@@ -32,9 +32,11 @@ def read_info(
     ch_refs : list of str
         List of channel reference electrodes.
     ch_status : list of str
-        List of channel status. Added in version 0.3.0.
+        List of channel status.
+        .. versionadded: 0.3.0.
     ch_types : list of str
-        List of channel types. Added in version 0.3.0.
+        List of channel types.
+        .. versionadded: 0.3.0.
     """
     ch_names, ch_units, ch_refs, ch_status, ch_types = [], [], [], [], []
     for k in range(cnt.get_channel_count()):
@@ -65,6 +67,10 @@ def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
         Subject sex (0=unknown, 1=male, 2=female).
     birthday : datetime.date
         The subject birthday.
+
+    Notes
+    -----
+    .. versionadded: 0.3.0.
     """
     name, his_id, sex, birthday = cnt.get_patient_info()
     sex = {"": 0, "M": 1, "F": 2}[sex]
@@ -89,6 +95,10 @@ def read_device_info(cnt: InputCNT) -> tuple[str, str, str, str]:
         Device serial.
     site : str
         Device site.
+
+    Notes
+    -----
+    .. versionadded: 0.3.0.
     """
     make, mode, serial = cnt.get_machine_info()
     site = cnt.get_hospital()
@@ -122,8 +132,10 @@ def read_data(
         The cnt object from which the data is read.
     first_samp : int
         Start index.
+        .. versionadded: 0.3.0.
     last_samp : int
         End index.
+        .. versionadded: 0.3.0.
 
     Returns
     -------
