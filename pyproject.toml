@@ -9,7 +9,7 @@ authors = [
   {email = 'mathieu.scheltienne@fcbg.ch', name = 'Mathieu Scheltienne'},
 ]
 classifiers = [
-  'License :: OSI Approved :: MIT License',
+  'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
   'Natural Language :: English',
   'Operating System :: MacOS',
   'Operating System :: Microsoft :: Windows',
