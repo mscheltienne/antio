@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
@@ -15,10 +13,6 @@ from antio.parser import (
     read_subject_info,
     read_triggers,
 )
-
-if TYPE_CHECKING:
-    from pathlib import Path
-    from typing import Union
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
@@ -154,9 +148,7 @@ def test_read_triggers_disconnet(ca_208, read_raw_bv):
         assert_allclose(onset1, onset2 / raw.info["sfreq"], atol=2e-3)
 
 
-def test_read_user_annotations(
-    user_annotations: dict[str, Union[dict[str, Path], str, int]],
-):
+def test_read_user_annotations(user_annotations):
     """Test reading of user annotations."""
     onsets, durations, descriptions, impedances, disconnect = read_triggers(
         read_cnt(user_annotations["cnt"]["short"])
@@ -171,3 +163,47 @@ def test_read_user_annotations(
     idx = descriptions.index("1000/user-annot-2")
     assert_allclose(durations[idx], 500 * 0.2, atol=1)  # give 1 sample of jitter
     assert 0 < onsets[idx]
+
+
+@pytest.mark.parametrize("dataset", ["user_annotations"])
+def test_legacy_cnt_format(
+    dataset, read_raw_bv, birthday_format, meas_date_format, request
+):
+    """Test the legacy CNT format."""
+    dataset = request.getfixturevalue(dataset)
+    # channel information
+    cnt = read_cnt(dataset["cnt"]["legacy"])
+    ch_names, ch_units, ch_refs, _, _ = read_info(cnt)
+    raw = read_raw_bv(dataset["bv"]["short"])
+    assert ch_names == raw.ch_names
+    assert len(ch_names) == dataset["n_channels"] + dataset["n_bips"]
+    assert ch_units == [dataset["ch_unit"]] * len(ch_names)
+    assert (
+        ch_refs
+        == [dataset["ch_ref"]] * dataset["n_channels"] + [""] * dataset["n_bips"]
+    )
+    assert len(ch_names) == len(ch_units)
+    assert len(ch_names) == len(ch_refs)
+
+    # subject information
+    his_id, name, sex, birthday = read_subject_info(cnt)
+    assert his_id == dataset["patient_info"]["id"]
+    assert name == dataset["patient_info"]["name"]
+    assert ("", "M", "F")[sex] == dataset["patient_info"]["sex"]
+    assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
+
+    # device information
+    *machine_info, site = read_device_info(cnt)
+    assert tuple(machine_info) == dataset["machine_info"]
+    assert site == dataset["hospital"]
+
+    # meas date
+    meas_date = read_meas_date(cnt)
+    assert meas_date.strftime(meas_date_format) == dataset["meas_date"]
+
+    # data array, /!\ user_annotations had floating pins (no cap attached)
+    data = read_data(cnt)
+    data *= 1e-6  # convert from uV to V
+    raw = read_raw_bv(dataset["bv"]["short"])
+    assert data.shape == raw.get_data().shape
+    assert_allclose(data, raw.get_data(), atol=1e-8)
