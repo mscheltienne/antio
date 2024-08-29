@@ -161,3 +161,13 @@ def test_read_user_annotations(
     onsets, durations, descriptions, impedances, disconnect = read_triggers(
         read_cnt(user_annotations["cnt"]["short"])
     )
+    # there are 2 user annotations in this recording, one 1000/user-annot and one
+    # 1000/user-annot-2 which has a 0.2s duration
+    assert "1000/user-annot" in descriptions
+    idx = descriptions.index("1000/user-annot")
+    assert durations[idx] == 0
+    assert 0 < onsets[idx]
+    assert "1000/user-annot-2" in descriptions
+    idx = descriptions.index("1000/user-annot-2")
+    assert_allclose(durations[idx], 500 * 0.2, atol=1)  # give 1 sample of jitter
+    assert 0 < onsets[idx]
