@@ -5,8 +5,10 @@ repos:
           - id: ruff
             name: ruff linter
             args: [--fix, --show-fixes]
+            exclude: tests/data
           - id: ruff-format
             name: ruff formatter
+            exclude: tests/data
 
     - repo: https://github.com/codespell-project/codespell
       rev: v2.3.0
@@ -15,6 +17,7 @@ repos:
             args: [--write-changes]
             additional_dependencies: [tomli]
             files: (src/antio|tests)
+            exclude: tests/data
 
     - repo: https://github.com/pappasam/toml-sort
       rev: v0.23.1
