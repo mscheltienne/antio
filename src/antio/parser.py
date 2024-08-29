@@ -196,11 +196,15 @@ def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list
         elif condition is not None and condition.lower() == "amplifier reconnected":
             disconnect["stop"].append(idx)
             continue
-        # treat all the other triggers as regular event annotations
+        # treat all the other triggers as regular event annotations, and differentiate
+        # between hardware trigger and user annotations which have a non None
+        # 'condition' field.
         onsets.append(idx)
         durations.append(duration)
+        desc = code
+        if condition is not None:
+            desc = f"{desc}/{condition}"
         if description is not None:
-            descriptions.append(description)
-        else:
-            descriptions.append(code)
+            desc = f"{desc}/{description}"
+        descriptions.append(desc)
     return onsets, durations, descriptions, impedances, disconnect
