@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pytest
 from numpy.testing import assert_allclose
@@ -13,6 +15,10 @@ from antio.parser import (
     read_subject_info,
     read_triggers,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
+    from typing import Union
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
@@ -146,3 +152,12 @@ def test_read_triggers_disconnet(ca_208, read_raw_bv):
     assert all([0 <= elt for elt in durations])
     for onset1, onset2 in zip(annotations.onset, onsets):
         assert_allclose(onset1, onset2 / raw.info["sfreq"], atol=2e-3)
+
+
+def test_read_user_annotations(
+    user_annotations: dict[str, Union[dict[str, Path], str, int]],
+):
+    """Test reading of user annotations."""
+    onsets, durations, descriptions, impedances, disconnect = read_triggers(
+        read_cnt(user_annotations["cnt"]["short"])
+    )

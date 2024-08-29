@@ -101,7 +101,7 @@ def user_annotations() -> dict[str, Union[dict[str, Path], str, int]]:
             "sex": "",
         },
         # TODO: Investigate why the serial number is missing.
-        "machine_info": ("eego", "EE_226", ""),
+        "machine_info": ("eego", "EE_225", ""),
         "hospital": "",
     }
 

@@ -203,8 +203,8 @@ def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list
         durations.append(duration)
         desc = code
         if condition is not None:
-            desc = f"{desc}/{condition}"
+            desc += f"/{condition}"
         if description is not None:
-            desc = f"{desc}/{description}"
+            desc += f"/{description}"
         descriptions.append(desc)
     return onsets, durations, descriptions, impedances, disconnect
