@@ -103,7 +103,7 @@ repair-wheel-command = [
 check-filenames = true
 check-hidden = true
 ignore-words = '.codespellignore'
-skip = 'build,.git,.mypy_cache,.pytest_cache,.venv'
+skip = 'build,.git,.mypy_cache,.pytest_cache,.venv,tests/data'
 
 [tool.coverage.report]
 exclude_lines = [
