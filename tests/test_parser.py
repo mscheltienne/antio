@@ -15,7 +15,7 @@ from antio.parser import (
 )
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
 def test_read_info(dataset, read_raw_bv, request):
     """Test parsing basic channel information."""
     dataset = request.getfixturevalue(dataset)
@@ -38,7 +38,7 @@ def test_read_info_status_types():
     # TODO: Placeholder for when we have a test file with channel status and types
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
 def test_read_subject_info(dataset, birthday_format, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)
@@ -50,7 +50,7 @@ def test_read_subject_info(dataset, birthday_format, request):
     assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
 def test_read_device_info(dataset, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)
@@ -60,7 +60,7 @@ def test_read_device_info(dataset, request):
     assert site == dataset["hospital"]
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
 def test_read_meas_date(dataset, meas_date_format, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)

@@ -75,6 +75,38 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
+def user_annotations() -> dict[str, Union[dict[str, Path], str, int]]:
+    """Return the path to a dataset containing user annotations with floating pins."""
+    directory = Path(__file__).parent / "data" / "user_annotations"
+    cnt = {
+        "short": directory / "test-user-annotation.cnt",
+        "legacy": directory / "test-user-annotation-legacy.cnt",
+    }
+    bv = {
+        "short": cnt["short"].with_suffix(".vhdr"),
+    }
+    return {
+        "cnt": cnt,
+        "bv": bv,
+        "ch_ref": "5Z",
+        "ch_unit": "uv",
+        "n_channels": 64,
+        "n_bips": 0,
+        "sfreq": 500,
+        "meas_date": "2024-08-29-16-15-44+0000",
+        "patient_info": {
+            "name": "test test",
+            "id": "",
+            "birthday": "2024-02-06",
+            "sex": "",
+        },
+        # TODO: Investigate why the serial number is missing.
+        "machine_info": ("eego", "EE_226", ""),
+        "hospital": "",
+    }
+
+
+@pytest.fixture(scope="session")
 def meas_date_format() -> str:
     """Return the format of the measurement date."""
     return "%Y-%m-%d-%H-%M-%S%z"
