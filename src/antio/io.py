@@ -16,6 +16,7 @@ def read_raw_ant(
     bipolars: list[str] | tuple[str, ...] | None = None,
     impedance_annotation: str = "impedance",
     *,
+    preload=False,
     verbose=None,
 ) -> RawANT:
     """Reader for Raw ANT files in .cnt format."""
@@ -27,7 +28,7 @@ def read_raw_ant(
     if not check_version("mne", "1.9"):
         raise RuntimeError(
             "The ANT-Neuro reader was added to MNE-Python 1.9. Either upgrade MNE "
-            "or use 'antio' version 0.1.0 to read the CNT file to a Raw object."
+            "or use 'antio' version 0.1.0 to read the CNT file into a Raw object."
         )
 
     from mne.io import read_raw_ant
@@ -38,5 +39,6 @@ def read_raw_ant(
         misc=misc,
         bipolars=bipolars,
         impedance_annotation=impedance_annotation,
+        preload=preload,
         verbose=verbose,
     )
