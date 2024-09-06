@@ -2701,7 +2701,7 @@ int make_partial_output_consistent(eeg_t *cnt, int finalize)
   */
   if (DATATYPE_UNDEFINED != cnt->current_datachunk)
     close_data_chunk(cnt, finalize, &cnt->store[cnt->current_datachunk]);
-  
+
   /* Write the Recording info chunk, if one is specified */
   if (NULL != cnt->recording_info) {
     write_recinfo_chunk(cnt, cnt->recording_info);
@@ -4039,4 +4039,3 @@ val_t* eep_get_values(eeg_t* cnt)
   val_create(&cnt->values);
   return cnt->values;
 }
-
