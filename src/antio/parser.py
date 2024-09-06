@@ -37,8 +37,11 @@ def read_info(
     ch_types : list of str
         List of channel types.
         .. versionadded: 0.3.0.
+    ch_scales : list of float
+        List of channel scaling factors.
+        .. versionadded: 0.4.0.
     """
-    ch_names, ch_units, ch_refs, ch_status, ch_types = [], [], [], [], []
+    ch_names, ch_units, ch_refs, ch_status, ch_types, ch_scales = [], [], [], [], [], []
     for k in range(cnt.get_channel_count()):
         channel = cnt.get_channel(k)
         ch_names.append(channel[0])
@@ -46,7 +49,8 @@ def read_info(
         ch_refs.append(channel[2])
         ch_status.append(channel[3])
         ch_types.append(channel[4])
-    return ch_names, ch_units, ch_refs, ch_status, ch_types
+        ch_scales.append(channel[5])
+    return ch_names, ch_units, ch_refs, ch_status, ch_types, ch_scales
 
 
 def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:

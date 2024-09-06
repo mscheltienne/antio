@@ -147,6 +147,20 @@ pyeep_get_channel_reference(PyObject* self, PyObject* args) {
 ///////////////////////////////////////////////////////////////////////////////
 static
 PyObject *
+pyeep_get_channel_scale(PyObject* self, PyObject* args) {
+  int handle;
+  int index;
+  float scale;
+
+  if(!PyArg_ParseTuple(args, "ii", & handle, & index)) {
+    return NULL;
+  }
+  scale = libeep_get_channel_scale(handle, index);
+  return Py_BuildValue("d", (double)scale);
+}
+///////////////////////////////////////////////////////////////////////////////
+static
+PyObject *
 pyeep_get_sample_frequency(PyObject* self, PyObject* args) {
   int handle;
 
@@ -456,7 +470,7 @@ static PyMethodDef methods[] = {
   {"get_channel_type",         pyeep_get_channel_type,         METH_VARARGS, "get channel type"},
   {"get_channel_unit",         pyeep_get_channel_unit,         METH_VARARGS, "get channel unit"},
   {"get_channel_reference",    pyeep_get_channel_reference,    METH_VARARGS, "get channel reference"},
-// float libeep_get_channel_scale(cntfile_t handle, int index);
+  {"get_channel_scale",        pyeep_get_channel_scale,        METH_VARARGS, "get channel scale"},
 // int libeep_get_channel_index(cntfile_t handle, const char *label);
   {"get_sample_frequency",     pyeep_get_sample_frequency,     METH_VARARGS, "get sample frequency"},
   {"get_sample_count",         pyeep_get_sample_count,         METH_VARARGS, "get sample count"},

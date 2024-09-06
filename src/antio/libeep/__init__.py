@@ -46,7 +46,7 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_channel_count(self._handle)
 
-    def get_channel(self, index: int) -> tuple[str, str, str, str, str]:
+    def get_channel(self, index: int) -> tuple[str, str, str, str, str, float]:
         """Get the channel information at a given index.
 
         Parameters
@@ -63,6 +63,7 @@ class InputCNT(BaseCNT):
             - 2: reference
             - 3: status
             - 4: type
+            - 5: scale
         """
         if index < 0:
             raise RuntimeError(f"Channel index {index} cannot be negative.")
@@ -77,6 +78,7 @@ class InputCNT(BaseCNT):
             pyeep.get_channel_reference(self._handle, index),
             pyeep.get_channel_status(self._handle, index),
             pyeep.get_channel_type(self._handle, index),
+            pyeep.get_channel_scale(self._handle, index),
         )
 
     def get_sample_frequency(self) -> int:
