@@ -14,8 +14,16 @@ from antio.parser import (
     read_triggers,
 )
 
+DATASETS: list[str] = [
+    "andy_101",
+    "ca_208",
+    "user_annotations",
+    "na_271",
+    "na_271_with_bipolars",
+]
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
+
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_info(dataset, read_raw_bv, request):
     """Test parsing basic channel information."""
     dataset = request.getfixturevalue(dataset)
@@ -38,7 +46,7 @@ def test_read_info_status_types():
     # TODO: Placeholder for when we have a test file with channel status and types
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_subject_info(dataset, birthday_format, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)
@@ -50,7 +58,7 @@ def test_read_subject_info(dataset, birthday_format, request):
     assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_device_info(dataset, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)
@@ -60,7 +68,7 @@ def test_read_device_info(dataset, request):
     assert site == dataset["hospital"]
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208", "user_annotations"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_meas_date(dataset, meas_date_format, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)
@@ -69,7 +77,7 @@ def test_read_meas_date(dataset, meas_date_format, request):
     assert meas_date.strftime(meas_date_format) == dataset["meas_date"]
 
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_data(dataset, read_raw_bv, request):
     """Test reading the data array."""
     dataset = request.getfixturevalue(dataset)
@@ -165,7 +173,9 @@ def test_read_user_annotations(user_annotations):
     assert 0 < onsets[idx]
 
 
-@pytest.mark.parametrize("dataset", ["user_annotations"])
+@pytest.mark.parametrize(
+    "dataset", ["user_annotations", "na_271", "na_271_with_bipolars"]
+)
 def test_legacy_cnt_format(
     dataset, read_raw_bv, birthday_format, meas_date_format, request
 ):

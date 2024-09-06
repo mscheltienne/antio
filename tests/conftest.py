@@ -107,6 +107,77 @@ def user_annotations() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
+def na_271() -> dict[str, Union[dict[str, Path], str, int]]:
+    """Return the path to a dataset containing 128 channel recording.
+
+    The recording was done with an NA_271 net dipped in saline solution.
+    """
+    directory = Path(__file__).parent / "data" / "NA_271"
+    cnt = {
+        "short": directory / "test-na-271.cnt",
+        "legacy": directory / "test-na-271-legacy.cnt",
+    }
+    bv = {
+        "short": cnt["short"].with_suffix(".vhdr"),
+    }
+    return {
+        "cnt": cnt,
+        "bv": bv,
+        "ch_ref": "Z7",
+        "ch_unit": "uv",
+        "n_channels": 128,
+        "n_bips": 0,
+        "sfreq": 500,
+        "meas_date": "2024-09-06-10-45-07+0000",
+        "patient_info": {
+            "name": "antio test",
+            "id": "",
+            "birthday": "2024-08-14",
+            "sex": "",
+        },
+        # TODO: Investigate why the serial number is missing.
+        "machine_info": ("eego", "EE_226", ""),
+        "hospital": "",
+    }
+
+
+@pytest.fixture(scope="session")
+def na_271_with_bipolars() -> dict[str, Union[dict[str, Path], str, int]]:
+    """Return the path to a dataset containing 128 channel recording.
+
+    The recording was done with an NA_271 net dipped in saline solution and includes
+    bipolar channels.
+    """
+    directory = Path(__file__).parent / "data" / "NA_271_with_bipolars"
+    cnt = {
+        "short": directory / "test-na-271.cnt",
+        "legacy": directory / "test-na-271-legacy.cnt",
+    }
+    bv = {
+        "short": cnt["short"].with_suffix(".vhdr"),
+    }
+    return {
+        "cnt": cnt,
+        "bv": bv,
+        "ch_ref": "Z7",
+        "ch_unit": "uv",
+        "n_channels": 128,
+        "n_bips": 6,
+        "sfreq": 1000,
+        "meas_date": "2024-09-06-10-37-23+0000",
+        "patient_info": {
+            "name": "antio test",
+            "id": "",
+            "birthday": "2024-08-14",
+            "sex": "",
+        },
+        # TODO: Investigate why the serial number is missing.
+        "machine_info": ("eego", "EE_226", ""),
+        "hospital": "",
+    }
+
+
+@pytest.fixture(scope="session")
 def meas_date_format() -> str:
     """Return the format of the measurement date."""
     return "%Y-%m-%d-%H-%M-%S%z"
