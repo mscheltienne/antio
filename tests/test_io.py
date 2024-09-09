@@ -6,8 +6,17 @@ from numpy.testing import assert_allclose
 
 from antio.io import read_raw_ant
 
+DATASETS: list[str] = [
+    "andy_101",
+    "ca_208",
+    "ca_208_refs",
+    "na_271",
+    "na_271_bips",
+    "user_annotations",
+]
 
-@pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
+
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_raw_ant(dataset, read_raw_bv, request):
     """Test antio.io.read_raw_ant."""
     # TODO: replace with pytest.importorskip("mne", "1.9") when MNE 1.9 is released.
