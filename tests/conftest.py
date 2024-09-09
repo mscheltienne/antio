@@ -46,6 +46,45 @@ def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
+def ca_208_refs() -> dict[str, Union[dict[str, Path], str, int]]:
+    """Return the paths and info to the CA_208_refs dataset.
+
+    The following montage was applid on export:
+    - highpass: 0.3 Hz - lowpass: 30 Hz
+    - Fp1, Fpz, Fp2 referenced to Fz
+    - CP3, CP4 referenced to Cz
+    - others to CPz
+    """
+    directory = Path(__file__).parent / "data" / "CA_208_refs"
+    cnt = {
+        "short": directory / "test-ref.cnt",
+        "legacy": directory / "test-ref-legacy.cnt",
+    }
+    bv = {
+        "short": cnt["short"].with_suffix(".vhdr"),
+    }
+    return {
+        "cnt": cnt,
+        "bv": bv,
+        "ch_ref": None,
+        "ch_unit": "uv",
+        "n_channels": 64,
+        "n_bips": 0,
+        "sfreq": 500,
+        "meas_date": "2024-09-09-10-57-44+0000",
+        "patient_info": {
+            "name": "antio test",
+            "id": "",
+            "birthday": "2024-08-14",
+            "sex": "",
+        },
+        # TODO: Investigate why the serial number is missing.
+        "machine_info": ("eego", "EE_225", ""),
+        "hospital": "",
+    }
+
+
+@pytest.fixture(scope="session")
 def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
     """Return the path and info to the andy_101 dataset."""
     directory = Path(__file__).parent / "data" / "andy_101"
