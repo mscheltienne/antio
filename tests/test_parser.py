@@ -19,7 +19,7 @@ DATASETS: list[str] = [
     "ca_208",
     "user_annotations",
     "na_271",
-    "na_271_with_bipolars",
+    "na_271_bips",
 ]
 
 
@@ -173,9 +173,7 @@ def test_read_user_annotations(user_annotations):
     assert 0 < onsets[idx]
 
 
-@pytest.mark.parametrize(
-    "dataset", ["user_annotations", "na_271", "na_271_with_bipolars"]
-)
+@pytest.mark.parametrize("dataset", ["user_annotations", "na_271", "na_271_bips"])
 def test_legacy_cnt_format(
     dataset, read_raw_bv, birthday_format, meas_date_format, request
 ):

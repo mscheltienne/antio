@@ -14,7 +14,7 @@ DATASETS: list[str] = [
     "ca_208",
     "user_annotations",
     "na_271",
-    "na_271_with_bipolars",
+    "na_271_bips",
 ]
 
 

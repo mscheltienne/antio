@@ -142,13 +142,13 @@ def na_271() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
-def na_271_with_bipolars() -> dict[str, Union[dict[str, Path], str, int]]:
+def na_271_bips() -> dict[str, Union[dict[str, Path], str, int]]:
     """Return the path to a dataset containing 128 channel recording.
 
     The recording was done with an NA_271 net dipped in saline solution and includes
     bipolar channels.
     """
-    directory = Path(__file__).parent / "data" / "NA_271_with_bipolars"
+    directory = Path(__file__).parent / "data" / "NA_271_bips"
     cnt = {
         "short": directory / "test-na-271.cnt",
         "legacy": directory / "test-na-271-legacy.cnt",
