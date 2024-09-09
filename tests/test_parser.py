@@ -17,9 +17,10 @@ from antio.parser import (
 DATASETS: list[str] = [
     "andy_101",
     "ca_208",
-    "user_annotations",
+    "ca_208_refs",
     "na_271",
     "na_271_bips",
+    "user_annotations",
 ]
 
 
@@ -33,12 +34,27 @@ def test_read_info(dataset, read_raw_bv, request):
     assert ch_names == raw.ch_names
     assert len(ch_names) == dataset["n_channels"] + dataset["n_bips"]
     assert ch_units == [dataset["ch_unit"]] * len(ch_names)
-    assert (
-        ch_refs
-        == [dataset["ch_ref"]] * dataset["n_channels"] + [""] * dataset["n_bips"]
-    )
+    if dataset["ch_ref"] is not None:
+        assert (
+            ch_refs
+            == [dataset["ch_ref"]] * dataset["n_channels"] + [""] * dataset["n_bips"]
+        )
     assert len(ch_names) == len(ch_units)
     assert len(ch_names) == len(ch_refs)
+
+
+def test_read_info_custom_reference(ca_208_refs, read_raw_bv):
+    """Test parsing basic channel information when custom montage is applied."""
+    cnt = read_cnt(ca_208_refs["cnt"]["short"])
+    ch_names, ch_units, ch_refs, _, _ = read_info(cnt)
+    raw = read_raw_bv(ca_208_refs["bv"]["short"])
+    assert ch_names == raw.ch_names
+    assert len(ch_names) == ca_208_refs["n_channels"] + ca_208_refs["n_bips"]
+    assert ch_units == [ca_208_refs["ch_unit"]] * len(ch_names)
+    assert ch_refs == [
+        "Fz" if ch in ("Fp1", "Fpz", "Fp2") else "Cz" if ch in ("CP3", "CP4") else "CPz"
+        for ch in ch_names
+    ]
 
 
 def test_read_info_status_types():
@@ -173,7 +189,9 @@ def test_read_user_annotations(user_annotations):
     assert 0 < onsets[idx]
 
 
-@pytest.mark.parametrize("dataset", ["user_annotations", "na_271", "na_271_bips"])
+@pytest.mark.parametrize(
+    "dataset", ["user_annotations", "na_271", "na_271_bips", "ca_208_refs"]
+)
 def test_legacy_cnt_format(
     dataset, read_raw_bv, birthday_format, meas_date_format, request
 ):
@@ -186,10 +204,11 @@ def test_legacy_cnt_format(
     assert ch_names == raw.ch_names
     assert len(ch_names) == dataset["n_channels"] + dataset["n_bips"]
     assert ch_units == [dataset["ch_unit"]] * len(ch_names)
-    assert (
-        ch_refs
-        == [dataset["ch_ref"]] * dataset["n_channels"] + [""] * dataset["n_bips"]
-    )
+    if dataset["ch_ref"] is not None:
+        assert (
+            ch_refs
+            == [dataset["ch_ref"]] * dataset["n_channels"] + [""] * dataset["n_bips"]
+        )
     assert len(ch_names) == len(ch_units)
     assert len(ch_names) == len(ch_refs)
 

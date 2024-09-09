@@ -12,9 +12,10 @@ from antio.libeep import read_cnt
 DATASETS: list[str] = [
     "andy_101",
     "ca_208",
-    "user_annotations",
+    "ca_208_refs",
     "na_271",
     "na_271_bips",
+    "user_annotations",
 ]
 
 
@@ -30,7 +31,8 @@ def test_get_channel_information(dataset, read_raw_bv, request):
         label, unit, ref, status, ch_type = cnt.get_channel(k)
         assert label == raw.ch_names[k]
         assert unit.lower() == dataset["ch_unit"]
-        assert ref == dataset["ch_ref"]
+        if dataset["ch_ref"] is not None:
+            assert ref == dataset["ch_ref"]
         assert status == ""
         assert ch_type == ""
 
@@ -55,7 +57,7 @@ def test_get_channel_information_custom_reference(ca_208_refs, read_raw_bv):
             assert ref == "CPz"
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_invalid_channel(dataset, request):
     """Test getting an invalid channel."""
     dataset = request.getfixturevalue(dataset)
@@ -81,7 +83,7 @@ def test_read_invalid_cnt(tmp_path):
         read_cnt(tmp_path / "test.txt")
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_read_meas_date(dataset, meas_date_format, request):
     """Test reading the measurement date."""
     dataset = request.getfixturevalue(dataset)
@@ -95,7 +97,7 @@ def test_read_meas_date(dataset, meas_date_format, request):
     assert start_time != start_time_fraction
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_sample_count(dataset, request):
     """Test getting the sample count from a CNT file."""
     dataset = request.getfixturevalue(dataset)
@@ -103,7 +105,7 @@ def test_get_sample_count(dataset, request):
     assert 0 < cnt.get_sample_count()
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_samples(dataset, read_raw_bv, request):
     """Test retrieving samples from a CNT file."""
     dataset = request.getfixturevalue(dataset)
@@ -133,7 +135,7 @@ def test_get_samples(dataset, read_raw_bv, request):
         assert_allclose(raw_data, samples_np, atol=1e-8)
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_invalid_samples(dataset, request):
     """Test retrieving samples outside of the range of the file."""
     dataset = request.getfixturevalue(dataset)
@@ -159,7 +161,7 @@ def test_get_invalid_samples(dataset, request):
     assert samples_np.size == len(samples)
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_patient_information(dataset, birthday_format, request):
     """Test reading the patient information."""
     dataset = request.getfixturevalue(dataset)
@@ -172,7 +174,7 @@ def test_get_patient_information(dataset, birthday_format, request):
     assert birthday.strftime(birthday_format) == dataset["patient_info"]["birthday"]
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_hospital_field(dataset, request):
     """Test getting the hospital field."""
     dataset = request.getfixturevalue(dataset)
@@ -180,7 +182,7 @@ def test_get_hospital_field(dataset, request):
     assert cnt.get_hospital() == dataset["hospital"]
 
 
-@pytest.mark.parametrize("dataset", DATASETS + ["ca_208_refs"])
+@pytest.mark.parametrize("dataset", DATASETS)
 def test_get_machine_information(dataset, request):
     """Test getting the machine information."""
     dataset = request.getfixturevalue(dataset)
