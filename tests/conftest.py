@@ -9,13 +9,19 @@ from mne.io import read_raw_brainvision
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from typing import Union
+    from typing import Optional, Union
 
     from mne.io import BaseRaw
 
 
+TypeDataset = dict[
+    str,
+    Optional[Union[dict[str, Path], str, int, tuple[str, str, str], dict[str, str]]],
+]
+
+
 @pytest.fixture(scope="session")
-def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
+def ca_208() -> TypeDataset:
     """Return the paths and info to the CA_208 dataset."""
     directory = Path(__file__).parent / "data" / "CA_208"
     cnt = {
@@ -46,7 +52,7 @@ def ca_208() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
-def ca_208_refs() -> dict[str, Union[dict[str, Path], str, int]]:
+def ca_208_refs() -> TypeDataset:
     """Return the paths and info to the CA_208_refs dataset.
 
     The following montage was applid on export:
@@ -85,7 +91,7 @@ def ca_208_refs() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
-def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
+def andy_101() -> TypeDataset:
     """Return the path and info to the andy_101 dataset."""
     directory = Path(__file__).parent / "data" / "andy_101"
     cnt = {
@@ -114,7 +120,7 @@ def andy_101() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
-def user_annotations() -> dict[str, Union[dict[str, Path], str, int]]:
+def user_annotations() -> TypeDataset:
     """Return the path to a dataset containing user annotations with floating pins."""
     directory = Path(__file__).parent / "data" / "user_annotations"
     cnt = {
@@ -146,7 +152,7 @@ def user_annotations() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
-def na_271() -> dict[str, Union[dict[str, Path], str, int]]:
+def na_271() -> TypeDataset:
     """Return the path to a dataset containing 128 channel recording.
 
     The recording was done with an NA_271 net dipped in saline solution.
@@ -181,7 +187,7 @@ def na_271() -> dict[str, Union[dict[str, Path], str, int]]:
 
 
 @pytest.fixture(scope="session")
-def na_271_bips() -> dict[str, Union[dict[str, Path], str, int]]:
+def na_271_bips() -> TypeDataset:
     """Return the path to a dataset containing 128 channel recording.
 
     The recording was done with an NA_271 net dipped in saline solution and includes
