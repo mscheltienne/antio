@@ -1,10 +1,10 @@
 import os
 import platform
 import pprint
+import shutil
 import subprocess
 import sys
 from pathlib import Path
-import shutil
 from tempfile import TemporaryDirectory
 
 from setuptools import setup
@@ -24,7 +24,6 @@ else:
 
 
 class CMakeExtension(Extension):
-
     def __init__(self, name, py_limited_api=False):
         # don't invoke the original build_ext for this special extension
         super().__init__(name, sources=[], py_limited_api=py_limited_api)
