@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 import warnings
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Optional, Union
 
 import pytest
-from mne.io import read_raw_brainvision
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-    from typing import Optional, Union
-
-    from mne.io import BaseRaw
-
+from mne.io import BaseRaw, read_raw_brainvision
 
 TypeDataset = dict[
     str,

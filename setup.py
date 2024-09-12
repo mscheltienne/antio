@@ -24,6 +24,8 @@ else:
 
 
 class CMakeExtension(Extension):
+    """Dummy wrapper for CMake build."""
+
     def __init__(self, name, py_limited_api=False):
         # don't invoke the original build_ext for this special extension
         super().__init__(name, sources=[], py_limited_api=py_limited_api)
@@ -78,7 +80,7 @@ class build_ext(_build_ext):  # noqa: D101
             for elt in (lib, pyeep):
                 dst = Path(self.build_lib) / "antio" / "libeep" / elt.name
                 dst.parent.mkdir(parents=True, exist_ok=True)
-                print(f"Moving {elt} to {dst}")
+                print(f"Moving {elt} to {dst}")  # noqa: T201
                 shutil.move(elt, dst)
         super().run()
 
