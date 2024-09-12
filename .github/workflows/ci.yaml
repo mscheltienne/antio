@@ -135,6 +135,22 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+  editable:
+    timeout-minutes: 10
+    name: test editable install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -ve .[test]
+      - run: antio sys-info --developer
+      - run: pytest tests/ --cov=antio --cov-report=xml
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   sdist:
     timeout-minutes: 10
     name: create sdist

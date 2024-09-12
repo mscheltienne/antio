@@ -126,7 +126,7 @@ dmypy.json
 
 # cibuildwheels
 wheelhouse/
-antio/libeep/*.dll
-antio/libeep/*.so
-antio/libeep/*.dylib
-antio/libeep/*.pyd
+src/antio/libeep/*.dll
+src/antio/libeep/*.so
+src/antio/libeep/*.dylib
+src/antio/libeep/*.pyd
