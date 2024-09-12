@@ -4,12 +4,12 @@ import pprint
 import subprocess
 import sys
 from pathlib import Path
-from shutil import move
+import shutil
 from tempfile import TemporaryDirectory
 
 from setuptools import setup
 from setuptools.command.build_ext import build_ext as _build_ext
-from setuptools.dist import Distribution
+from setuptools.extension import Extension
 from wheel.bdist_wheel import bdist_wheel
 
 # set the platform-specific files, libeep first, pyeep second.
@@ -23,9 +23,11 @@ else:
     lib_files = []
 
 
-class BinaryDistribution(Distribution):  # noqa: D101
-    def has_ext_modules(self):  # noqa: D102
-        return True
+class CMakeExtension(Extension):
+
+    def __init__(self, name, py_limited_api=False):
+        # don't invoke the original build_ext for this special extension
+        super().__init__(name, sources=[], py_limited_api=py_limited_api)
 
 
 class build_ext(_build_ext):  # noqa: D101
@@ -66,7 +68,7 @@ class build_ext(_build_ext):  # noqa: D101
             subprocess.run(
                 ["cmake", "--build", build_dir, "--config", "Release"], check=True
             )
-            # locate the built files and move then to antio.libeep
+            # locate the built files and copy then to antio.libeep
             build_dir = Path(build_dir)
             if platform.system() == "Windows":
                 lib = build_dir / "Release" / lib_files[0]
@@ -75,7 +77,10 @@ class build_ext(_build_ext):  # noqa: D101
                 lib = build_dir / lib_files[0]
                 pyeep = build_dir / "python" / lib_files[1]
             for elt in (lib, pyeep):
-                move(elt, Path(self.build_lib) / "antio" / "libeep" / elt.name)
+                dst = Path(self.build_lib) / "antio" / "libeep" / elt.name
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                print(f"Moving {elt} to {dst}")
+                shutil.move(elt, dst)
         super().run()
 
 
@@ -94,9 +99,9 @@ class bdist_wheel_abi3(bdist_wheel):  # noqa: D101
 
 
 setup(
+    ext_modules=[CMakeExtension("antio.libeep.pyeep", py_limited_api=True)],
     cmdclass={
         "build_ext": build_ext,
         "bdist_wheel": bdist_wheel_abi3,
     },
-    distclass=BinaryDistribution,  # to handle binary files
 )

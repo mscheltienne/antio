@@ -9,8 +9,6 @@ from typing import TYPE_CHECKING
 import psutil
 from packaging.requirements import Requirement
 
-from ..libeep import pyeep
-
 if TYPE_CHECKING:
     from typing import IO, Callable, Optional
 
@@ -26,6 +24,8 @@ def sys_info(fid: Optional[IO] = None, developer: bool = False):
     developer : bool
         If True, display information about optional dependencies.
     """
+    from ..libeep import pyeep
+
     developer = bool(developer)
     ljust = 26
     out = partial(print, end="", file=fid)
