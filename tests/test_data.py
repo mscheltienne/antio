@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def mne_testing_dataset() -> Path:
     """Check if the MNE testing dataset is available."""
     # TODO: replace with pytest.importorskip("mne", "1.9") when MNE 1.9 is released.

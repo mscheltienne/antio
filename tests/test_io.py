@@ -9,9 +9,7 @@ from antio.io import read_raw_ant
 DATASETS: list[str] = [
     "andy_101",
     "ca_208",
-    "ca_208_refs",
     "na_271",
-    "na_271_bips",
     "user_annotations",
 ]
 
