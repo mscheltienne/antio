@@ -131,6 +131,7 @@ jobs:
       - run: antio sys-info --developer
       - uses: ./.github/actions/get-testing-dataset
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
+      - run: pytest tests/ --cov=antio --cov-report=xml --cov-append
       - uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
