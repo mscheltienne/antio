@@ -76,9 +76,8 @@ int _riff_get_chunk(FILE *f, chunk_t *in)
   uint32_t tmp;
 
   in->start = eepio_ftell(f);
-  _riff_get_id(f, &(in->id));
-
-  read_u32(f, &tmp);
+  if (_riff_get_id(f, &(in->id))) return RIFFERR_FILE;
+  if (!read_u32(f, &tmp)) return RIFFERR_FILE;
   in->size = tmp;
 
   return ferror(f);
@@ -87,10 +86,10 @@ int _riff_get_chunk(FILE *f, chunk_t *in)
 int riff_put_chunk(FILE *f, chunk_t out)
 {
   uint32_t itmp;
-  _riff_put_id(f, out.id);
+  if (_riff_put_id(f, out.id)) return RIFFERR_FILE;
 
   itmp = out.size;
-  write_u32(f, itmp);
+  if (!write_u32(f, itmp)) return RIFFERR_FILE;
 
   return ferror(f);
 }
@@ -100,9 +99,9 @@ int riff_form_open(FILE *f, chunk_t *chunk, fourcc_t *formtype)
   rewind(f);
 
   chunk->parent = NULL;
-  _riff_get_chunk(f, chunk);
+  if (_riff_get_chunk(f, chunk)) return RIFFERR_FILE;
   if (chunk->id == FOURCC_RIFF) {
-    _riff_get_id(f, formtype);
+    if (_riff_get_id(f, formtype)) return RIFFERR_FILE;
     return RIFFERR_NONE;
   }
   else {
@@ -124,7 +123,7 @@ int riff_list_open(FILE *f, chunk_t *chunk, fourcc_t listtype, chunk_t parent)
     eepio_fseek(f, nextchunk, SEEK_CUR);
     if (_riff_get_chunk(f, chunk)) return RIFFERR_FILE;
     if (chunk->id == FOURCC_LIST) {
-      _riff_get_id(f, &curlisttype);
+      if (_riff_get_id(f, &curlisttype)) return RIFFERR_FILE;
       if (curlisttype == listtype) {
         match = 1;
       }
@@ -199,7 +198,7 @@ int riff_fetch(FILE *f, chunk_t *chunk, fourcc_t *listid,
   }
   else {
     if (chunk->id == FOURCC_LIST)
-      _riff_get_id(f, listid);
+      return _riff_get_id(f, listid);
     return RIFFERR_NONE;
   }
 }
