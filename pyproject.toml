@@ -18,6 +18,7 @@ classifiers = [
   'Programming Language :: Python :: 3.10',
   'Programming Language :: Python :: 3.11',
   'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.13',
   'Programming Language :: Python :: 3.9',
 ]
 dependencies = [
@@ -75,7 +76,7 @@ tracker = 'https://github.com/mscheltienne/antio/issues'
 
 [tool.cibuildwheel]
 archs = "native"
-build = "cp312-*"
+build = "cp313-*"
 skip = "*musllinux*"
 test-command = "pytest {project}/tests"
 test-extras = ["test"]
