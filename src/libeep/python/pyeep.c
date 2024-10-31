@@ -129,7 +129,12 @@ pyeep_get_channel_unit(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_unit(handle, index));
+  const char* unit_str = libeep_get_channel_unit(handle, index);
+  if (unit_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", unit_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static

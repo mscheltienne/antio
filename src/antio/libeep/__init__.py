@@ -46,13 +46,17 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_channel_count(self._handle)
 
-    def get_channel(self, index: int) -> tuple[str, str, str, str, str]:
+    def get_channel(
+        self, index: int, encoding: str = "latin1"
+    ) -> tuple[str, str, str, str, str]:
         """Get the channel information at a given index.
 
         Parameters
         ----------
         index : int
             Index of the channel.
+        encoding : str
+            Encoding used for the unit string.
 
         Returns
         -------
@@ -71,9 +75,11 @@ class InputCNT(BaseCNT):
             raise RuntimeError(
                 f"Channel index {index} exceeds total channel count {n_channels}."
             )
+        unit = pyeep.get_channel_unit(self._handle, index)
+        unit = unit.decode(encoding) if unit is not None else ""
         return (
             pyeep.get_channel_label(self._handle, index),
-            pyeep.get_channel_unit(self._handle, index),
+            unit,
             pyeep.get_channel_reference(self._handle, index),
             pyeep.get_channel_status(self._handle, index),
             pyeep.get_channel_type(self._handle, index),
