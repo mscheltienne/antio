@@ -65,15 +65,15 @@ def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
         Name.
     sex : int
         Subject sex (0=unknown, 1=male, 2=female).
-    birthday : datetime.date
-        The subject birthday.
+    birthday : datetime.date | None
+        The subject birthday. None if it could not be parsed.
 
     Notes
     -----
     .. versionadded: 0.3.0.
     """
     name, his_id, sex, birthday = cnt.get_patient_info()
-    sex = {"": 0, "M": 1, "F": 2}[sex]
+    sex = {"": 0, "M": 1, "F": 2}.get(sex, 0)
     return his_id, name, sex, birthday
 
 

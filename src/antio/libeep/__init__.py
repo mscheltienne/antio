@@ -220,7 +220,7 @@ class InputCNT(BaseCNT):
             pyeep.get_machine_serial_number(self._handle),
         )
 
-    def get_patient_info(self) -> tuple[str, str, str, datetime]:
+    def get_patient_info(self) -> tuple[str, str, str, date | None]:
         """Get patient info.
 
         Returns
@@ -245,11 +245,16 @@ class InputCNT(BaseCNT):
 
         Returns
         -------
-        dob : datetime.datetime
-            date of birth in datetime format.
+        date : datetime.date
+            Date of birth.
         """
         year, month, day = pyeep.get_date_of_birth(self._handle)
-        return datetime(year=year, month=month, day=day, tzinfo=timezone.utc).date()
+        try:
+            # one of the value year, month, day could bet set to 0 as this is the
+            # initial value, which is invalid for a datetime object.
+            return datetime(year=year, month=month, day=day, tzinfo=timezone.utc).date()
+        except Exception:
+            return None
 
     def get_trigger_count(self) -> int:
         """Get the total number of triggers (annotations).
