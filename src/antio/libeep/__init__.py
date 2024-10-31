@@ -47,7 +47,7 @@ class InputCNT(BaseCNT):
         return pyeep.get_channel_count(self._handle)
 
     def get_channel(
-        self, index: int, encoding: str = "latin1"
+        self, index: int, encoding: str = "latin-1"
     ) -> tuple[str, str, str, str, str]:
         """Get the channel information at a given index.
 
