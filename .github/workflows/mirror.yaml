@@ -21,11 +21,9 @@ jobs:
           path: src
           ref: libeep
       - name: Checkout GitLab Repository
-        run: |
-          git clone https://gitlab.com/smeeze/libeep.git libeep
+        run: git clone https://gitlab.com/smeeze/libeep libeep
       - name: Copy files from GitLab to GitHub
-        run: |
-          rsync -a --delete --exclude='.git' libeep/ src/
+        run: rsync -a --delete --exclude='.git' libeep/ src/
       - name: Commit and Push Changes
         run: |
           cd src

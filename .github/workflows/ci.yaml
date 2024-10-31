@@ -136,7 +136,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  editable:
+  test-editable:
     timeout-minutes: 10
     name: test editable install
     runs-on: ubuntu-latest
@@ -188,7 +188,7 @@ jobs:
       - run: twine check --strict dist/*
 
   publish:
-    needs: [check, test, test-mne]
+    needs: [check, test, test-mne, test-editable]
     name: publish PyPI
     runs-on: ubuntu-latest
     permissions:
