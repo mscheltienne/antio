@@ -93,7 +93,7 @@ jobs:
       - run: pip install --only-binary antio antio[test] --find-links dist --pre
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -132,7 +132,7 @@ jobs:
       - uses: ./.github/actions/get-testing-dataset
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
       - run: pytest tests/ --cov=antio --cov-report=xml --cov-append
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -148,7 +148,7 @@ jobs:
       - run: pip install -ve .[test]
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
