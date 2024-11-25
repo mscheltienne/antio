@@ -27,7 +27,7 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-      - uses: pypa/cibuildwheel@v2.21.3
+      - uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_TEST_SKIP: "{*macosx*,*win*}"
       - uses: actions/upload-artifact@v4
@@ -54,7 +54,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: all
-      - uses: pypa/cibuildwheel@v2.21.3
+      - uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_ARCHS: ${{ matrix.arch }}
           # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
