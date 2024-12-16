@@ -28,7 +28,7 @@ def test_get_channel_information(dataset, read_raw_bv, request):
     assert cnt.get_sample_frequency() == dataset["sfreq"]
     raw = read_raw_bv(dataset["bv"]["short"])
     for k in range(dataset["n_channels"]):
-        label, unit, ref, status, ch_type = cnt.get_channel(k)
+        label, unit, ref, status, ch_type = cnt.get_channel(k, encoding="latin-1")
         assert label == raw.ch_names[k]
         assert unit.lower() == dataset["ch_unit"]
         if dataset["ch_ref"] is not None:
@@ -44,7 +44,7 @@ def test_get_channel_information_custom_reference(ca_208_refs, read_raw_bv):
     assert cnt.get_sample_frequency() == ca_208_refs["sfreq"]
     raw = read_raw_bv(ca_208_refs["bv"]["short"])
     for k in range(ca_208_refs["n_channels"]):
-        label, unit, ref, status, ch_type = cnt.get_channel(k)
+        label, unit, ref, status, ch_type = cnt.get_channel(k, encoding="latin-1")
         assert label == raw.ch_names[k]
         assert unit.lower() == ca_208_refs["ch_unit"]
         assert status == ""
@@ -65,12 +65,12 @@ def test_get_invalid_channel(dataset, request):
     n_channels = cnt.get_channel_count()
     assert n_channels == dataset["n_channels"] + dataset["n_bips"]
     with pytest.raises(RuntimeError, match="exceeds total channel count"):
-        cnt.get_channel(n_channels + 1)
+        cnt.get_channel(n_channels + 1, encoding="latin-1")
     with pytest.raises(RuntimeError, match="exceeds total channel count"):
-        cnt.get_channel(n_channels)
+        cnt.get_channel(n_channels, encoding="latin-1")
     with pytest.raises(RuntimeError, match="cannot be negative"):
-        cnt.get_channel(-1)
-    info = cnt.get_channel(n_channels - 1)
+        cnt.get_channel(-1, encoding="latin-1")
+    info = cnt.get_channel(n_channels - 1, encoding="latin-1")
     assert isinstance(info, tuple)
     assert len(info) != 0
 
@@ -179,7 +179,7 @@ def test_get_hospital_field(dataset, request):
     """Test getting the hospital field."""
     dataset = request.getfixturevalue(dataset)
     cnt = read_cnt(dataset["cnt"]["short"])
-    assert cnt.get_hospital() == dataset["hospital"]
+    assert cnt.get_hospital(encoding="latin-1") == dataset["hospital"]
 
 
 @pytest.mark.parametrize("dataset", DATASETS)
@@ -188,7 +188,7 @@ def test_get_machine_information(dataset, request):
     dataset = request.getfixturevalue(dataset)
     cnt = read_cnt(dataset["cnt"]["short"])
     # TODO: Investigate why the serial number is missing in both datasets.
-    assert cnt.get_machine_info() == dataset["machine_info"]
+    assert cnt.get_machine_info(encoding="latin-1") == dataset["machine_info"]
 
 
 @pytest.mark.parametrize("dataset", ["andy_101", "ca_208"])
