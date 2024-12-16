@@ -90,7 +90,12 @@ pyeep_get_channel_label(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_label(handle, index));
+  const char* label_str = libeep_get_channel_label(handle, index);
+  if (label_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", label_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -103,7 +108,12 @@ pyeep_get_channel_status(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_status(handle, index));
+  const char* status_str = libeep_get_channel_status(handle, index);
+  if (status_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", status_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -115,8 +125,12 @@ pyeep_get_channel_type(PyObject* self, PyObject* args) {
   if(!PyArg_ParseTuple(args, "ii", & handle, & index)) {
     return NULL;
   }
+  const char* type_str = libeep_get_channel_type(handle, index);
+  if (type_str == NULL) {
+      Py_RETURN_NONE;
+  }
 
-  return Py_BuildValue("s", libeep_get_channel_type(handle, index));
+  return Py_BuildValue("y", type_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -147,7 +161,12 @@ pyeep_get_channel_reference(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_reference(handle, index));
+  const char* ref_str = libeep_get_channel_reference(handle, index);
+  if (ref_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", ref_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -320,7 +339,12 @@ pyeep_get_hospital(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_hospital(handle));
+  const char* hospital_str = libeep_get_hospital(handle);
+  if (hospital_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", hospital_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -332,7 +356,12 @@ pyeep_get_machine_make(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_machine_make(handle));
+  const char* mmake_str = libeep_get_machine_make(handle);
+  if (mmake_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", mmake_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -344,7 +373,12 @@ pyeep_get_machine_model(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_machine_model(handle));
+  const char* model_str = libeep_get_machine_model(handle);
+  if (model_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", model_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -356,7 +390,12 @@ pyeep_get_machine_serial_number(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_machine_serial_number(handle));
+  const char* sn_str = libeep_get_machine_serial_number(handle);
+  if (sn_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", sn_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -367,6 +406,13 @@ pyeep_get_patient_id(PyObject* self, PyObject* args) {
   if(!PyArg_ParseTuple(args, "i", & handle)) {
     return NULL;
   }
+
+  const char* patient_id_str = libeep_get_patient_id(handle);
+  if (patient_id_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", patient_id_str);
 
   return Py_BuildValue("s", libeep_get_patient_id(handle));
 }
@@ -380,7 +426,12 @@ pyeep_get_patient_name(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_patient_name(handle));
+  const char* patient_str = libeep_get_patient_name(handle);
+  if (patient_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", patient_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static

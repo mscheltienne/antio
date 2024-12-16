@@ -47,7 +47,7 @@ class InputCNT(BaseCNT):
         return pyeep.get_channel_count(self._handle)
 
     def get_channel(
-        self, index: int, encoding: str = "latin-1"
+        self, index: int, *, encoding: str
     ) -> tuple[str, str, str, str, str]:
         """Get the channel information at a given index.
 
@@ -56,7 +56,7 @@ class InputCNT(BaseCNT):
         index : int
             Index of the channel.
         encoding : str
-            Encoding used for the unit string.
+            Encoding used for the strings.
 
         Returns
         -------
@@ -75,15 +75,18 @@ class InputCNT(BaseCNT):
             raise RuntimeError(
                 f"Channel index {index} exceeds total channel count {n_channels}."
             )
-        unit = pyeep.get_channel_unit(self._handle, index)
-        unit = unit.decode(encoding) if unit is not None else ""
-        return (
-            pyeep.get_channel_label(self._handle, index),
-            unit,
-            pyeep.get_channel_reference(self._handle, index),
-            pyeep.get_channel_status(self._handle, index),
-            pyeep.get_channel_type(self._handle, index),
+        functions = (
+            pyeep.get_channel_label,
+            pyeep.get_channel_unit,
+            pyeep.get_channel_reference,
+            pyeep.get_channel_status,
+            pyeep.get_channel_type,
         )
+        channel = []
+        for func in functions:
+            value = func(self._handle, index)
+            channel.append(value.decode(encoding) if value is not None else "")
+        return tuple(channel)
 
     def get_sample_frequency(self) -> int:
         """Get the sampling frequency of the recording in Hz.
@@ -199,17 +202,20 @@ class InputCNT(BaseCNT):
             start_date = np.round(start_date * 3600.0 * 24.0) - 2209161600
             return datetime.fromtimestamp(start_date + start_fraction, timezone.utc)
 
-    def get_hospital(self) -> str:
+    def get_hospital(self, *, encoding: str) -> str:
         """Get hospital name of the recording.
 
         Returns
         -------
         hospital : str
             Hospital name.
+        encoding : str
+            Encoding used for the string.
         """
-        return pyeep.get_hospital(self._handle)
+        hospital = pyeep.get_hospital(self._handle)
+        return hospital.decode(encoding) if hospital is not None else ""
 
-    def get_machine_info(self) -> tuple[str, str, str]:
+    def get_machine_info(self, *, encoding: str) -> tuple[str, str, str]:
         """Get machine information.
 
         Returns
@@ -219,14 +225,21 @@ class InputCNT(BaseCNT):
             - 0: machine make
             - 1: machine model
             - 2: machine serial number
+        encoding : str
+            Encoding used for the strings.
         """
-        return (
-            pyeep.get_machine_make(self._handle),
-            pyeep.get_machine_model(self._handle),
-            pyeep.get_machine_serial_number(self._handle),
+        functions = (
+            pyeep.get_machine_make,
+            pyeep.get_machine_model,
+            pyeep.get_machine_serial_number,
         )
+        info = []
+        for func in functions:
+            value = func(self._handle)
+            info.append(value.decode(encoding) if value is not None else "")
+        return tuple(info)
 
-    def get_patient_info(self) -> tuple[str, str, str, date | None]:
+    def get_patient_info(self, *, encoding: str) -> tuple[str, str, str, date | None]:
         """Get patient info.
 
         Returns
@@ -237,14 +250,18 @@ class InputCNT(BaseCNT):
             - 1: patient id
             - 2: patient sex
             - 3: patient date of birth
+        encoding : str
+            Encoding used for the strings.
         """
+        functions = (pyeep.get_patient_name, pyeep.get_patient_id)
+        info = []
+        for func in functions:
+            value = func(self._handle)
+            info.append(value.decode(encoding) if value is not None else "")
         sex = pyeep.get_patient_sex(self._handle)
-        return (
-            pyeep.get_patient_name(self._handle),
-            pyeep.get_patient_id(self._handle),
-            "" if sex == "\x00" else sex,
-            self._get_date_of_birth(),
-        )
+        info.append("" if sex == "\x00" else sex)
+        info.append(self._get_date_of_birth())
+        return tuple(info)
 
     def _get_date_of_birth(self) -> date:
         """Get date of birth of the patient.

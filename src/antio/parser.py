@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 def read_info(
-    cnt: InputCNT,
+    cnt: InputCNT, *, encoding: str = "latin-1"
 ) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
     """Parse the channel information from the cnt file.
 
@@ -37,10 +37,13 @@ def read_info(
     ch_types : list of str
         List of channel types.
         .. versionadded: 0.3.0.
+    encoding : str
+        Encoding used for the strings.
+        .. versionadded: 0.5.0
     """
     ch_names, ch_units, ch_refs, ch_status, ch_types = [], [], [], [], []
     for k in range(cnt.get_channel_count()):
-        channel = cnt.get_channel(k)
+        channel = cnt.get_channel(k, encoding=encoding)
         ch_names.append(channel[0])
         ch_units.append(channel[1].lower())  # always lower the unit for mapping
         ch_refs.append(channel[2])
@@ -49,7 +52,9 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
+def read_subject_info(
+    cnt: InputCNT, *, encoding: str = "latin-1"
+) -> tuple[str, str, int, date]:
     """Parse the subject information from the cnt file.
 
     Parameters
@@ -67,17 +72,22 @@ def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
         Subject sex (0=unknown, 1=male, 2=female).
     birthday : datetime.date | None
         The subject birthday. None if it could not be parsed.
+    encoding : str
+        Encoding used for the strings.
+        .. versionadded: 0.5.0
 
     Notes
     -----
     .. versionadded: 0.3.0.
     """
-    name, his_id, sex, birthday = cnt.get_patient_info()
+    name, his_id, sex, birthday = cnt.get_patient_info(encoding=encoding)
     sex = {"": 0, "M": 1, "F": 2}.get(sex, 0)
     return his_id, name, sex, birthday
 
 
-def read_device_info(cnt: InputCNT) -> tuple[str, str, str, str]:
+def read_device_info(
+    cnt: InputCNT, *, encoding: str = "latin-1"
+) -> tuple[str, str, str, str]:
     """Parse the machine information from the cnt file.
 
     Parameters
@@ -95,13 +105,16 @@ def read_device_info(cnt: InputCNT) -> tuple[str, str, str, str]:
         Device serial.
     site : str
         Device site.
+    encoding : str
+        Encoding used for the strings.
+        .. versionadded: 0.5.0
 
     Notes
     -----
     .. versionadded: 0.3.0.
     """
-    make, mode, serial = cnt.get_machine_info()
-    site = cnt.get_hospital()
+    make, mode, serial = cnt.get_machine_info(encoding=encoding)
+    site = cnt.get_hospital(encoding=encoding)
     return make, mode, serial, site
 
 
