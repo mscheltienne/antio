@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 def read_info(
-    cnt: InputCNT,
+    cnt: InputCNT, *, encoding: str = "latin-1"
 ) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
     """Parse the channel information from the cnt file.
 
@@ -37,10 +37,13 @@ def read_info(
     ch_types : list of str
         List of channel types.
         .. versionadded: 0.3.0.
+    encoding : str
+        Encoding used for the strings.
+        .. versionadded: 0.5.0
     """
     ch_names, ch_units, ch_refs, ch_status, ch_types = [], [], [], [], []
     for k in range(cnt.get_channel_count()):
-        channel = cnt.get_channel(k)
+        channel = cnt.get_channel(k, encoding=encoding)
         ch_names.append(channel[0])
         ch_units.append(channel[1].lower())  # always lower the unit for mapping
         ch_refs.append(channel[2])

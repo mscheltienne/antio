@@ -46,9 +46,7 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_channel_count(self._handle)
 
-    def get_channel(
-        self, index: int, encoding: str = "latin-1"
-    ) -> tuple[str, str, str, str, str]:
+    def get_channel(self, index: int, encoding: str) -> tuple[str, str, str, str, str]:
         """Get the channel information at a given index.
 
         Parameters
@@ -56,7 +54,7 @@ class InputCNT(BaseCNT):
         index : int
             Index of the channel.
         encoding : str
-            Encoding used for the unit string.
+            Encoding used for the strings.
 
         Returns
         -------
