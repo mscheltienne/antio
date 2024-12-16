@@ -46,7 +46,9 @@ class InputCNT(BaseCNT):
         """
         return pyeep.get_channel_count(self._handle)
 
-    def get_channel(self, index: int, encoding: str) -> tuple[str, str, str, str, str]:
+    def get_channel(
+        self, index: int, *, encoding: str
+    ) -> tuple[str, str, str, str, str]:
         """Get the channel information at a given index.
 
         Parameters
@@ -200,17 +202,20 @@ class InputCNT(BaseCNT):
             start_date = np.round(start_date * 3600.0 * 24.0) - 2209161600
             return datetime.fromtimestamp(start_date + start_fraction, timezone.utc)
 
-    def get_hospital(self) -> str:
+    def get_hospital(self, *, encoding: str) -> str:
         """Get hospital name of the recording.
 
         Returns
         -------
         hospital : str
             Hospital name.
+        encoding : str
+            Encoding used for the string.
         """
-        return pyeep.get_hospital(self._handle)
+        hospital = pyeep.get_hospital(self._handle)
+        return hospital.decode(encoding) if hospital is not None else ""
 
-    def get_machine_info(self) -> tuple[str, str, str]:
+    def get_machine_info(self, *, encoding: str) -> tuple[str, str, str]:
         """Get machine information.
 
         Returns
@@ -220,12 +225,19 @@ class InputCNT(BaseCNT):
             - 0: machine make
             - 1: machine model
             - 2: machine serial number
+        encoding : str
+            Encoding used for the strings.
         """
-        return (
-            pyeep.get_machine_make(self._handle),
-            pyeep.get_machine_model(self._handle),
-            pyeep.get_machine_serial_number(self._handle),
+        functions = (
+            pyeep.get_machine_make,
+            pyeep.get_machine_model,
+            pyeep.get_machine_serial_number,
         )
+        info = []
+        for func in functions:
+            value = func(self._handle)
+            info.append(value.decode(encoding) if value is not None else "")
+        return tuple(info)
 
     def get_patient_info(self) -> tuple[str, str, str, date | None]:
         """Get patient info.
