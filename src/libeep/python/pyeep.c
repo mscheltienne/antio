@@ -407,6 +407,13 @@ pyeep_get_patient_id(PyObject* self, PyObject* args) {
     return NULL;
   }
 
+  const char* patient_id_str = libeep_get_patient_id(handle);
+  if (patient_id_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", patient_id_str);
+
   return Py_BuildValue("s", libeep_get_patient_id(handle));
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -419,7 +426,12 @@ pyeep_get_patient_name(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_patient_name(handle));
+  const char* patient_str = libeep_get_patient_name(handle);
+  if (patient_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", patient_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static

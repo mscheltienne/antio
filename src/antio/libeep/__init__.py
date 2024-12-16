@@ -239,7 +239,7 @@ class InputCNT(BaseCNT):
             info.append(value.decode(encoding) if value is not None else "")
         return tuple(info)
 
-    def get_patient_info(self) -> tuple[str, str, str, date | None]:
+    def get_patient_info(self, *, encoding: str) -> tuple[str, str, str, date | None]:
         """Get patient info.
 
         Returns
@@ -250,14 +250,18 @@ class InputCNT(BaseCNT):
             - 1: patient id
             - 2: patient sex
             - 3: patient date of birth
+        encoding : str
+            Encoding used for the strings.
         """
+        functions = (pyeep.get_patient_name, pyeep.get_patient_id)
+        info = []
+        for func in functions:
+            value = func(self._handle)
+            info.append(value.decode(encoding) if value is not None else "")
         sex = pyeep.get_patient_sex(self._handle)
-        return (
-            pyeep.get_patient_name(self._handle),
-            pyeep.get_patient_id(self._handle),
-            "" if sex == "\x00" else sex,
-            self._get_date_of_birth(),
-        )
+        info.append("" if sex == "\x00" else sex)
+        info.append(self._get_date_of_birth())
+        return tuple(info)
 
     def _get_date_of_birth(self) -> date:
         """Get date of birth of the patient.

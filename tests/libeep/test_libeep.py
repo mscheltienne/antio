@@ -166,7 +166,7 @@ def test_get_patient_information(dataset, birthday_format, request):
     """Test reading the patient information."""
     dataset = request.getfixturevalue(dataset)
     cnt = read_cnt(dataset["cnt"]["short"])
-    name, patient_id, sex, birthday = cnt.get_patient_info()
+    name, patient_id, sex, birthday = cnt.get_patient_info(encoding="latin-1")
     assert name == dataset["patient_info"]["name"]
     assert patient_id == dataset["patient_info"]["id"]
     assert sex == dataset["patient_info"]["sex"]

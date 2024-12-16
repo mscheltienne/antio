@@ -52,7 +52,9 @@ def read_info(
     return ch_names, ch_units, ch_refs, ch_status, ch_types
 
 
-def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
+def read_subject_info(
+    cnt: InputCNT, *, encoding: str = "latin-1"
+) -> tuple[str, str, int, date]:
     """Parse the subject information from the cnt file.
 
     Parameters
@@ -70,12 +72,15 @@ def read_subject_info(cnt: InputCNT) -> tuple[str, str, int, date]:
         Subject sex (0=unknown, 1=male, 2=female).
     birthday : datetime.date | None
         The subject birthday. None if it could not be parsed.
+    encoding : str
+        Encoding used for the strings.
+        .. versionadded: 0.5.0
 
     Notes
     -----
     .. versionadded: 0.3.0.
     """
-    name, his_id, sex, birthday = cnt.get_patient_info()
+    name, his_id, sex, birthday = cnt.get_patient_info(encoding=encoding)
     sex = {"": 0, "M": 1, "F": 2}.get(sex, 0)
     return his_id, name, sex, birthday
 
