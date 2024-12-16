@@ -75,15 +75,18 @@ class InputCNT(BaseCNT):
             raise RuntimeError(
                 f"Channel index {index} exceeds total channel count {n_channels}."
             )
-        unit = pyeep.get_channel_unit(self._handle, index)
-        unit = unit.decode(encoding) if unit is not None else ""
-        return (
-            pyeep.get_channel_label(self._handle, index),
-            unit,
-            pyeep.get_channel_reference(self._handle, index),
-            pyeep.get_channel_status(self._handle, index),
-            pyeep.get_channel_type(self._handle, index),
+        functions = (
+            pyeep.get_channel_label,
+            pyeep.get_channel_unit,
+            pyeep.get_channel_reference,
+            pyeep.get_channel_status,
+            pyeep.get_channel_type,
         )
+        channel = []
+        for func in functions:
+            value = func(self._handle, index)
+            channel.append(value.decode(encoding) if value is not None else "")
+        return tuple(channel)
 
     def get_sample_frequency(self) -> int:
         """Get the sampling frequency of the recording in Hz.

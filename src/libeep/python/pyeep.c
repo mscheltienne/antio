@@ -90,7 +90,12 @@ pyeep_get_channel_label(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_label(handle, index));
+  const char* unit_str = libeep_get_channel_label(handle, index);
+  if (unit_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", unit_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -103,7 +108,12 @@ pyeep_get_channel_status(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_status(handle, index));
+  const char* unit_str = libeep_get_channel_status(handle, index);
+  if (unit_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", unit_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -115,8 +125,12 @@ pyeep_get_channel_type(PyObject* self, PyObject* args) {
   if(!PyArg_ParseTuple(args, "ii", & handle, & index)) {
     return NULL;
   }
+  const char* unit_str = libeep_get_channel_type(handle, index);
+  if (unit_str == NULL) {
+      Py_RETURN_NONE;
+  }
 
-  return Py_BuildValue("s", libeep_get_channel_type(handle, index));
+  return Py_BuildValue("y", unit_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
@@ -147,7 +161,12 @@ pyeep_get_channel_reference(PyObject* self, PyObject* args) {
     return NULL;
   }
 
-  return Py_BuildValue("s", libeep_get_channel_reference(handle, index));
+  const char* unit_str = libeep_get_channel_reference(handle, index);
+  if (unit_str == NULL) {
+      Py_RETURN_NONE;
+  }
+
+  return Py_BuildValue("y", unit_str);
 }
 ///////////////////////////////////////////////////////////////////////////////
 static
