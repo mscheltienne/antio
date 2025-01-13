@@ -56,6 +56,6 @@ def test_data_synchronization(mne_testing_dataset):
         relative = file.relative_to(directory)
         mne_file = mne_testing_dataset / relative
         assert mne_file.exists(), f"File '{mne_file}' is missing."
-        assert sha256sum(file) == sha256sum(
-            mne_file
-        ), f"File '{mne_file}' is different."
+        assert sha256sum(file) == sha256sum(mne_file), (
+            f"File '{mne_file}' is different."
+        )
