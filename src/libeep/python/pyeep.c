@@ -20,6 +20,7 @@
 static
 PyObject *
 pyeep_get_version(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   if(!PyArg_ParseTuple(args, "")) {
     return NULL;
   }
@@ -30,6 +31,7 @@ pyeep_get_version(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_read(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   char * filename;
 
   if(!PyArg_ParseTuple(args, "s", & filename)) {
@@ -42,6 +44,7 @@ pyeep_read(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_write_cnt(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   char       * filename;
   int          rate;
   chaninfo_t   channel_info_handle;
@@ -57,6 +60,7 @@ pyeep_write_cnt(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_close(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
 
   if(!PyArg_ParseTuple(args, "i", & handle)) {
@@ -71,6 +75,7 @@ pyeep_close(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_get_channel_count(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
 
   if(!PyArg_ParseTuple(args, "i", & handle)) {
@@ -83,6 +88,7 @@ pyeep_get_channel_count(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_get_channel_label(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
   int index;
 
@@ -101,6 +107,7 @@ pyeep_get_channel_label(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_get_channel_status(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
   int index;
 
@@ -119,6 +126,7 @@ pyeep_get_channel_status(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_get_channel_type(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
   int index;
 
@@ -136,6 +144,7 @@ pyeep_get_channel_type(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_get_channel_unit(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
   int index;
 
@@ -154,6 +163,7 @@ pyeep_get_channel_unit(PyObject* self, PyObject* args) {
 static
 PyObject *
 pyeep_get_channel_reference(PyObject* self, PyObject* args) {
+  (void)self;  // Unused parameter
   int handle;
   int index;
 
