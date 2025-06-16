@@ -246,7 +246,7 @@ pyeep_get_samples_as_buffer(PyObject* self, PyObject* args) {
 
   Py_ssize_t array_len = (to - fro) * libeep_get_channel_count(handle);
 
-  PyObject * buf = PyMemoryView_FromMemory(libeep_sample_data, array_len * sizeof(*libeep_sample_data), PyBUF_READ);
+  PyObject * buf = PyMemoryView_FromMemory((char *)libeep_sample_data, array_len * sizeof(*libeep_sample_data), PyBUF_READ);
   return buf;
 }
 ///////////////////////////////////////////////////////////////////////////////
