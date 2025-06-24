@@ -106,11 +106,12 @@ jobs:
       run:
         shell: bash
     steps:
+      - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with:
           activate-environment: true
           python-version: ${{ matrix.python }}
-      - uses: actions/checkout@v4
+
       - uses: actions/checkout@v4
         with:
           repository: mne-tools/mne-python
