@@ -74,8 +74,9 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
+          activate-environment: true
           python-version: ${{ matrix.python }}
       - uses: actions/download-artifact@v4
         with:
@@ -83,7 +84,7 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/
-      - run: pip install --only-binary antio antio[test] --find-links dist --pre
+      - run: uv pip install --only-binary antio antio[test] --find-links dist --pre
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v5
@@ -105,22 +106,23 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
+          activate-environment: true
           python-version: ${{ matrix.python }}
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
           repository: mne-tools/mne-python
           path: mne-python
-      - run: pip install -e mne-python
+      - run: uv pip install -e mne-python
       - uses: actions/download-artifact@v4
         with:
           pattern: cibw-wheels-*
           merge-multiple: true
           path: dist
       - run: ls -alt . && ls -alt dist/ && ls -alt mne-python/
-      - run: pip install --only-binary antio antio[test] --find-links dist --pre
+      - run: uv pip install --only-binary antio antio[test] --find-links dist --pre
       - run: antio sys-info --developer
       - uses: ./.github/actions/get-testing-dataset
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
@@ -135,10 +137,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
+          activate-environment: true
           python-version: '3.12'
-      - run: pip install -ve .[test]
+      - run: uv pip install -ve .[test]
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v5
