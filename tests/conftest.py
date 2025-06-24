@@ -3,14 +3,13 @@ from __future__ import annotations
 import warnings
 from collections.abc import Callable
 from pathlib import Path
-from typing import Optional, Union
 
 import pytest
 from mne.io import BaseRaw, read_raw_brainvision
 
 TypeDataset = dict[
     str,
-    Optional[Union[dict[str, Path], str, int, tuple[str, str, str], dict[str, str]]],
+    dict[str, Path] | str | int | tuple[str, str, str] | dict[str, str] | None,
 ]
 
 

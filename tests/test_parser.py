@@ -168,7 +168,7 @@ def test_read_triggers_disconnet(ca_208, read_raw_bv):
     assert len(annotations) == len(descriptions)
     assert all([0 <= elt for elt in onsets])
     assert all([0 <= elt for elt in durations])
-    for onset1, onset2 in zip(annotations.onset, onsets):
+    for onset1, onset2 in zip(annotations.onset, onsets, strict=False):
         assert_allclose(onset1, onset2 / raw.info["sfreq"], atol=2e-3)
 
 
