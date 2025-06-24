@@ -99,7 +99,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            python: 3.12
+            python: "3.12"
     name: test MNE on ${{ matrix.os }} - py${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     defaults:
