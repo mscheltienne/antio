@@ -187,7 +187,7 @@ class InputCNT(BaseCNT):
         start_time = pyeep.get_start_time(self._handle)
         return datetime.fromtimestamp(start_time, timezone.utc)
 
-    def get_start_time_and_fraction(self) -> Optional[datetime]:
+    def get_start_time_and_fraction(self) -> datetime | None:
         """Get start time with second fraction.
 
         Returns
@@ -291,7 +291,7 @@ class InputCNT(BaseCNT):
 
     def get_trigger(
         self, index: int
-    ) -> tuple[str, int, int, Optional[str], Optional[str], Optional[str]]:
+    ) -> tuple[str, int, int, str | None, str | None, str | None]:
         """Get the trigger (annotation) at a given index.
 
         Parameters
@@ -320,7 +320,7 @@ class InputCNT(BaseCNT):
         return pyeep.get_trigger(self._handle, index)
 
 
-def read_cnt(fname: Union[str, Path]) -> InputCNT:
+def read_cnt(fname: str | Path) -> InputCNT:
     """Read a CNT file.
 
     Parameters

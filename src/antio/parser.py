@@ -6,7 +6,6 @@ import numpy as np
 
 if TYPE_CHECKING:
     from datetime import date, datetime
-    from typing import Optional
 
     from numpy.typing import NDArray
 
@@ -118,7 +117,7 @@ def read_device_info(
     return make, mode, serial, site
 
 
-def read_meas_date(cnt: InputCNT) -> Optional[datetime]:
+def read_meas_date(cnt: InputCNT) -> datetime | None:
     """Parse the measurement from the cnt file.
 
     Parameters
@@ -135,7 +134,7 @@ def read_meas_date(cnt: InputCNT) -> Optional[datetime]:
 
 
 def read_data(
-    cnt: InputCNT, first_samp: int = 0, last_samp: Optional[int] = None
+    cnt: InputCNT, first_samp: int = 0, last_samp: int | None = None
 ) -> NDArray[np.float64]:
     """Read the data array.
 
