@@ -61,7 +61,7 @@ readme = 'README.md'
 requires-python = '>=3.11'
 
 [project.scripts]
-antio = 'antio.commands.main:run'
+antio = 'antio._commands.main:run'
 
 [project.urls]
 documentation = 'https://github.com/mscheltienne/antio'

@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from click.testing import CliRunner
 
-from antio.commands.sys_info import run
+from antio._commands.sys_info import run
 
 
 @pytest.mark.parametrize("developer", [False, True])
