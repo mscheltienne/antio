@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 
-from antio.commands.main import run
+from antio._commands.main import run
 
 
 def test_main():

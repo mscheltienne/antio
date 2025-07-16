@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -185,7 +185,7 @@ class InputCNT(BaseCNT):
             Acquisition start time.
         """
         start_time = pyeep.get_start_time(self._handle)
-        return datetime.fromtimestamp(start_time, timezone.utc)
+        return datetime.fromtimestamp(start_time, UTC)
 
     def get_start_time_and_fraction(self) -> datetime | None:
         """Get start time with second fraction.
@@ -200,7 +200,7 @@ class InputCNT(BaseCNT):
         # start date is in EXCEL format
         if start_date >= 27538 and start_date <= 2958464:
             start_date = np.round(start_date * 3600.0 * 24.0) - 2209161600
-            return datetime.fromtimestamp(start_date + start_fraction, timezone.utc)
+            return datetime.fromtimestamp(start_date + start_fraction, UTC)
 
     def get_hospital(self, *, encoding: str) -> str:
         """Get hospital name of the recording.
@@ -275,7 +275,7 @@ class InputCNT(BaseCNT):
         try:
             # one of the value year, month, day could bet set to 0 as this is the
             # initial value, which is invalid for a datetime object.
-            return datetime(year=year, month=month, day=day, tzinfo=timezone.utc).date()
+            return datetime(year=year, month=month, day=day, tzinfo=UTC).date()
         except Exception:
             return None
 

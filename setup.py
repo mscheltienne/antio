@@ -64,7 +64,7 @@ class build_ext(_build_ext):  # noqa: D101
                 "Python3_SABI_LIBRARY",
             ):
                 if key in check_env:
-                    args.append(f"-D{key}={check_env[key]}")
+                    args.append(f"-D{key}={check_env[key]}")  # noqa: PERF401
             subprocess.run(args, check=True)
             subprocess.run(
                 ["cmake", "--build", build_dir, "--config", "Release"], check=True
