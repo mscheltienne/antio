@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import platform
 import sys
+import tomllib
 from functools import partial
 from importlib.metadata import metadata, requires, version
 from importlib.util import find_spec
@@ -9,10 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import psutil
-import tomllib
 from packaging.requirements import Requirement
-
-from ._checks import check_type
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -24,7 +22,6 @@ def sys_info(
     *,
     extra: bool = False,
     developer: bool = False,
-    package: str | None = None,
 ) -> None:
     """Print the system information for debugging.
 
@@ -38,16 +35,12 @@ def sys_info(
     developer : bool
         If True, display information about optional dependencies. Only available for
         the package installed in editable mode.
-    package : str | None
-        The package to display information about. If None, display information about the
-        current package.
     """
-    check_type(developer, (bool,), "developer")
-    check_type(package, (str, None), "package")
+    assert isinstance(developer, bool), "developer must be a boolean."
 
     ljust = 26
     out = partial(print, end="", file=fid)
-    package = __package__.split(".")[0] if package is None else package
+    package = __package__.split(".")[0]
 
     # OS information - requires python 3.8 or above
     out("Platform:".ljust(ljust) + platform.platform() + "\n")
