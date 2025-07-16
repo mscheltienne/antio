@@ -1,6 +1,6 @@
 name: mirror
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.ref }}
+  group: ${{ github.workflow }}-${{ github.event.ref }}
   cancel-in-progress: true
 on:  # yamllint disable-line rule:truthy
   schedule:
