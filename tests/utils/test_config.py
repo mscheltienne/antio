@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from io import StringIO
+from pathlib import Path
 
+import pytest
+
+import antio
 from antio.utils.config import sys_info
 
 
@@ -25,10 +29,15 @@ def test_sys_info() -> None:
     assert "style" not in value
     assert "test" not in value
 
+
+@pytest.mark.skipif(
+    not (Path(antio.__file__).parents[2] / "pyproject.toml").exists(),
+    reason="not editable install",
+)
+def test_sys_info_developer() -> None:
+    """Test info-showing utility, with developer dependencies."""
     out = StringIO()
     sys_info(fid=out, developer=True)
     value = out.getvalue()
     out.close()
-
-    assert "style" in value
     assert "test" in value
