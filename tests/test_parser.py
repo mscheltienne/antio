@@ -117,8 +117,8 @@ def test_read_triggers(dataset, read_raw_bv, request):
     assert len(impedances) == len([elt for elt in descriptions if elt == "impedance"])
     assert len(onsets) == len(durations)
     assert len(onsets) == len(descriptions)
-    assert all([0 <= elt for elt in onsets])
-    assert all([0 <= elt for elt in durations])
+    assert all(0 <= elt for elt in onsets)
+    assert all(0 <= elt for elt in durations)
     # compare with brainvision file
     raw = read_raw_bv(dataset["bv"]["short"])
     idx = np.where(raw.annotations.description != "New Segment/")[0]
@@ -166,8 +166,8 @@ def test_read_triggers_disconnet(ca_208, read_raw_bv):
     assert len(annotations) == len(onsets)
     assert len(annotations) == len(durations)
     assert len(annotations) == len(descriptions)
-    assert all([0 <= elt for elt in onsets])
-    assert all([0 <= elt for elt in durations])
+    assert all(0 <= elt for elt in onsets)
+    assert all(0 <= elt for elt in durations)
     for onset1, onset2 in zip(annotations.onset, onsets, strict=False):
         assert_allclose(onset1, onset2 / raw.info["sfreq"], atol=2e-3)
 

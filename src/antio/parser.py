@@ -186,7 +186,7 @@ def read_triggers(cnt: InputCNT) -> tuple[list, list, list, list, dict[str, list
         disconnection and reconnection.
     """
     onsets, durations, descriptions, impedances = [], [], [], []
-    disconnect = dict(start=[], stop=[])
+    disconnect = {"start": [], "stop": []}
     for k in range(cnt.get_trigger_count()):
         code, idx, duration, condition, description, impedance = cnt.get_trigger(k)
         # detect impedance measurements
