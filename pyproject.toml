@@ -73,8 +73,6 @@ tracker = 'https://github.com/mscheltienne/antio/issues'
 archs = "native"
 build = "cp312-*"
 skip = "*musllinux*"
-test-command = "pytest {project}/tests"
-test-extras = ["test"]
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = [

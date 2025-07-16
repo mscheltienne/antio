@@ -29,8 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pypa/cibuildwheel@v3.0.1
-        env:
-          CIBW_TEST_SKIP: "{*macosx*,*win*}"
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-native-${{ strategy.job-index }}
