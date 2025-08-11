@@ -81,7 +81,7 @@ jobs:
         with:
           activate-environment: true
           python-version: ${{ matrix.python }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           pattern: cibw-wheels-*
           merge-multiple: true
@@ -122,7 +122,7 @@ jobs:
           repository: mne-tools/mne-python
           path: mne-python
       - run: uv pip install -e mne-python
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           pattern: cibw-wheels-*
           merge-multiple: true
@@ -180,7 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           pattern: cibw-wheels-*
           merge-multiple: true
@@ -204,7 +204,7 @@ jobs:
       url: https://pypi.org/p/antio
     timeout-minutes: 10
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           pattern: cibw-wheels-*
           merge-multiple: true
