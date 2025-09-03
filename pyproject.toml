@@ -51,7 +51,7 @@ keywords = [
   'eego',
   'python',
 ]
-license = {file = 'LICENSE'}
+license = 'LGPL-3.0-or-later'
 maintainers = [
   {email = 'mathieu.scheltienne@gmail.com', name = 'Mathieu Scheltienne'},
   {name = 'Eric Larson'},

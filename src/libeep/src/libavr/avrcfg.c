@@ -169,11 +169,11 @@ int cfg_get_msecint(const char *line, swin_t *win, eeg_t *src)
 
 /* average ------------------------------------------------------- */
 
-typedef int (*avrfunc_t) ();            /* cfg item parser prototypes */
+typedef int (*avrfunc_t) (char *, int, AverageParameters *, eeg_t *);            /* cfg item parser prototypes */
 
-int avrkey(char *line, int mode, AverageParameters *p);
-int avrcond(char *line, int mode, AverageParameters *p);
-int avrcondlab(char *line, int mode, AverageParameters *p);
+int avrkey(char *line, int mode, AverageParameters *p, eeg_t *e);
+int avrcond(char *line, int mode, AverageParameters *p, eeg_t *e);
+int avrcondlab(char *line, int mode, AverageParameters *p, eeg_t *e);
 int avrchan(char *line, int mode, AverageParameters *p, eeg_t *e);
 int avrwin(char *line, int mode, AverageParameters *p, eeg_t *e);
 int avrbase(char *line, int mode, AverageParameters *p, eeg_t *e);
@@ -221,7 +221,7 @@ char *avrkeyword[] = {                 /* a keyword which enters its mode */
   and the members it have to set up
 */
 
-int avrkey(char *line, int mode, AverageParameters *p)  
+int avrkey(char *line, int mode, AverageParameters *p, eeg_t *e)  
 {
   int i;
 
@@ -244,7 +244,7 @@ int avrkey(char *line, int mode, AverageParameters *p)
   return AVRERROR;
 }
 
-int avrcond(char *line, int mode, AverageParameters *p)
+int avrcond(char *line, int mode, AverageParameters *p, eeg_t *e)
 {
   int i, occ;
   int keymode;
@@ -257,7 +257,7 @@ int avrcond(char *line, int mode, AverageParameters *p)
   strcpy(linebak, line);
   cfg_line_norm(linebak);
   
-  if (((keymode = avrkey(linebak, mode, p)) != AVRERROR))
+  if (((keymode = avrkey(linebak, mode, p, e)) != AVRERROR))
     return keymode;
 
   /* no end - new condition */
@@ -317,7 +317,7 @@ int avrcond(char *line, int mode, AverageParameters *p)
   return AVRCONDLAB;
 }
 
-int avrcondlab(char *line, int mode, AverageParameters *p)
+int avrcondlab(char *line, int mode, AverageParameters *p, eeg_t *e)
 {
   int i, l;
   char *colorstr = NULL;
@@ -373,7 +373,7 @@ int avrchan(char *line, int mode, AverageParameters *p, eeg_t *e)
   }
   
   /* no label - maybe key ? */
-  return avrkey(line, mode, p);
+  return avrkey(line, mode, p, e);
 }
 
 int avrwin(char *line, int mode, AverageParameters *p, eeg_t *e)
