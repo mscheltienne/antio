@@ -171,6 +171,7 @@ int32_t * libeep_get_raw_samples(cntfile_t handle, long from, long to);
 void libeep_free_raw_samples(int32_t *data);
 /**
 * @brief returns a handle to a new recording info object which can be passed to libeep_write_cnt()
+* @returns a handle to recording info
 */
 recinfo_t libeep_create_recinfo();
 /**

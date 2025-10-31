@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.7)
 
 set(LIBEEP_VERSION_MAJOR 3)
 set(LIBEEP_VERSION_MINOR 3)
