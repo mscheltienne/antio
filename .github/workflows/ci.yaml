@@ -89,7 +89,7 @@ jobs:
       - run: ls -alt . && ls -alt dist/
       - run: uv sync -q --locked --no-default-groups --group test --no-install-project
       - run: uv pip install antio -q --only-binary antio --find-links dist --pre
-      - run: antio sys-info --developer
+      - run: antio sys-info
       - run: pytest tests/ --cov=antio --cov-report=xml
       - uses: codecov/codecov-action@v5
         if: ${{ github.repository == 'mscheltienne/antio' }}
@@ -130,7 +130,7 @@ jobs:
       - run: ls -alt . && ls -alt dist/ && ls -alt mne-python/
       - run: uv sync -q --locked --no-default-groups --group test --no-install-project
       - run: uv pip install antio -q --only-binary antio --find-links dist --pre
-      - run: antio sys-info --developer
+      - run: antio sys-info
       - uses: ./.github/actions/get-testing-dataset
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
       - run: pytest tests/ --cov=antio --cov-report=xml --cov-append
