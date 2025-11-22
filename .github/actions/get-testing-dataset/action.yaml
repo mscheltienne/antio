@@ -4,14 +4,11 @@ description: "A composite action to get MNE testing dataset from cache or remote
 runs:
   using: "composite"
   steps:
-    - name: Get dataset version file
-      shell: bash
-      run: curl https://raw.githubusercontent.com/mne-tools/mne-testing-data/refs/heads/master/version.txt -o mne_testing_dataset_version.txt
     - name: Cache MNE testing dataset
       id: cache_mne_testing
       uses: actions/cache@v4
       with:
-        key: mne-python-testing-${{ runner.os }}-${{ hashFiles('mne_testing_dataset_version.txt') }}
+        key: mne-python-testing-${{ runner.os }}
         path: ~/mne_data/MNE-testing-data
     - name: Download MNE testing dataset
       shell: bash
