@@ -120,6 +120,7 @@ jobs:
         with:
           repository: mne-tools/mne-python
           path: mne-python
+          fetch-depth: 0
       - run: uv pip install -e mne-python
       - uses: actions/download-artifact@v6
         with:
