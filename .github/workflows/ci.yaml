@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: pypa/cibuildwheel@v3.2.1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: cibw-wheels-${{ matrix.os }}-native-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
@@ -57,7 +57,7 @@ jobs:
           # https://cibuildwheel.pypa.io/en/stable/faq/#windows-arm64
           CIBW_BEFORE_BUILD_WINDOWS: bash ./tools/cibw_before_build_windows_cross.sh
           CIBW_BUILD_VERBOSITY: 3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.arch }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
@@ -168,7 +168,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v7
       - run: uv build --sdist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: cibw-wheels-sdist
           path: ./dist/*.tar.gz
