@@ -116,7 +116,6 @@ jobs:
         with:
           activate-environment: true
           python-version: ${{ matrix.python }}
-
       - uses: actions/checkout@v5
         with:
           repository: mne-tools/mne-python
