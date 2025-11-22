@@ -132,6 +132,7 @@ jobs:
       - run: uv pip install antio -q --only-binary antio --find-links dist --pre
       - run: antio sys-info
       - uses: ./.github/actions/get-testing-dataset
+      - run: python -c "import mne; print(mne.__version__)"
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
       - run: pytest tests/ --cov=antio --cov-report=xml --cov-append
       - uses: codecov/codecov-action@v5
