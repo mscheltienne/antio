@@ -16,7 +16,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout github libeep repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: src
           ref: libeep
