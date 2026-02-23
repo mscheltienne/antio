@@ -39,13 +39,16 @@ else:
 class CMakeExtension(Extension):
     """Dummy wrapper for CMake build."""
 
-    def __init__(self, name, py_limited_api=False):
+    def __init__(self, name, py_limited_api=False) -> None:
         # don't invoke the original build_ext for this special extension
         super().__init__(name, sources=[], py_limited_api=py_limited_api)
 
 
 class build_ext(_build_ext):  # noqa: D101
-    def run(self):
+    def build_extensions(self) -> None:  # noqa: D102
+        pass  # cmake handles everything, skip default setuptools build
+
+    def run(self) -> None:
         """Build libeep with cmake as part of the extension build process."""
         src_dir = Path(__file__).parent / "src" / "libeep"
         # This is an unfortunate hack to get new env vars within a GH Actions step
