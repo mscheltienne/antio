@@ -17,12 +17,20 @@ _is_free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))
 
 # set the platform-specific files, libeep first, pyeep second.
 if platform.system() == "Linux":
-    _pyeep = f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}" if _is_free_threaded else "pyeep.abi3.so"
+    _pyeep = (
+        f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}"
+        if _is_free_threaded
+        else "pyeep.abi3.so"
+    )
     lib_files = ["libEep.so", _pyeep]
 elif platform.system() == "Windows":
     lib_files = ["Eep.dll", "pyeep.pyd"]
 elif platform.system() == "Darwin":
-    _pyeep = f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}" if _is_free_threaded else "pyeep.abi3.so"
+    _pyeep = (
+        f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}"
+        if _is_free_threaded
+        else "pyeep.abi3.so"
+    )
     lib_files = ["libEep.dylib", _pyeep]
 else:
     lib_files = []
@@ -107,7 +115,9 @@ class bdist_wheel_abi3(bdist_wheel):  # noqa: D101
 
 
 setup(
-    ext_modules=[CMakeExtension("antio.libeep.pyeep", py_limited_api=not _is_free_threaded)],
+    ext_modules=[
+        CMakeExtension("antio.libeep.pyeep", py_limited_api=not _is_free_threaded)
+    ],
     cmdclass={
         "build_ext": build_ext,
         "bdist_wheel": bdist_wheel_abi3,
