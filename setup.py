@@ -4,6 +4,7 @@ import pprint
 import shutil
 import subprocess
 import sys
+import sysconfig
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -12,13 +13,17 @@ from setuptools.command.build_ext import build_ext as _build_ext
 from setuptools.extension import Extension
 from wheel.bdist_wheel import bdist_wheel
 
+_is_free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))
+
 # set the platform-specific files, libeep first, pyeep second.
 if platform.system() == "Linux":
-    lib_files = ["libEep.so", "pyeep.abi3.so"]
+    _pyeep = f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}" if _is_free_threaded else "pyeep.abi3.so"
+    lib_files = ["libEep.so", _pyeep]
 elif platform.system() == "Windows":
     lib_files = ["Eep.dll", "pyeep.pyd"]
 elif platform.system() == "Darwin":
-    lib_files = ["libEep.dylib", "pyeep.abi3.so"]
+    _pyeep = f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}" if _is_free_threaded else "pyeep.abi3.so"
+    lib_files = ["libEep.dylib", _pyeep]
 else:
     lib_files = []
 
@@ -58,6 +63,8 @@ class build_ext(_build_ext):  # noqa: D101
                 "-DCMAKE_BUILD_TYPE=Release",
                 f"-DPython3_EXECUTABLE={sys.executable}",
             ]
+            if _is_free_threaded:
+                args.append("-DUSE_STABLE_ABI=OFF")
             for key in (
                 "CMAKE_GENERATOR",
                 "CMAKE_GENERATOR_PLATFORM",
@@ -91,7 +98,7 @@ class bdist_wheel_abi3(bdist_wheel):  # noqa: D101
     def get_tag(self):  # noqa: D102
         python, abi, plat = super().get_tag()
 
-        if python.startswith("cp"):
+        if python.startswith("cp") and not abi.endswith("t"):
             # on CPython, our wheels are abi3 and compatible back to 3.2,
             # but let's set it to our min version anyway
             return "cp311", "abi3", plat
@@ -100,7 +107,7 @@ class bdist_wheel_abi3(bdist_wheel):  # noqa: D101
 
 
 setup(
-    ext_modules=[CMakeExtension("antio.libeep.pyeep", py_limited_api=True)],
+    ext_modules=[CMakeExtension("antio.libeep.pyeep", py_limited_api=not _is_free_threaded)],
     cmdclass={
         "build_ext": build_ext,
         "bdist_wheel": bdist_wheel_abi3,
