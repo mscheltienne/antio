@@ -90,7 +90,7 @@ jobs:
       - run: uv pip install antio -q --only-binary antio --find-links dist --pre
       - run: antio sys-info
       - run: pytest tests/ --cov=antio --cov-report=xml
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: ${{ github.repository == 'mscheltienne/antio' }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -134,7 +134,7 @@ jobs:
       - uses: ./.github/actions/get-testing-dataset
       - run: pytest mne-python/mne/io/ant/tests/ --cov=antio --cov-report=xml
       - run: pytest tests/ --cov=antio --cov-report=xml --cov-append
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: ${{ github.repository == 'mscheltienne/antio' }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -155,7 +155,7 @@ jobs:
       - run: uv sync -q --locked --no-default-groups --group test
       - run: antio sys-info --developer
       - run: pytest tests/ --cov=antio --cov-report=xml
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: ${{ github.repository == 'mscheltienne/antio' }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
