@@ -1,11 +1,11 @@
 repos:
     - repo: https://github.com/astral-sh/uv-pre-commit
-      rev: 0.10.3
+      rev: 0.11.7
       hooks:
           - id: uv-lock
 
     - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.15.1
+      rev: v0.15.11
       hooks:
           - id: ruff
             name: ruff linter
@@ -16,7 +16,7 @@ repos:
             exclude: tests/data
 
     - repo: https://github.com/codespell-project/codespell
-      rev: v2.4.1
+      rev: v2.4.2
       hooks:
           - id: codespell
             additional_dependencies: [tomli]
@@ -24,7 +24,7 @@ repos:
             exclude: tests/data
 
     - repo: https://github.com/pappasam/toml-sort
-      rev: v0.24.3
+      rev: v0.24.4
       hooks:
           - id: toml-sort-fix
             files: pyproject.toml
