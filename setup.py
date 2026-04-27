@@ -24,7 +24,12 @@ if platform.system() == "Linux":
     )
     lib_files = ["libEep.so", _pyeep]
 elif platform.system() == "Windows":
-    lib_files = ["Eep.dll", "pyeep.pyd"]
+    _pyeep = (
+        f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}"
+        if _is_free_threaded
+        else "pyeep.pyd"
+    )
+    lib_files = ["Eep.dll", _pyeep]
 elif platform.system() == "Darwin":
     _pyeep = (
         f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}"
@@ -79,6 +84,7 @@ class build_ext(_build_ext):  # noqa: D101
             for key in (
                 "CMAKE_GENERATOR",
                 "CMAKE_GENERATOR_PLATFORM",
+                "Python3_LIBRARY",
                 "Python3_SABI_LIBRARY",
             ):
                 if key in check_env:
