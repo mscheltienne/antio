@@ -24,12 +24,9 @@ if platform.system() == "Linux":
     )
     lib_files = ["libEep.so", _pyeep]
 elif platform.system() == "Windows":
-    _pyeep = (
-        f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}"
-        if _is_free_threaded
-        else "pyeep.pyd"
-    )
-    lib_files = ["Eep.dll", _pyeep]
+    # CMakeLists.txt forces SUFFIX .pyd on Windows, so the output filename is
+    # always pyeep.pyd regardless of free-threading or SOABI.
+    lib_files = ["Eep.dll", "pyeep.pyd"]
 elif platform.system() == "Darwin":
     _pyeep = (
         f"pyeep{sysconfig.get_config_var('EXT_SUFFIX')}"
