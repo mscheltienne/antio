@@ -1,9 +1,8 @@
 // system
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <string.h>
 #include <string.h>
 #include <time.h>
 // libeep
@@ -706,7 +705,7 @@ libeep_get_channel_index(cntfile_t handle, const char *chan) {
 int
 libeep_get_sample_frequency(cntfile_t handle) {
   struct _libeep_entry * obj=_libeep_get_object(handle, om_read);
-  return (int)(/* TODO: round before truncating */(1.0 / eep_get_period(obj->eep)));
+  return (int)round(1.0 / eep_get_period(obj->eep));
 }
 ///////////////////////////////////////////////////////////////////////////////
 long
