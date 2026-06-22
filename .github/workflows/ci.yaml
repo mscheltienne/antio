@@ -26,7 +26,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: pypa/cibuildwheel@v4.1.0
@@ -47,7 +47,7 @@ jobs:
     name: build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: pypa/cibuildwheel@v4.1.0
@@ -78,7 +78,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
         with:
           activate-environment: true
@@ -113,12 +113,12 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
         with:
           activate-environment: true
           python-version: ${{ matrix.python }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: mne-tools/mne-python
           path: mne-python
@@ -148,7 +148,7 @@ jobs:
     name: test editable install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: astral-sh/setup-uv@v7
@@ -168,7 +168,7 @@ jobs:
     name: create sdist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
       - run: uv build --sdist
       - uses: actions/upload-artifact@v7
@@ -182,7 +182,7 @@ jobs:
     name: run twine check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
         with:
           pattern: cibw-wheels-*
