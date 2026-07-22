@@ -1,6 +1,9 @@
 [build-system]
 build-backend = 'setuptools.build_meta'
-requires = ['setuptools >= 64.0.0', 'setuptools_scm>=8']
+# cmake 4.4.0 has a FindPython regression that breaks Development.SABIModule on
+# Windows (fixed on CMake master, unreleased), so pin it out here rather than
+# relying on the cmake shipped by the CI images
+requires = ['cmake != 4.4.0', 'setuptools >= 64.0.0', 'setuptools_scm>=8']
 
 [dependency-groups]
 ide = [
